@@ -97,6 +97,21 @@
   }
   .spec dd{margin:0; font-family:var(--mono); font-size:.95rem; font-weight:500}
 
+  /* ---------- figures ---------- */
+  figure{margin:22px 0}
+  figure img{
+    display:block; width:100%; height:auto; border-radius:8px;
+    border:1px solid var(--line); background:var(--bg-alt);
+  }
+  figcaption{
+    margin-top:8px; font-size:.82rem; color:var(--fg-muted); line-height:1.5;
+  }
+  .grid2, .grid3{display:grid; gap:14px; margin:22px 0}
+  .grid2{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  .grid3{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+  .grid2 figure, .grid3 figure{margin:0}
+  .grid2 figcaption, .grid3 figcaption{margin-top:7px; font-size:.78rem}
+
   .tags{display:flex; flex-wrap:wrap; gap:7px; list-style:none; margin:14px 0 0; padding:0}
   .tags li{
     font-family:var(--mono); font-size:.76rem; padding:4px 10px;
@@ -147,6 +162,12 @@
     state &mdash; all under a 6 kg maximum takeoff weight.
   </p>
 
+  <figure>
+    <img src="img/uav-aircraft.jpg" alt="The completed twin-boom pusher UAV on a stand"
+         width="1500" height="1125" loading="lazy">
+    <figcaption>The finished aircraft &mdash; twin-boom, pusher, 1.71&nbsp;m span, 3.5&nbsp;kg.</figcaption>
+  </figure>
+
   <div class="mine">
     <h3>What I did</h3>
     <p>
@@ -175,6 +196,19 @@
     </ul>
   </div>
 
+  <div class="grid2">
+    <figure>
+      <img src="img/uav-nose.jpg" alt="Vacuum-formed clear nose fitted over the camera bay"
+           width="1125" height="1500" loading="lazy">
+      <figcaption>The vacuum-formed nose that replaced the 3D-printed one, so the camera could see out and stay protected.</figcaption>
+    </figure>
+    <figure>
+      <img src="img/uav-joint.jpg" alt="Wing-to-fuselage joint and tail boom attachment"
+           width="1125" height="1500" loading="lazy">
+      <figcaption>Wing and boom attachment &mdash; aircraft plywood at the load path, balsa everywhere it was not needed.</figcaption>
+    </figure>
+  </div>
+
   <h3>Airframe</h3>
   <dl class="specs">
     <div class="spec"><dt>Configuration</dt><dd>Twin-boom, pusher</dd></div>
@@ -192,6 +226,18 @@
     Root/tip chord 0.38 / 0.19 m &middot; incidence +2&deg; with &minus;2&deg; washout,
     so the root stalls first and the ailerons keep authority &middot; H-tail, NACA 0012
   </p>
+
+  <figure>
+    <img src="img/uav-planform.png" alt="Wing planform with span and chord dimensions"
+         loading="lazy">
+    <figcaption>Wing planform &mdash; 1.709&nbsp;m span, 0.38&nbsp;m root chord tapering to 0.19&nbsp;m.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="img/uav-truss.png" alt="CAD render of the internal truss framing"
+         loading="lazy">
+    <figcaption>Internal truss framing, laid out so avionics could be reached after the skin went on.</figcaption>
+  </figure>
 
   <h3>Aerodynamics &amp; stability</h3>
   <ul class="body">
@@ -213,6 +259,12 @@
     </li>
   </ul>
 
+  <figure>
+      <img src="img/uav-lift.png" alt="Lift coefficient versus angle of attack curve"
+           width="1024" height="662" loading="lazy">
+      <figcaption>C<sub>L</sub> against angle of attack &mdash; the 0.8 design point sits at about 6.2&deg;, inside the linear range.</figcaption>
+  </figure>
+
   <h3>Flight test</h3>
   <p>
     On 19 Aug 2026 the aircraft completed <strong>two full autonomous waypoint missions</strong>
@@ -220,6 +272,12 @@
     segment it held AUTO mode for 169.2 s (67.8% of the log), with 31&ndash;32 GPS satellites and
     a maximum HDOP of 0.52.
   </p>
+
+  <figure>
+    <img src="img/uav-onboard.jpg" alt="View from the aircraft's onboard camera in flight"
+         loading="lazy">
+    <figcaption>From the onboard camera in flight, propeller and tail boom in frame.</figcaption>
+  </figure>
 
   <h3>Autonomy stack</h3>
   <p>
@@ -230,6 +288,18 @@
     link meant hold, never an improvised coordinate. Pixhawk and ArduPlane kept flight control
     throughout &mdash; the AI only picked a branch.
   </p>
+
+  <figure>
+    <img src="img/uav-avionics.png" alt="Block diagram of the avionics and ground link"
+         loading="lazy">
+    <figcaption>Onboard avionics and the ground link: Pixhawk&nbsp;6C, F9P RTK, HM30 video and telemetry, gimbal camera.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="img/uav-detection.jpg" alt="Onboard video with detection boxes drawn over buildings"
+         loading="lazy">
+    <figcaption>Detection running on the downlinked video &mdash; each box carries a class and a confidence score, and only a confident, matching class was allowed to pick a branch.</figcaption>
+  </figure>
 
   <ul class="tags">
     <li>OpenVSP</li><li>VSPAERO</li><li>Composite &amp; balsa fabrication</li>
@@ -252,6 +322,19 @@
     want to know: <em>will this finish?</em> So people start a run at 40%, the vacuum dies
     halfway, and the whole cycle has to start over. We replaced the percentage with a verdict.
   </p>
+
+  <div class="grid2">
+    <figure>
+      <img src="img/ax-before.jpg" alt="Vacuum display showing only a battery percentage"
+           width="894" height="1212" loading="lazy">
+      <figcaption>Before &mdash; 57%. True, and no help at all.</figcaption>
+    </figure>
+    <figure>
+      <img src="img/ax-after.jpg" alt="The same display showing a completable verdict"
+           width="1254" height="1254" loading="lazy">
+      <figcaption>After &mdash; the same display, now answering the question the user actually has.</figcaption>
+    </figure>
+  </div>
 
   <div class="mine">
     <h3>What I did</h3>
@@ -299,6 +382,30 @@
     </li>
   </ul>
 
+  <div class="grid3">
+    <figure>
+      <img src="img/ax-go.png" alt="Green card reading completable with 15 minutes of margin"
+           width="1099" height="996" loading="lazy">
+      <figcaption>Completable &mdash; +15 min of margin, so the button simply starts the run.</figcaption>
+    </figure>
+    <figure>
+      <img src="img/ax-tight.png" alt="Amber card reading tight with 2 minutes of margin"
+           width="1099" height="987" loading="lazy">
+      <figcaption>Tight &mdash; +2 min, so the button switches to quiet mode to buy margin.</figcaption>
+    </figure>
+    <figure>
+      <img src="img/ax-charge.png" alt="Red card reading needs a charge with negative margin"
+           width="1099" height="987" loading="lazy">
+      <figcaption>Needs a charge &mdash; &minus;9 min, so the button offers charging or a smaller area.</figcaption>
+    </figure>
+  </div>
+
+  <figure>
+    <img src="img/ax-onboarding.png" alt="Onboarding screen asking which household type fits"
+         width="695" height="1500" loading="lazy" style="max-width:300px">
+    <figcaption>Onboarding &mdash; seven everyday questions instead of a settings menu, saved as a reusable preset.</figcaption>
+  </figure>
+
   <h3>Battery health, not just charge</h3>
   <p>
     The model separates <strong>state of charge</strong> from <strong>state of health</strong>.
@@ -306,6 +413,19 @@
     <em>tight</em> &mdash; the same number, a different answer. Below 80% SOH the interface starts
     warning about replacement instead of silently under-delivering.
   </p>
+
+  <div class="grid2">
+    <figure>
+      <img src="img/ax-soh-new.png" alt="Card reading completable at full battery health"
+           width="942" height="691" loading="lazy">
+      <figcaption>Healthy pack &mdash; 82% charge reads completable, +7 min.</figcaption>
+    </figure>
+    <figure>
+      <img src="img/ax-soh-worn.png" alt="Card reading tight at 78 percent state of health"
+           width="942" height="691" loading="lazy">
+      <figcaption>Same 82% charge at 78% SOH &mdash; now tight, +0 min. Same number, different answer.</figcaption>
+    </figure>
+  </div>
 
   <h3>One verdict, three channels</h3>
   <p>
