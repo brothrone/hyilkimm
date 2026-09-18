@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hyeongil Kim — Aerospace Engineering Portfolio</title>
+<meta name="description" content="Aerospace engineering portfolio of Hyeongil Kim: fixed-wing UAV airframe fabrication and a battery-life coaching interface for an AI vacuum cleaner.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff; --bg-alt:#f6f7f9; --fg:#14181f; --fg-muted:#5b6472;
+    --line:#e3e6ea; --accent:#1f3864; --accent-soft:#eef2f9;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --maxw:860px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0e1116; --bg-alt:#161b22; --fg:#e6edf3; --fg-muted:#9aa4b2;
+      --line:#262c36; --accent:#7da8e6; --accent-soft:#18212f;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1116; --bg-alt:#161b22; --fg:#e6edf3; --fg-muted:#9aa4b2;
+    --line:#262c36; --accent:#7da8e6; --accent-soft:#18212f;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:var(--sans); font-size:16px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 16px}
+
+  /* ---------- header ---------- */
+  header{padding:72px 0 44px; border-bottom:1px solid var(--line)}
+  h1{
+    margin:0 0 6px; font-size:clamp(2rem,6vw,2.75rem); font-weight:700;
+    letter-spacing:-.02em; line-height:1.1;
+  }
+  .role{margin:0 0 20px; color:var(--fg-muted); font-size:1.05rem}
+  .intro{margin:0 0 24px; font-size:1.08rem; max-width:62ch}
+  .links{display:flex; flex-wrap:wrap; gap:10px; list-style:none; margin:0; padding:0}
+  .links a{
+    display:inline-block; padding:6px 13px; border:1px solid var(--line);
+    border-radius:999px; color:var(--fg); text-decoration:none;
+    font-size:.9rem; transition:border-color .15s, background .15s;
+  }
+  .links a:hover{border-color:var(--accent); background:var(--accent-soft)}
+
+  /* ---------- sections ---------- */
+  section{padding:52px 0; border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  .eyebrow{
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 28px;
+  }
+  h2{margin:0 0 4px; font-size:1.5rem; font-weight:650; letter-spacing:-.01em}
+  .award{
+    display:inline-block; margin:0 0 4px; font-size:.9rem; font-weight:500;
+    color:var(--accent);
+  }
+  .meta{
+    margin:0 0 20px; font-family:var(--mono); font-size:.8rem;
+    color:var(--fg-muted);
+  }
+  h3{
+    margin:30px 0 10px; font-size:.78rem; font-weight:600;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--fg-muted);
+  }
+  p{margin:0 0 14px}
+  ul.body{margin:0 0 14px; padding-left:20px}
+  ul.body li{margin-bottom:7px}
+  strong{font-weight:600}
+
+  .mine{
+    background:var(--bg-alt); border-left:3px solid var(--accent);
+    padding:16px 18px; border-radius:0 8px 8px 0; margin:22px 0;
+  }
+  .mine h3{margin-top:0}
+  .mine p:last-child, .mine ul:last-child{margin-bottom:0}
+
+  /* ---------- spec table ---------- */
+  .specs{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px; background:var(--line); border:1px solid var(--line);
+    border-radius:8px; overflow:hidden; margin:18px 0 6px;
+  }
+  .spec{background:var(--bg); padding:12px 14px}
+  .spec dt{
+    font-size:.7rem; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--fg-muted); margin:0 0 3px;
+  }
+  .spec dd{margin:0; font-family:var(--mono); font-size:.95rem; font-weight:500}
+
+  .tags{display:flex; flex-wrap:wrap; gap:7px; list-style:none; margin:14px 0 0; padding:0}
+  .tags li{
+    font-family:var(--mono); font-size:.76rem; padding:4px 10px;
+    background:var(--bg-alt); border:1px solid var(--line); border-radius:6px;
+    color:var(--fg-muted);
+  }
+
+  footer{padding:44px 0 72px; color:var(--fg-muted); font-size:.9rem}
+  footer a{color:var(--fg)}
+
+  @media (max-width:520px){
+    header{padding:48px 0 36px}
+    section{padding:40px 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <h1>Hyeongil Kim</h1>
+  <p class="role">Aerospace Engineering &middot; Pusan National University, Busan, South Korea</p>
+  <p class="intro">
+    I build things and then check whether they actually work &mdash; airframes I cut and glued
+    myself, and the interfaces that run on top of hardware. Below are the two projects I spent
+    2026 on.
+  </p>
+  <ul class="links">
+    <li><a href="mailto:hyilkimm@gmail.com">hyilkimm@gmail.com</a></li>
+    <li><a href="https://github.com/brothrone">GitHub</a></li>
+    <li><a href="https://brothrone.org">Blog</a></li>
+  </ul>
+</header>
+
+<!-- ================= PROJECT 1 ================= -->
+<section>
+  <p class="eyebrow">Project 01</p>
+  <h2>Fixed-Wing Reconnaissance UAV</h2>
+  <p class="award">Excellence Award &mdash; 2nd of more than 30 teams nationwide</p>
+  <p class="meta">
+    PNU President&rsquo;s Cup Creative Aircraft Competition &middot; Aug 2026 &middot; 8-person team &middot; Team Box Box
+  </p>
+
+  <p>
+    A low-altitude reconnaissance aircraft that had to take off, fly a circuit, identify a ground
+    target from the air, pass through the gate matching that target, and land in a re-launchable
+    state &mdash; all under a 6 kg maximum takeoff weight.
+  </p>
+
+  <div class="mine">
+    <h3>What I did</h3>
+    <p>
+      I was responsible for <strong>airframe fabrication</strong>: turning the team&rsquo;s drawings
+      into a structure that could survive flight while staying under weight.
+    </p>
+    <ul class="body">
+      <li>
+        Placed materials by stiffness requirement rather than uniformly &mdash; carbon-fiber pipe
+        for spars and booms, balsa where mass mattered more than rigidity, aircraft plywood at
+        load paths and joints.
+      </li>
+      <li>
+        Built a <strong>truss square-bulkhead fuselage</strong>, chosen so avionics could be laid
+        out and reached easily, and a <strong>semi-monocoque wing</strong> that kept wiring runs
+        simple without giving up stiffness.
+      </li>
+      <li>
+        Replaced the 3D-printed nose with a <strong>vacuum-formed plastic shell</strong> after the
+        printed part limited the camera&rsquo;s field of view and left it exposed.
+      </li>
+      <li>
+        Final mass came in at <strong>3.5 kg against a 6 kg limit</strong>, and the aircraft I
+        built flew.
+      </li>
+    </ul>
+  </div>
+
+  <h3>Airframe</h3>
+  <dl class="specs">
+    <div class="spec"><dt>Configuration</dt><dd>Twin-boom, pusher</dd></div>
+    <div class="spec"><dt>Wingspan</dt><dd>1.71 m</dd></div>
+    <div class="spec"><dt>Wing area</dt><dd>0.487 m&sup2;</dd></div>
+    <div class="spec"><dt>Aspect ratio</dt><dd>6.0</dd></div>
+    <div class="spec"><dt>Airfoil</dt><dd>NACA 4412</dd></div>
+    <div class="spec"><dt>Design mass</dt><dd>3.5 kg</dd></div>
+    <div class="spec"><dt>Cruise speed</dt><dd>12 m/s</dd></div>
+    <div class="spec"><dt>Flight control</dt><dd>Pixhawk 6C</dd></div>
+  </dl>
+  <p class="meta">
+    Root/tip chord 0.38 / 0.19 m (taper 0.5) &middot; incidence +2&deg; with &minus;2&deg; washout,
+    so the root stalls first and the ailerons keep authority &middot; H-tail, NACA 0012
+  </p>
+
+  <h3>Aerodynamics &amp; stability</h3>
+  <ul class="body">
+    <li>
+      Geometry modelled in <strong>OpenVSP</strong>, coefficients from <strong>VSPAERO</strong>
+      vortex-lattice analysis at Re &asymp; 2.3&times;10<sup>5</sup>.
+    </li>
+    <li>
+      Target C<sub>L</sub> of 0.8 reached at about <strong>6.2&deg; angle of attack</strong>, well
+      inside the linear range &mdash; lift stays linear from &minus;2&deg; to 16&deg;, leaving
+      stall margin in cruise.
+    </li>
+    <li>
+      Parasite drag C<sub>D0</sub> &asymp; 0.0265, Oswald efficiency 0.725.
+    </li>
+    <li>
+      <strong>Statically stable in pitch</strong>: centre of gravity at 0.528 m sits ahead of the
+      neutral point at 0.536 m.
+    </li>
+  </ul>
+
+  <h3>Flight test</h3>
+  <p>
+    On 19 Aug 2026 the aircraft completed <strong>two full autonomous waypoint missions</strong>
+    (29 waypoints each) and transitioned to return-to-launch both times. Across the analysed
+    segment it held AUTO mode for 169.2 s (67.8% of the log), with 31&ndash;32 GPS satellites and
+    a maximum HDOP of 0.52.
+  </p>
+
+  <h3>Autonomy stack</h3>
+  <p>
+    The team extended a fixed preset mission into a bounded real-time route choice. A ground
+    laptop ran object detection (YOLO fine-tuned on Open Images, mAP50 0.711) and decided
+    left or right; a safety manager then checked that decision against an allow-list of two
+    approved waypoints before any MAVLink command reached the aircraft. Low confidence or a lost
+    link meant hold, never an improvised coordinate. Pixhawk and ArduPlane kept flight control
+    throughout &mdash; the AI only picked a branch.
+  </p>
+
+  <ul class="tags">
+    <li>OpenVSP</li><li>VSPAERO</li><li>Composite &amp; balsa fabrication</li>
+    <li>Vacuum forming</li><li>3D printing</li><li>Pixhawk / ArduPilot</li>
+  </ul>
+</section>
+
+<!-- ================= PROJECT 2 ================= -->
+<section>
+  <p class="eyebrow">Project 02</p>
+  <h2>Battery-Life Coaching Interface for an AI Vacuum</h2>
+  <p class="award">Encouragement Award</p>
+  <p class="meta">
+    Future AX Home Appliance Living Solution+ Project &middot; Pusan National University
+    &middot; Sep 2026 &middot; Team Parasible
+  </p>
+
+  <p>
+    A robot vacuum shows you a battery percentage. It does not tell you the thing you actually
+    want to know: <em>will this finish?</em> So people start a run at 40%, the vacuum dies
+    halfway, and the whole cycle has to start over. We replaced the percentage with a verdict.
+  </p>
+
+  <h3>How it decides</h3>
+  <ul class="body">
+    <li>
+      The interface computes <strong>margin = expected runtime &minus; required cleaning time</strong>
+      and sorts every run into one of three verdicts at the +5 min and 0 min boundaries:
+      <strong>completable</strong>, <strong>tight</strong>, or <strong>needs a charge</strong>.
+    </li>
+    <li>
+      The action button changes with the verdict &mdash; <em>start cleaning</em>,
+      <em>clean in quiet mode</em> (buying margin), or <em>charge first / reduce the area</em>.
+      Every time the user changes the selected zones, the estimate recomputes.
+    </li>
+    <li>
+      Required cleaning time comes from seven onboarding questions about the home: floor area,
+      flooring type, pets, and preferred cleaning hours.
+    </li>
+  </ul>
+
+  <h3>Battery health, not just charge</h3>
+  <p>
+    The model separates <strong>state of charge</strong> from <strong>state of health</strong>.
+    At the same 82% charge, a new pack reads <em>completable</em> while a pack at 78% SOH reads
+    <em>tight</em> &mdash; the same number, a different answer. Below 80% SOH the interface starts
+    warning about replacement instead of silently under-delivering.
+  </p>
+
+  <h3>One verdict, three channels</h3>
+  <p>
+    The same result appears in the phone app, on the device&rsquo;s own display, and through a
+    voice assistant, so it is reachable without picking up a phone. Guidance is phrased for five
+    household profiles across ten usage patterns, and the system drops to silent, screen-only
+    output during late-night and nap hours.
+  </p>
+
+  <h3>Why the structure matters</h3>
+  <p>
+    Verdict logic, message text, and output channel are independent, so the same decision layer
+    ports to any battery-powered appliance and new phrasing or voices are a data addition rather
+    than a code change.
+  </p>
+
+  <ul class="tags">
+    <li>Battery modelling (SOC / SOH)</li><li>UI design</li><li>Prototyping</li>
+    <li>Multi-channel sync</li>
+  </ul>
+</section>
+
+<!-- ================= BACKGROUND ================= -->
+<section>
+  <p class="eyebrow">Background</p>
+
+  <h3>Aviation experience</h3>
+  <ul class="body">
+    <li>
+      <strong>KUH-1 Surion helicopter crew chief</strong>, Republic of Korea Army
+      (Jun 2022 &ndash; Dec 2023) &mdash; 200 flight hours over 18 months of national service,
+      including aerial wildfire suppression, with daily pre-flight and onboard equipment
+      inspections alongside pilots and maintenance technicians.
+    </li>
+    <li>
+      <strong>Flight operations intern</strong>, Air Busan flight dispatch team
+      (Aug &ndash; Sep 2021).
+    </li>
+  </ul>
+
+  <h3>Working with people from elsewhere</h3>
+  <ul class="body">
+    <li>
+      <strong>Peer mentor</strong>, International Student Buddy Program, PNU
+      (Mar 2024 &ndash; Aug 2025) &mdash; supported three exchange students one-on-one through
+      registration, campus life, and settling in.
+    </li>
+    <li>
+      <strong>Executive board member</strong>, English Discussion Club, PNU
+      (Mar 2025 &ndash; Aug 2025) &mdash; ran weekly English discussions for a club of more than
+      100 members.
+    </li>
+  </ul>
+
+  <h3>English</h3>
+  <p>TOEIC 905 (2026) &middot; OPIc Advanced Low (2025)</p>
+</section>
+
+<footer>
+  <p>
+    Hyeongil Kim &middot;
+    <a href="mailto:hyilkimm@gmail.com">hyilkimm@gmail.com</a> &middot;
+    Busan, South Korea
+  </p>
+</footer>
+
+</div>
+</body>
+</html>
