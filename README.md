@@ -9,7 +9,9 @@ Two projects from 2026:
 2. **Battery-life coaching interface for an AI vacuum** — Future AX Home Appliance
    Living Solution+ Project (Encouragement Award)
 
-Static site, no build step. `index.html` is the whole thing.
+Static site, no build step. `index.html` is the portfolio; `essay/index.html` is the
+product page for **Essay**, a Windows desktop app for managing cover letters and job specs.
+Its download button points at the newest `.exe` asset on this repo's GitHub Releases.
 
 ## Local preview
 

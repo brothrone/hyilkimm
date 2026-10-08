@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Essay — 자소서와 스펙, 한곳에서</title>
+<meta name="description" content="공고 링크 하나로 자소서 문항까지 채우고, 내 경험으로 초안을 쓰고, 마감을 챙기는 Windows 데스크톱 앱. 데이터는 내 PC에만, AI는 내 Claude·Gemini 구독으로. API 키도 추가 요금도 없습니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://brothrone.github.io/hyilkimm/essay/">
+<meta property="og:title" content="Essay — 자소서와 스펙, 한곳에서">
+<meta property="og:description" content="공고 링크 하나로 자소서 문항까지 채우고, 내 경험으로 초안을 쓰고, 마감을 챙기는 Windows 데스크톱 앱. 유료 API 없음.">
+<meta property="og:image" content="https://brothrone.github.io/hyilkimm/img/essay/og.jpg">
+<meta property="og:image:alt" content="Essay 홈 화면 — 다가오는 마감, 지원 현황, 맞춤 공고">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../img/essay/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#ffffff; --bg-alt:#f6f7f9; --fg:#14181f; --fg-muted:#5b6472;
+    --line:#e3e6ea; --accent:#1f3864; --accent-soft:#eef2f9;
+    --brand:#3854db; --brand-deep:#0f1440; --brand-soft:#eef1fd;
+    --ok:#1a7f4b; --ok-soft:#e9f7ef;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:'Pretendard Variable',Pretendard,'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --maxw:1040px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0e1116; --bg-alt:#161b22; --fg:#e6edf3; --fg-muted:#9aa4b2;
+      --line:#262c36; --accent:#7da8e6; --accent-soft:#18212f;
+      --brand:#7d93ff; --brand-soft:#1a2140; --ok:#5cc98a; --ok-soft:#14291d;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1116; --bg-alt:#161b22; --fg:#e6edf3; --fg-muted:#9aa4b2;
+    --line:#262c36; --accent:#7da8e6; --accent-soft:#18212f;
+    --brand:#7d93ff; --brand-soft:#1a2140; --ok:#5cc98a; --ok-soft:#14291d;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:var(--sans); font-size:16px; line-height:1.7;
+    -webkit-font-smoothing:antialiased; word-break:keep-all;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 16px}
+  a{color:var(--accent)}
+  p{margin:0 0 14px}
+  strong{font-weight:600}
+  code{font-family:var(--mono); font-size:.86em; background:var(--bg-alt); border:1px solid var(--line); border-radius:5px; padding:1px 6px}
+  pre{
+    margin:10px 0 0; padding:12px 14px; background:var(--bg-alt); border:1px solid var(--line);
+    border-radius:8px; font-family:var(--mono); font-size:.82rem; line-height:1.6; overflow-x:auto;
+  }
+  pre code{background:none; border:0; padding:0; font-size:inherit}
+
+  /* ---------- top bar ---------- */
+  .top{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:18px 0; border-bottom:1px solid var(--line);
+  }
+  .top a{text-decoration:none; color:var(--fg-muted); font-size:.9rem}
+  .top a:hover{color:var(--fg)}
+  .top .brand{display:flex; align-items:center; gap:9px; color:var(--fg); font-weight:700; font-size:1.05rem}
+  .top .brand svg{width:26px; height:26px; border-radius:6px}
+  .top nav{display:flex; gap:18px}
+
+  /* ---------- hero ---------- */
+  .hero{padding:64px 0 36px}
+  .eyebrow{
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 18px;
+  }
+  h1{
+    margin:0 0 16px; font-size:clamp(2rem,5.4vw,3.1rem); font-weight:700;
+    letter-spacing:-.025em; line-height:1.18;
+  }
+  h1 .hl{color:var(--brand)}
+  .lead{font-size:1.12rem; color:var(--fg-muted); max-width:44em; margin:0 0 28px}
+  .cta{display:flex; flex-wrap:wrap; align-items:center; gap:14px 18px}
+  .dl{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 22px; border-radius:12px; background:var(--brand); color:#fff;
+    text-decoration:none; font-weight:600; font-size:1.05rem;
+    box-shadow:0 8px 24px rgba(56,84,219,.25); transition:transform .12s, box-shadow .12s;
+  }
+  .dl:hover{transform:translateY(-1px); box-shadow:0 12px 28px rgba(56,84,219,.32)}
+  .dl svg{width:20px; height:20px}
+  .dl-meta{font-family:var(--mono); font-size:.78rem; color:var(--fg-muted); line-height:1.5}
+  .dl-meta b{color:var(--fg); font-weight:500}
+  .ghost{color:var(--fg); text-decoration:none; font-size:.95rem; border-bottom:1px solid var(--line)}
+  .ghost:hover{border-color:var(--fg)}
+  .pending{margin:12px 0 0; font-size:.88rem; color:var(--fg-muted)}
+  .hero-shot{margin:40px 0 0}
+  .hero-shot img{
+    display:block; width:100%; height:auto; border-radius:12px;
+    border:1px solid var(--line); box-shadow:0 24px 60px rgba(20,24,31,.12);
+  }
+
+  /* ---------- pills ---------- */
+  .pills{display:flex; flex-wrap:wrap; gap:8px; list-style:none; margin:0 0 30px; padding:0}
+  .pills li{
+    display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px;
+    background:var(--ok-soft); color:var(--ok); font-size:.84rem; font-weight:500;
+  }
+
+  /* ---------- sections ---------- */
+  section{padding:56px 0; border-top:1px solid var(--line)}
+  h2{margin:0 0 10px; font-size:1.65rem; font-weight:700; letter-spacing:-.015em; line-height:1.3}
+  .sub{color:var(--fg-muted); font-size:1.02rem; max-width:48em; margin:0 0 28px}
+  h3{margin:24px 0 8px; font-size:1.05rem; font-weight:650}
+
+  .feature{
+    display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:28px 40px; align-items:center;
+    padding:34px 0;
+  }
+  .feature + .feature{border-top:1px dashed var(--line)}
+  .feature.flip .f-text{order:2}
+  .f-num{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; color:var(--brand); margin:0 0 10px}
+  .f-text h3{margin:0 0 10px; font-size:1.3rem; letter-spacing:-.01em}
+  .f-text p{color:var(--fg-muted); margin:0 0 10px}
+  .f-text ul{margin:8px 0 0; padding-left:18px; color:var(--fg-muted)}
+  .f-text li{margin-bottom:5px}
+  figure{margin:0}
+  figure img{
+    display:block; width:100%; height:auto; border-radius:10px;
+    border:1px solid var(--line); background:var(--bg-alt); box-shadow:0 10px 30px rgba(20,24,31,.08);
+  }
+  figcaption{margin-top:8px; font-size:.8rem; color:var(--fg-muted); line-height:1.5}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; margin:0}
+
+  /* ---------- cards ---------- */
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:0}
+  .card{background:var(--bg-alt); border:1px solid var(--line); border-radius:12px; padding:18px 18px 16px}
+  .card h3{margin:0 0 6px; font-size:1rem}
+  .card p{margin:0; color:var(--fg-muted); font-size:.93rem}
+
+  /* ---------- table ---------- */
+  table{width:100%; border-collapse:collapse; font-size:.93rem; margin:8px 0 0}
+  th,td{padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top}
+  th{font-weight:600; color:var(--fg-muted); font-size:.8rem; letter-spacing:.04em; text-transform:uppercase}
+  td:first-child{color:var(--fg-muted); white-space:nowrap}
+
+  /* ---------- steps ---------- */
+  ol.steps{list-style:none; margin:0; padding:0; counter-reset:step}
+  ol.steps li{
+    position:relative; padding:0 0 22px 48px; counter-increment:step;
+  }
+  ol.steps li::before{
+    content:counter(step); position:absolute; left:0; top:0; width:32px; height:32px; border-radius:50%;
+    background:var(--brand-soft); color:var(--brand); font-weight:700; font-size:.9rem;
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono);
+  }
+  ol.steps li strong{display:block; margin-bottom:4px}
+  ol.steps li p{color:var(--fg-muted); margin:0 0 6px; font-size:.95rem}
+  .note{
+    background:var(--bg-alt); border-left:3px solid var(--accent); padding:14px 16px;
+    border-radius:0 8px 8px 0; margin:18px 0 0; font-size:.93rem; color:var(--fg-muted);
+  }
+  .note strong{color:var(--fg)}
+
+  /* ---------- faq ---------- */
+  details{border-top:1px solid var(--line); padding:14px 0}
+  details:last-of-type{border-bottom:1px solid var(--line)}
+  summary{cursor:pointer; font-weight:600; list-style:none; display:flex; justify-content:space-between; gap:12px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:'+'; color:var(--fg-muted); font-family:var(--mono)}
+  details[open] summary::after{content:'−'}
+  details p{margin:10px 0 0; color:var(--fg-muted); font-size:.95rem}
+
+  footer{padding:40px 0 72px; color:var(--fg-muted); font-size:.9rem; border-top:1px solid var(--line)}
+  footer a{color:var(--fg)}
+
+  @media (max-width:760px){
+    .hero{padding:44px 0 28px}
+    section{padding:44px 0}
+    .feature{grid-template-columns:1fr; gap:18px; padding:28px 0}
+    .feature.flip .f-text{order:0}
+    .top nav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="top">
+  <a class="brand" href="./" aria-label="Essay">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3854DB"/><stop offset="1" stop-color="#0F1440"/></linearGradient></defs><rect width="64" height="64" rx="14.5" fill="url(#g)"/><g fill="#fff" transform="translate(32 32) scale(0.96) translate(-32 -36.25)"><path fill-rule="evenodd" d="M32 57C28.5 50 21.5 40 21 32C20.8 27.5 22.6 24.2 25 22.5H39C41.4 24.2 43.2 27.5 43 32C42.5 40 35.5 50 32 57ZM34.6 33A2.6 2.6 0 1 0 29.4 33A2.6 2.6 0 1 0 34.6 33ZM31.25 36.2H32.75V53H31.25Z"/><rect x="24.5" y="15.5" width="15" height="5" rx="1.4"/></g></svg>
+    Essay
+  </a>
+  <nav>
+    <a href="#features">기능</a>
+    <a href="#ai">AI · 요금</a>
+    <a href="#install">설치</a>
+    <a href="#faq">FAQ</a>
+    <a href="../">Hyeongil Kim &rarr;</a>
+  </nav>
+</div>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <p class="eyebrow">Windows 데스크톱 앱 &middot; 무료 &middot; 유료 API 없음</p>
+  <h1>자소서, <span class="hl">공고 링크 하나</span>로<br>시작하세요.</h1>
+  <p class="lead">
+    Essay는 자기소개서 &middot; 경험 &middot; 스펙을 한곳에서 관리하는 데스크톱 앱입니다.
+    공고 링크를 붙여넣으면 문항까지 채우고, 정리해 둔 내 경험으로 초안을 쓰고, 마감을 대신 챙깁니다.
+    데이터는 내 PC에만 저장되고, AI는 이미 쓰고 있는 Claude &middot; Gemini 구독으로 돌아갑니다.
+  </p>
+  <ul class="pills">
+    <li>&#10003; API 키 불필요</li>
+    <li>&#10003; 추가 요금 없음</li>
+    <li>&#10003; 데이터는 내 PC에만</li>
+    <li>&#10003; 설치 후 바로 사용</li>
+  </ul>
+  <div class="cta">
+    <a id="dl" class="dl" href="https://github.com/brothrone/hyilkimm/releases/latest" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      Windows용 다운로드
+    </a>
+    <span id="dl-meta" class="dl-meta"><b>Windows 10 / 11</b> &middot; 64비트 &middot; 설치 파일 (.exe)</span>
+    <a class="ghost" href="#install">설치 방법 보기</a>
+  </div>
+  <p id="dl-pending" class="pending" hidden>설치 파일을 준비하고 있어요. 곧 이 버튼으로 바로 받을 수 있습니다.</p>
+
+  <figure class="hero-shot">
+    <img src="../img/essay/home.webp" alt="Essay 홈 화면 — 다가오는 마감, 지원 현황, 확인할 것, 맞춤 공고" width="1800" height="1123">
+  </figure>
+</header>
+
+<!-- ================= FEATURES ================= -->
+<section id="features">
+  <p class="eyebrow">기능</p>
+  <h2>공고를 찾는 일부터 제출 전 검사까지</h2>
+  <p class="sub">
+    티오(TIO) 같은 자소서 관리 서비스의 구성을 바탕으로, 혼자 취업 준비할 때 매번 손으로 하던 일을 앱이 대신하도록 만들었습니다.
+    아래 화면은 모두 앱에 들어 있는 <strong>예시 데이터</strong>입니다.
+  </p>
+
+  <div class="feature">
+    <div class="f-text">
+      <p class="f-num">01 &middot; 공고 링크 불러오기</p>
+      <h3>링크를 붙여넣으면 문항까지 채워집니다</h3>
+      <p>사람인 &middot; 잡코리아 &middot; 원티드 &middot; 캐치 등 공고 주소를 붙여넣으면 회사 &middot; 직무 &middot; 마감일 &middot; 공고 내용 &middot; 자소서 문항을 자동으로 읽어 옵니다.</p>
+      <ul>
+        <li>공고에 문항이 없으면 같은 회사의 자소서 문항을 웹에서 따로 찾아 <strong>출처와 함께</strong> 넣습니다.</li>
+        <li>그래도 없으면 자주 나오는 문항 4개로 시작하고, 편집기에서 알려 줍니다.</li>
+        <li>마감된 공고는 바로 경고합니다.</li>
+      </ul>
+    </div>
+    <figure>
+      <img src="../img/essay/import.webp" alt="새 자소서 시작하기 창 — 공고 링크에서 회사, 직무, 마감일과 자소서 문항 3개를 불러온 모습" width="1800" height="1123" loading="lazy">
+      <figcaption>공고 링크를 붙여넣은 직후. 회사 &middot; 직무 &middot; 마감 시간과 문항 3개가 채워졌습니다.</figcaption>
+    </figure>
+  </div>
+
+  <div class="feature flip">
+    <div class="f-text">
+      <p class="f-num">02 &middot; 맞춤 공고</p>
+      <h3>내 스펙에 맞는 공고를 AI가 찾아 줍니다</h3>
+      <p>정리해 둔 스펙과 경험을 바탕으로 지금 접수 중인 공고를 웹에서 검색하고, <strong>매칭 점수와 이유</strong>를 붙여 보여 줍니다.</p>
+      <ul>
+        <li>마음에 드는 공고는 [자소서 시작] 한 번으로 프로젝트가 만들어집니다. 문항도 함께 불러옵니다.</li>
+        <li>저장 &middot; 숨김으로 정리하고, 홈에서 마감 순으로 다시 봅니다.</li>
+        <li>이름 &middot; 연락처는 검색에 보내지 않습니다.</li>
+      </ul>
+    </div>
+    <figure>
+      <img src="../img/essay/jobs.webp" alt="맞춤 공고 화면 — 매칭 점수 92, 88, 81이 붙은 공고 카드와 자소서 시작 버튼" width="1800" height="1123" loading="lazy">
+      <figcaption>매칭 점수와 "왜 맞는지" 한 줄이 카드마다 붙습니다.</figcaption>
+    </figure>
+  </div>
+
+  <div class="feature">
+    <div class="f-text">
+      <p class="f-num">03 &middot; 자소서 편집기</p>
+      <h3>경험을 옆에 두고, 글자수를 보면서 씁니다</h3>
+      <p>문항마다 글자수 제한을 두고 <strong>공백 포함 &middot; 공백 제외 &middot; 바이트(한글 2) &middot; UTF-8</strong> 네 기준을 동시에 봅니다. 초과하면 바로 표시됩니다.</p>
+      <ul>
+        <li>문항에 연결한 경험의 STAR(상황 &middot; 과제 &middot; 행동 &middot; 결과)가 오른쪽에 펼쳐집니다.</li>
+        <li>편집 기록: 10분 단위 자동 저장과 AI 적용 전 버전을 언제든 되돌립니다.</li>
+        <li>다른 자소서에 쓴 비슷한 문항의 답변을 옆에서 바로 재활용합니다.</li>
+        <li>제출 전 검사: 다른 회사 이름이 섞였는지, 다른 답변과 거의 같은지, AI가 남긴 (확인 필요)가 있는지 경고합니다.</li>
+      </ul>
+    </div>
+    <figure>
+      <img src="../img/essay/editor-exp.webp" alt="자소서 편집기 — 문항 답변, 글자수 4기준, 오른쪽 경험 패널에 STAR 내용" width="1800" height="1123" loading="lazy">
+      <figcaption>왼쪽 문항 목록, 가운데 답변과 글자수, 오른쪽에 연결한 경험의 STAR.</figcaption>
+    </figure>
+  </div>
+
+  <div class="feature flip">
+    <div class="f-text">
+      <p class="f-num">04 &middot; AI 도우미</p>
+      <h3>내 구독으로 초안 &middot; 피드백 &middot; 고쳐 쓰기</h3>
+      <p>문항 &middot; 공고 메모 &middot; 연결한 경험 &middot; 스펙만 가지고 초안을 쓰고, 인사 담당자 시점의 피드백을 받고, 그 피드백으로 다시 고쳐 씁니다. 글자수 맞추기도 한 번에.</p>
+      <ul>
+        <li>결과를 미리 본 뒤 [답변에 적용]. 적용 전 상태는 편집 기록에 남아 되돌릴 수 있습니다.</li>
+        <li>자료에 없는 사실은 지어내지 않고 <strong>(확인 필요)</strong>로 표시하도록 요청합니다.</li>
+        <li>컴퓨터에 설치된 Claude Code 또는 Antigravity CLI(Gemini)를 로그인 세션으로 실행합니다. <a href="#ai">API 키 없음, 추가 요금 없음.</a></li>
+      </ul>
+    </div>
+    <div class="grid2">
+      <figure>
+        <img src="../img/essay/editor-ai.webp" alt="AI 도우미 패널 — 초안 쓰기 결과를 미리 보는 모습" width="1800" height="1123" loading="lazy">
+        <figcaption>초안 쓰기 — 연결한 경험으로 562자 초안을 받아 미리 봅니다.</figcaption>
+      </figure>
+      <figure>
+        <img src="../img/essay/editor-feedback.webp" alt="AI 도우미 패널 — 인사 담당자 시점의 피드백 5가지" width="1800" height="1123" loading="lazy">
+        <figcaption>피드백 — 가장 먼저 고칠 3가지까지. [이 피드백으로 고쳐 쓰기]로 이어집니다.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="f-text">
+      <p class="f-num">05 &middot; 경험 관리 &middot; 마인드맵</p>
+      <h3>경험을 한 번 정리하면 어떤 문항에도 꺼내 씁니다</h3>
+      <p>STAR + 배운 점 + 역량 태그로 경험을 정리하고, 어떤 자소서 문항에 썼는지 추적합니다.</p>
+      <ul>
+        <li>마인드맵: 나 &rarr; 역량 &rarr; 경험. <strong>비어 있는 역량</strong>이 보이니 어떤 경험을 더 쌓아야 할지 알 수 있습니다.</li>
+        <li>같은 경험을 여러 문항에 쓰면 중복 사용을 경고합니다.</li>
+      </ul>
+    </div>
+    <figure>
+      <img src="../img/essay/mindmap.webp" alt="경험 마인드맵 — 가운데 나, 역량별 노드, 연결된 경험 카드" width="1800" height="1123" loading="lazy">
+      <figcaption>역량별 마인드맵. 점선 노드는 아직 경험이 없는 역량입니다.</figcaption>
+    </figure>
+  </div>
+
+  <div class="feature flip">
+    <div class="f-text">
+      <p class="f-num">06 &middot; 지원 현황 &middot; 마감 알림</p>
+      <h3>마감은 앱이 챙깁니다</h3>
+      <p>작성중 &rarr; 제출완료 &rarr; 서류합격 &rarr; 면접진행 &rarr; 최종합격까지, 보드에서 카드를 끌어다 놓아 상태를 바꿉니다.</p>
+      <ul>
+        <li>작성 중인 자소서는 <strong>D-3 &middot; D-1 &middot; 당일</strong>에 Windows 알림. 누르면 해당 자소서로 이동합니다.</li>
+        <li>홈에서 다가오는 마감, 지원 현황, 어학 성적 만료 같은 확인할 것을 한눈에.</li>
+      </ul>
+    </div>
+    <figure>
+      <img src="../img/essay/board.webp" alt="자소서 프로젝트 보드 뷰 — 상태별 칸과 끌어다 놓기 영역" width="1800" height="1123" loading="lazy">
+      <figcaption>보드 뷰. 목록 뷰에서는 마감 임박 순 정렬과 검색이 됩니다.</figcaption>
+    </figure>
+  </div>
+
+  <div class="feature">
+    <div class="f-text">
+      <p class="f-num">07 &middot; 스펙 관리</p>
+      <h3>지원서 입력란에 필요한 정보를 한곳에</h3>
+      <p>학력 &middot; 어학 &middot; 자격증 &middot; 수상 &middot; 경력 &middot; 대외활동 &middot; 교육 이수를 정리해 두고, 지원서를 쓸 때 텍스트로 복사해 붙여넣습니다.</p>
+      <ul>
+        <li>어학 성적 유효기간을 자동으로 계산해 만료 전에 알려 줍니다.</li>
+        <li>AI 요청문에는 스펙 요약만 들어가고 연락처 &middot; 주소는 들어가지 않습니다.</li>
+      </ul>
+    </div>
+    <figure>
+      <img src="../img/essay/specs.webp" alt="스펙 관리 화면 — 학점, 어학, 자격증 요약과 기본 정보, 학력 목록" width="1800" height="1123" loading="lazy">
+    </figure>
+  </div>
+
+  <div class="feature flip">
+    <div class="f-text">
+      <p class="f-num">08 &middot; 내 PC에만 저장 &middot; 자동 백업</p>
+      <h3>파일 하나, 서버 없음</h3>
+      <p>모든 데이터는 <code>문서\Essay\Essay-데이터.json</code> 파일 하나에 저장됩니다. 계정도, 서버도 없습니다.</p>
+      <ul>
+        <li>매일 첫 저장 전 상태를 30일치 자동 백업하고, 예시 불러오기 &middot; 복원 같은 작업 전에는 스냅샷을 따로 남깁니다.</li>
+        <li>앱 안에서 백업 목록을 보고 바로 복원합니다. 다른 PC로 옮길 때는 JSON 백업 파일을 쓰면 됩니다.</li>
+      </ul>
+    </div>
+    <figure>
+      <img src="../img/essay/settings.webp" alt="백업 · 데이터 화면 — 데이터 파일 경로, 자동백업 목록과 복원 버튼, AI 설정" width="1800" height="1123" loading="lazy">
+    </figure>
+  </div>
+</section>
+
+<!-- ================= AI / PRICING ================= -->
+<section id="ai">
+  <p class="eyebrow">AI &middot; 요금</p>
+  <h2>유료 API를 쓰지 않습니다</h2>
+  <p class="sub">
+    Essay는 AI 회사의 API에 직접 접속하지 않습니다. 대신 컴퓨터에 설치된 공식 CLI를 <strong>로그인된 구독 세션</strong>으로 실행합니다.
+    API 키 환경변수는 넘기지 않아 종량제 요금이 나갈 수 없고, 사용량은 이미 내고 있는 구독에서만 차감됩니다.
+    둘 중 가지고 있는 쪽을 앱의 <strong>백업 &middot; 데이터 &rarr; AI 설정</strong>에서 고르면 됩니다.
+  </p>
+  <table>
+    <thead><tr><th></th><th>Claude</th><th>Gemini</th></tr></thead>
+    <tbody>
+      <tr><td>실행하는 CLI</td><td>Claude Code (<code>claude</code>)</td><td>Antigravity CLI (<code>agy</code>)</td></tr>
+      <tr><td>필요한 구독</td><td>Claude Pro &middot; Max</td><td>Google AI Pro &middot; Ultra (무료 계정도 한도 안에서 가능)</td></tr>
+      <tr><td>설치 (PowerShell)</td><td><code>irm https://claude.ai/install.ps1 | iex</code></td><td><code>irm https://antigravity.google/cli/install.ps1 | iex</code></td></tr>
+      <tr><td>로그인</td><td><code>claude auth login --claudeai</code></td><td><code>agy</code> 실행 &rarr; 브라우저에서 Google 로그인</td></tr>
+      <tr><td>웹 기능 (맞춤 공고 &middot; 공고 불러오기)</td><td>바로 사용</td><td>AI 설정에서 [웹 읽기 권한 허용] 한 번</td></tr>
+    </tbody>
+  </table>
+  <div class="cards" style="margin-top:22px">
+    <div class="card"><h3>내 파일은 건드리지 않음</h3><p>AI는 빈 임시 폴더에서, 글쓰기는 도구를 끈 채, 웹 기능은 검색과 페이지 읽기만 허용한 채 실행됩니다.</p></div>
+    <div class="card"><h3>개인정보는 보내지 않음</h3><p>요청문에는 문항 &middot; 공고 메모 &middot; 연결한 경험 &middot; 스펙 요약만 들어갑니다. 이름 &middot; 연락처 &middot; 주소는 넣지 않습니다.</p></div>
+    <div class="card"><h3>AI 없이도 전부 동작</h3><p>CLI를 설치하지 않으면 AI 버튼만 비활성화됩니다. 요청문을 복사해 쓰던 AI 채팅에 붙여넣는 방식도 그대로 있습니다.</p></div>
+  </div>
+</section>
+
+<!-- ================= INSTALL ================= -->
+<section id="install">
+  <p class="eyebrow">설치</p>
+  <h2>3분이면 시작합니다</h2>
+  <ol class="steps">
+    <li>
+      <strong>설치 파일을 받아 실행합니다</strong>
+      <p>위의 <a href="#dl">[Windows용 다운로드]</a>로 <code>Essay-Setup-&lt;버전&gt;.exe</code>를 받아 실행하면 설치 폴더를 고를 수 있고 바탕화면과 시작 메뉴에 바로가기가 생깁니다.</p>
+      <p>코드 서명이 없는 개인 배포 앱이라 처음 실행할 때 Windows SmartScreen 창이 뜰 수 있습니다. <strong>추가 정보 &rarr; 실행</strong>을 누르면 됩니다.</p>
+    </li>
+    <li>
+      <strong>예시 데이터로 둘러봅니다 (선택)</strong>
+      <p>홈의 [예시 데이터로 둘러보기]를 누르면 가상의 자소서 &middot; 경험 &middot; 스펙이 들어옵니다. 다 보고 나면 <strong>백업 &middot; 데이터</strong>에서 전체 삭제하고 내 것을 넣으면 됩니다.</p>
+    </li>
+    <li>
+      <strong>AI를 쓰려면 CLI를 한 번만 설치 &middot; 로그인합니다</strong>
+      <p>PowerShell을 열고 가지고 있는 구독 쪽 명령을 실행합니다.</p>
+<pre><code># Claude 구독이 있을 때
+irm https://claude.ai/install.ps1 | iex
+claude auth login --claudeai
+
+# Google AI(Gemini) 구독이 있을 때
+irm https://antigravity.google/cli/install.ps1 | iex
+agy</code></pre>
+      <p style="margin-top:8px">그다음 Essay의 <strong>백업 &middot; 데이터 &rarr; AI 설정</strong>에서 Claude 또는 Gemini를 고릅니다. "설치됨"으로 바뀌면 끝입니다. Gemini는 [웹 읽기 권한 허용]을 한 번 눌러야 맞춤 공고 &middot; 공고 불러오기가 됩니다.</p>
+    </li>
+  </ol>
+  <div class="note">
+    <strong>시스템 요구 사항</strong> &middot; Windows 10 / 11 (64비트). 데이터는 <code>문서\Essay</code> 폴더에 저장됩니다. 설치 경로가 특이해서 CLI를 못 찾으면 환경변수 <code>ESSAY_CLAUDE_PATH</code> / <code>ESSAY_AGY_PATH</code>에 실행 파일 전체 경로를 넣으면 됩니다.
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <p class="eyebrow">FAQ</p>
+  <h2>자주 묻는 것</h2>
+  <details>
+    <summary>정말 비용이 안 드나요?</summary>
+    <p>앱은 무료이고, AI는 이미 쓰고 있는 Claude 또는 Google AI 구독 사용량에서만 차감됩니다. API 키를 입력받는 곳이 없고, 실행할 때 API 키 환경변수도 넘기지 않습니다. 구독이 없으면 AI 버튼만 비활성화되고 나머지는 전부 동작합니다.</p>
+  </details>
+  <details>
+    <summary>내 자소서가 어딘가로 전송되나요?</summary>
+    <p>아니요. 데이터는 내 PC의 파일 한 개에만 저장됩니다. 인터넷으로 나가는 것은 AI 버튼을 눌렀을 때의 요청문뿐이고, 거기에도 이름 &middot; 연락처 &middot; 주소는 들어가지 않습니다. 공고 메모에 수험번호처럼 남에게 보이기 싫은 내용을 적어 두었다면 그 부분은 요청문에 포함되니 다른 곳에 적어 두세요.</p>
+  </details>
+  <details>
+    <summary>AI가 없는 사실을 지어내지는 않나요?</summary>
+    <p>요청문에 "자료에 없는 사실 &middot; 수치 &middot; 회사 정보는 지어내지 말고 꼭 필요하면 (확인 필요)로 표시"하도록 넣어 두었고, 제출 전 검사가 남아 있는 (확인 필요) 표시를 잡아 줍니다. 그래도 AI가 쓴 글은 반드시 직접 읽고 고쳐야 합니다. 초안은 초안입니다.</p>
+  </details>
+  <details>
+    <summary>맞춤 공고 찾기는 얼마나 걸리나요?</summary>
+    <p>AI가 사람인 &middot; 잡코리아 &middot; 원티드 &middot; 잡알리오 등을 검색하고 공고를 직접 열어 마감일을 확인하기 때문에 1~3분 걸립니다. 그동안 다른 화면으로 이동해도 계속 진행됩니다.</p>
+  </details>
+  <details>
+    <summary>글자수 '바이트(한글 2)'는 뭔가요?</summary>
+    <p>국내 지원 사이트 대부분이 쓰는 기준으로 한글 2바이트, 영문 &middot; 공백 &middot; 줄바꿈 1바이트입니다. 'UTF-8'은 한글 3바이트입니다. 지원 사이트 안내에 맞춰 문항마다 고르면 됩니다.</p>
+  </details>
+  <details>
+    <summary>맥에서도 되나요?</summary>
+    <p>지금 배포하는 설치 파일은 Windows용입니다. 맥 버전은 요청이 있으면 올릴 예정이니 아래 메일로 알려 주세요.</p>
+  </details>
+  <details>
+    <summary>버그나 요청은 어디로 보내나요?</summary>
+    <p><a href="mailto:hyilkimm@gmail.com">hyilkimm@gmail.com</a>으로 보내 주세요. 어떤 화면에서 무엇을 했는지 적어 주시면 빨리 고칠 수 있습니다.</p>
+  </details>
+</section>
+
+<footer>
+  <p>
+    Essay &middot; 만든 사람 <a href="../">Hyeongil Kim</a> &middot;
+    <a href="mailto:hyilkimm@gmail.com">hyilkimm@gmail.com</a> &middot;
+    <a href="https://github.com/brothrone/hyilkimm/releases">모든 버전 보기</a>
+  </p>
+  <p style="font-size:.82rem">화면에 보이는 회사 &middot; 공고 &middot; 인물은 모두 앱에 들어 있는 예시 데이터입니다.</p>
+</footer>
+
+</div>
+
+<script>
+  // 가장 최근 GitHub Release의 .exe를 다운로드 버튼에 연결한다. 실패하면 Releases 페이지 링크로 남는다.
+  (function () {
+    var btn = document.getElementById('dl');
+    var meta = document.getElementById('dl-meta');
+    var pending = document.getElementById('dl-pending');
+    fetch('https://api.github.com/repos/brothrone/hyilkimm/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rel) {
+        var asset = rel && (rel.assets || []).filter(function (a) { return /\.exe$/i.test(a.name); })[0];
+        if (!asset) { pending.hidden = false; return; }
+        btn.href = asset.browser_download_url;
+        var mb = Math.round(asset.size / 1048576);
+        var date = new Date(asset.updated_at);
+        var when = date.getFullYear() + '.' + String(date.getMonth() + 1).padStart(2, '0') + '.' + String(date.getDate()).padStart(2, '0');
+        meta.innerHTML = '<b>' + (rel.tag_name || '').replace(/^essay-/, '') + '</b> &middot; Windows 10 / 11 64비트 &middot; ' + mb + 'MB &middot; ' + when;
+      })
+      .catch(function () {});
+  })();
+</script>
+</body>
+</html>
