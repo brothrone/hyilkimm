@@ -60,7 +60,7 @@
   strong{font-weight:650}
   code{font-family:var(--mono);font-size:.84em;background:var(--bg-3);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-text);margin:0 0 16px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--brand-text);margin:0 0 16px}
   .eyebrow::before{content:'';width:18px;height:1px;background:var(--brand)}
   h2{margin:0 0 12px;font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;letter-spacing:-.025em;line-height:1.25}
   .sub{color:var(--fg-2);font-size:1.05rem;max-width:46em;margin:0 0 30px}
@@ -116,6 +116,7 @@
   .ghost{color:var(--fg);text-decoration:none;font-size:.95rem;font-weight:500;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg-2)}
   .ghost:hover{border-color:var(--line-2)}
   .pending{margin:12px 0 0;font-size:.88rem;color:var(--warn);background:var(--warn-soft);padding:8px 12px;border-radius:10px;display:inline-block}
+  .pending[hidden]{display:none}
 
   .shot-wrap{position:relative;margin:56px auto 0;max-width:1120px;perspective:1600px}
   .shot{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow-lg);background:var(--bg-2);transform:rotateX(6deg);transform-origin:top center;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
