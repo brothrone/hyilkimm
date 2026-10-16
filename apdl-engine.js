@@ -42,7 +42,7 @@
     this.D = {}; this.F = {}; this.DK = {}; this.FK = {}; this.SFB = {};
     this.params = {}; this.afunDeg = false; this.nsel = null; this.esel = null;
     this.proc = 'B'; this.title = ''; this.result = null; this.etab = {}; this.etabOrder = [];
-    this.plot = { kind: 'auto' }; this.eshape = 0; this.pnum = {}; this.curSec = null; this.lastNodes = []; this.solved = 0; this._once = {};
+    this.plot = { kind: 'auto' }; this.eshape = 0; this.dscale = 0; this.anim = null; this.pnum = {}; this.curSec = null; this.lastNodes = []; this.solved = 0; this._once = {};
   };
   Engine.prototype.p = function (s, k) { var self = this; String(s).split('\n').forEach(function (l) { self.out.push({ t: l, k: k || '' }); }); if (this.out.length > 30000) this.out.splice(0, this.out.length - 25000); };
   Engine.prototype.err = function (msg) { this.p(''); this.p(' *** ERROR ***', 'e'); this.p(' ' + msg.replace(/\n/g, '\n '), 'e'); this.nErr = (this.nErr || 0) + 1; if (this.curLine) this.errLines.push(this.curLine); };
@@ -266,7 +266,7 @@
     this.p(''); this.p(' SECTION ID NUMBER:  ' + id); this.p(' BEAM SECTION SUBTYPE: ' + s.sub); this.p(' BEAM SECTION DATA SUMMARY:');
     [['Area', P.A], ['Iyy', P.Iyy], ['Iyz', P.Iyz || 0], ['Izz', P.Izz], ['Torsion Constant', P.J], ['Centroid Y', P.cy], ['Centroid Z', P.cz]].forEach(function (r) { self.p('  ' + rpad(r[0], 20) + ' = ' + g(r[1])); });
   };
-  reg('SECOFFSET', 'P', function (f, N, S) { var s = this.secs[this.curSec]; if (!s) throw new ApdlError('No section was defined (SECOFFSET 앞에 SECTYPE).'); s.off = S(1) || 'CENT'; s.offyz = [N(2), N(3)]; this.p(' SECTION ' + this.curSec + ' OFFSET LOCATION = ' + s.off + (s.off === 'USER' ? '  OFFSETY= ' + g(N(2)) + '  OFFSETZ= ' + g(N(3)) : '')); if (s.off !== 'CENT') this.noteOnce('이 연습기는 SECOFFSET 위치를 기록만 하고, 계산은 단면 도심 기준으로 합니다.'); });
+  reg('SECOFFSET', 'P', function (f, N, S) { var s = this.secs[this.curSec]; if (!s) throw new ApdlError('No section was defined (SECOFFSET 앞에 SECTYPE).'); s.off = S(1) || 'CENT'; s.offyz = [N(2), N(3)]; this.p(' SECTION ' + this.curSec + ' OFFSET LOCATION = ' + s.off + (s.off === 'USER' ? '  OFFSETY= ' + g(N(2)) + '  OFFSETZ= ' + g(N(3)) : '')); if (s.off === 'SHRC') this.noteOnce('SHRC: 연습기는 전단중심을 도심과 같은 위치로 둡니다 (대칭 단면은 정확, C형강은 근사).'); this.result = null; });
   reg('SECNUM', 'P', function (f, N) { this.att.sec = N(1, 1); this.p(' SECTION ID NUMBER =  ' + this.att.sec); });
   reg('TYPE', 'P', function (f, N) { this.att.type = N(1, 1); this.p(' ELEMENT TYPE SET TO ' + pad(this.att.type, 8)); });
   reg('MAT', 'P', function (f, N) { this.att.mat = N(1, 1); this.p(' MATERIAL NUMBER SET TO ' + pad(this.att.mat, 8)); });
@@ -615,7 +615,17 @@
       for (var blk = 0; blk < 4; blk++) for (r = 0; r < 3; r++) for (c = 0; c < 3; c++) Tb[blk * 3 + r][blk * 3 + c] = Lm[r][c];
       var sf = this.SFB[eid], loads = [];
       if (sf) for (var lk in sf) { var s = sf[lk], dir = kind === 'beam' ? { 1: 'z-', 2: 'y-', 3: 'x+', 4: 'xI', 5: 'xJ' }[lk] : { 1: 'y-', 2: 'x+', 3: 'xI', 4: 'xJ' }[lk]; if (dir) loads.push({ dir: dir, vi: s.vi, vj: s.vj, io: s.io, jo: s.jo, lr: s.lr }); }
-      var fl = C.beamLoad(loads, ax.L), K12 = C.TtKT(Tb, kl), F12 = C.Ttv(Tb, fl), id2 = [];
+      var fl = C.beamLoad(loads, ax.L), kE = kl, fE = fl, Toff = null;
+      if (kind === 'beam') { // SECOFFSET: 노드 ↔ 단면 도심을 강체로 연결 (u_c = u_n − r × θ)
+        var sc = this.secs[e.sec], off = sc.off || 'CENT', ry = 0, rz = 0;
+        if (off === 'USER') { ry = (P.cy || 0) - (sc.offyz[0] || 0); rz = (P.cz || 0) - (sc.offyz[1] || 0); } else if (off === 'ORIGIN') { ry = P.cy || 0; rz = P.cz || 0; }
+        if (Math.abs(ry) + Math.abs(rz) > 1e-12) {
+          Toff = []; for (r = 0; r < 12; r++) { Toff.push(new Array(12).fill(0)); Toff[r][r] = 1; }
+          [0, 6].forEach(function (o) { Toff[o + 0][o + 4] = rz; Toff[o + 0][o + 5] = -ry; Toff[o + 1][o + 3] = -rz; Toff[o + 2][o + 3] = ry; });
+          kE = C.TtKT(Toff, kl); fE = C.Ttv(Toff, fl); info.Toff = Toff; info.off = [ry, rz];
+        }
+      }
+      var K12 = C.TtKT(Tb, kE), F12 = C.Ttv(Tb, fE), id2 = [];
       e.n.slice(0, 2).forEach(function (n, j) { dofs.forEach(function (d) { full.push([n, d]); id2.push(j * 6 + d); }); });
       info.Tb = Tb; info.kl = kl; info.fl = fl; info.P = P; info.ax = ax; info.id2 = id2;
       return { ke: id2.map(function (i1) { return id2.map(function (i2) { return K12[i1][i2]; }); }), fe: id2.map(function (i1) { return F12[i1]; }), dofs: full, info: info };
@@ -712,7 +722,7 @@
     }
     if (info.kind === 'beam' || info.kind === 'beam3') {
       var u12 = new Array(12).fill(0); info.id2.forEach(function (j, q) { u12[j] = ue[q]; });
-      var ul = C.Tv(info.Tb, u12), fl = C.Tv(info.kl, ul); for (i = 0; i < 12; i++) fl[i] -= info.fl[i];
+      var ul = C.Tv(info.Tb, u12); if (info.Toff) ul = C.Tv(info.Toff, ul); var fl = C.Tv(info.kl, ul); for (i = 0; i < 12; i++) fl[i] -= info.fl[i];
       var P = info.P, r = { FXI: -fl[0], SFYI: -fl[1], SFZI: -fl[2], TQI: -fl[3], MYI: -fl[4], MZI: -fl[5], FXJ: fl[6], SFYJ: fl[7], SFZJ: fl[8], TQJ: fl[9], MYJ: fl[10], MZJ: fl[11] };
       ['I', 'J'].forEach(function (s) { var My = r['MY' + s], Mz = r['MZ' + s]; r['SDIR' + s] = r['FX' + s] / P.A; r['SBYT' + s] = P.asec || !P.ymax ? 0 : -Mz * P.ymax / P.Izz; r['SBYB' + s] = P.asec || !P.ymin ? 0 : -Mz * P.ymin / P.Izz; r['SBZT' + s] = P.asec || !P.zmax ? 0 : My * P.zmax / P.Iyy; r['SBZB' + s] = P.asec || !P.zmin ? 0 : My * P.zmin / P.Iyy; });
       return r;
@@ -811,6 +821,9 @@
   reg('PLDISP', 'O', plotCmd('DISP', function (p, f, N) { p.und = N(1); }, 'DISPLAY DEFORMED SHAPE'));
   reg('PLNSOL', 'O', plotCmd('NSOL', function (p, f, N, S) { var it = S(1) || 'U', cp = S(2) || (it === 'S' ? 'EQV' : 'SUM'); p.item = it; p.comp = cp; p.und = N(3); if (it === 'S' && !Object.keys(this.nodalStress()).length) throw new ApdlError('No nodal stress results (PLNSOL,S 는 2-D 고체 요소만).'); }, 'PRODUCE NODAL PLOT'));
   reg('PLESOL', 'O', plotCmd('ESOL', function (p, f, N, S) { p.item = S(1) || 'S'; p.comp = S(2) || 'EQV'; }, 'PRODUCE ELEMENT SOLUTION PLOT'));
+  reg('PLLS', 'O', plotCmd('PLLS', function (p, f, N, S) { var li = S(1), lj = S(2) || S(1); if (!this.etab[li]) throw new ApdlError('Element table item ' + li + ' is not defined (먼저 ETABLE).'); if (!this.etab[lj]) throw new ApdlError('Element table item ' + lj + ' is not defined (먼저 ETABLE).'); p.li = li; p.lj = lj; p.fact = f[3] ? N(3) : 1; p.kund = N(4); }, 'PLOT LINE ELEMENT RESULTS'));
+  reg('ANDSCL ANIM', 'O', function (f, N, S, name) { this.needRes(); this.anim = { nfram: N(1) || 5, delay: f[2] ? N(2) : 0.1, ncycl: N(3) || 5, t: Date.now() }; this.plot = { kind: 'DISP', und: 0 }; this.p(' ANIMATE DEFORMED SHAPE   NFRAM= ' + this.anim.nfram + '  DELAY= ' + this.anim.delay + '  NCYCL= ' + this.anim.ncycl); });
+  reg('/DSCALE', 'A', function (f, N, S) { var v = S(2); this.dscale = (!v || v === 'AUTO' || v === '0') ? 0 : N(2); this.p(' DISPLACEMENT SCALING FACTOR = ' + (this.dscale ? g(this.dscale) : 'AUTO')); });
   reg('PLETAB', 'O', plotCmd('ETAB', function (p, f, N, S) { if (!this.etab[S(1)]) throw new ApdlError('Element table item ' + S(1) + ' is not defined.'); p.lab = S(1); }, 'PLOT ELEMENT TABLE ITEM'));
 
   reg('NLIST', 'A', function () { var self = this; this.p(' LIST ALL SELECTED NODES.   DSYS=      0'); this.p(''); this.p('    NODE        X             Y             Z           THXY     THYZ     THZX'); this.selN().forEach(function (n) { var x = self.nodes[n].x; self.p(pad(n, 8) + x.map(function (v) { return pad(g(v), 14); }).join('') + (self.nodes[n].T ? '      (rotated)' : '         0.00     0.00     0.00')); }); });

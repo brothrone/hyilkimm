@@ -193,6 +193,25 @@ dl.pages dt{font-family:var(--sans);font-style:normal;font-size:15px}
 .mw-histlist{position:absolute;left:27px;right:0;top:100%;z-index:45;max-height:260px;overflow:auto;background:#fff;border:1px solid #000}
 .mw-histlist button{display:block;width:100%;text-align:left;border:0;background:#fff;font:13px "Courier New",monospace;padding:2px 6px;cursor:pointer}
 .mw-histlist button:hover{background:#0078d7;color:#fff}
+.mw-syn{position:absolute;left:0;bottom:calc(100% + 4px);z-index:46;background:#ffffe1;border:1px solid #000;box-shadow:2px 2px 4px rgba(0,0,0,.3);padding:3px 0;max-width:min(760px,92vw);font:13px "Courier New",monospace;color:#000}
+.mw-syn[hidden]{display:none}
+.mw-syn.below{bottom:auto;top:calc(100% + 3px)}
+.mw-synl{padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mw-synl b{color:#00007f}
+.mw-synl span.on{background:#ffd21f;font-weight:700}
+.mw-synl em{font:12px var(--wf);color:#555;font-style:normal;margin-left:12px}
+.mw-synh{font:11px var(--wf);color:#666;padding:1px 8px;border-top:1px solid #d8d8b0}
+.mw-pk{display:flex;gap:3px;min-width:0}
+.mw-pk input{flex:1}
+.mw-pk button{font:12px var(--wf);padding:0 6px;border:1px solid #adadad;background:#e1e1e1;cursor:pointer}
+.mw-pick{position:absolute;left:8px;top:150px;z-index:58;width:190px;background:var(--face);border:1px solid #6f6f6f;box-shadow:3px 5px 14px rgba(0,0,0,.4);font-size:12.5px}
+.mw-pick[hidden]{display:none}
+.mw-pickbody{padding:6px 10px}
+.mw-pkrow{display:flex;gap:12px;padding:2px 0}
+.mw-pkinfo{font:12px/1.6 "Courier New",monospace;background:#fff;border:1px solid #aaa;padding:4px 6px;margin:6px 0}
+.mw-pkhint{font-size:11.5px;color:#444}
+.mw-pkbtns{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:6px 8px 8px;border-top:1px solid #dcdcdc}
+.mw-pkbtns button{font:12.5px var(--wf);height:24px;border:1px solid #adadad;background:#e1e1e1;cursor:pointer}
 .mw-sechead{display:flex;align-items:center;justify-content:space-between;font:15px var(--wf);color:#222;padding:1px 8px;border-bottom:1px solid #a8a8a8;background:var(--face);height:23px}
 .mw-coll{width:17px;height:17px;border:1px solid #333;border-radius:50%;background:none;font-size:11px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .mw-coll.flip{transform:rotate(180deg)}

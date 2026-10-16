@@ -10,7 +10,7 @@
   <div class="mw-iconbar">
    <button type="button" id="icNew"></button><button type="button" id="icOpen"></button><button type="button" id="icSave"></button><button type="button" id="icPzr"></button><button type="button" id="icPrint"></button><button type="button" id="icHelp"></button>
    <span class="mw-sep"></span>
-   <div class="mw-combo"><span class="mw-cmdico" id="mwCmdIco" aria-hidden="true"></span><input id="mwInput" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="명령 입력 (Command Input)"><button type="button" id="mwHistBtn" aria-label="이전 명령 목록">▾</button><div class="mw-histlist" id="mwHistList" hidden></div></div>
+   <div class="mw-combo"><div class="mw-syn" id="mwSyn" hidden></div><span class="mw-cmdico" id="mwCmdIco" aria-hidden="true"></span><input id="mwInput" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="명령 입력 (Command Input)"><button type="button" id="mwHistBtn" aria-label="이전 명령 목록">▾</button><div class="mw-histlist" id="mwHistList" hidden></div></div>
    <button type="button" id="icRaise"></button><button type="button" id="icReset"></button><button type="button" id="icContact"></button>
   </div>
   <div class="mw-sechead">Toolbar<button type="button" class="mw-coll" data-coll="tb" aria-label="Toolbar 접기">⌃</button></div>
@@ -49,6 +49,8 @@
 <tr><th>화면 부분</th><th>ANSYS에서의 이름</th><th>하는 일</th></tr>
 <tr><td>맨 위 메뉴</td><td>Utility Menu</td><td>File(Clear &amp; Start New, Resume/Save, Read Input from, Exit) · Select · List(KLIST~SFELIST) · Plot(KPLOT~EPLOT) · PlotCtrls(Numbering = <code>/pnum</code>, Viewing Direction = <code>/view</code>, Capture Image) · WorkPlane · Parameters · Macro · MenuCtrls · Help. Alt+밑줄 글자로도 열립니다.</td></tr>
 <tr><td>아이콘 줄의 입력 칸</td><td>Command Input (콤보 상자)</td><td>명령 한 줄 + Enter. ↑↓ 또는 ▾ 로 이전 명령. 여러 줄을 붙여넣으면 한꺼번에 실행. 오류는 <b>Error</b> 창, 경고는 <b>Warning</b> 창으로 뜨고, 그 명령만 무시됩니다.</td></tr>
+<tr><td>명령 도우미</td><td>Command prompt 도움말</td><td>입력 칸에 <code>n</code>처럼 치면 위에 맞는 명령과 문법(<code>N, NODE, X, Y, Z, THXY…</code>)이 뜨고, 쉼표를 칠 때마다 지금 넣을 칸이 노란색으로 표시됩니다. Tab = 첫 명령 채우기.</td></tr>
+<tr><td>Pick 버튼 · Query</td><td>Picking</td><td>대화상자의 노드·키포인트·요소 칸 옆 <b>Pick</b>을 누르면 그래픽 창에서 클릭해 고를 수 있습니다(여러 개 고르면 명령을 하나씩 실행). General Postproc › Query Results 로 노드를 클릭하면 변위·반력이 그림 위에 표시됩니다.</td></tr>
 <tr><td>Toolbar</td><td>Toolbar</td><td>SAVE_DB · RESUM_DB · QUIT(Exit 창) · POWRGRPH</td></tr>
 <tr><td>왼쪽 트리</td><td>Main Menu</td><td>Preprocessor / Solution / General Postproc를 열면 그 처리기로 들어갑니다(<code>/prep7</code> 등 자동 입력). 대화상자 아래에 실제로 입력될 명령이 미리 보입니다. Solve › Current LS는 ANSYS처럼 /STATUS 창과 확인 창이 뜹니다.</td></tr>
 <tr><td>검은 창 + 오른쪽 세로 아이콘</td><td>Graphics Window, Pan-Zoom-Rotate 도구</td><td>Iso · Oblique · Front · Back · Top · Bottom · Left · Right 보기(<code>/view</code>), Fit(<code>/auto</code>), Box Zoom, Back Up, Zoom In/Out, Pan 4방향, Rotate ±X ±Y ±Z, Rate(1~9, 한 번에 돌리는 각도), Dynamic Mode. 마우스: 휠 = 확대, 드래그 = 이동, Ctrl+오른쪽 드래그(또는 Dynamic Mode에서 드래그) = 회전.</td></tr>
@@ -67,14 +69,14 @@
 <tr><td>형상</td><td><code>k</code> <code>l</code>(원통좌표계면 원호) <code>lsymm</code> <code>nummrg</code> <code>latt</code> <code>esize</code> <code>lesize</code> <code>lmesh</code> · 면: <code>a</code> <code>al</code> <code>amesh</code> <code>aclear</code> <code>adele</code> <code>rectng</code> <code>blc4</code> <code>blc5</code> <code>pcirc</code> <code>cyl4</code> <code>aadd</code> <code>asba</code></td></tr>
 <tr><td>노드·요소</td><td><code>n</code> <code>e</code> <code>en</code> <code>fill</code> <code>ngen</code> <code>egen</code> <code>nmodif</code> <code>nrotat</code> <code>emodif</code> <code>nsel</code> <code>esel</code> <code>allsel</code></td></tr>
 <tr><td>하중·구속</td><td><code>d</code> <code>dk</code> <code>f</code> <code>fk</code> <code>sfbeam</code>(face 1·2·3, VALI→VALJ, 오프셋) <code>sfedele</code> <code>ddele</code> <code>fdele</code></td></tr>
-<tr><td>결과</td><td><code>prnsol</code>(u, rot) <code>prrsol</code> <code>etable</code>(LINK180: smisc 1, ls 1 · BEAM188: smisc 1~6, 14~19, 31~40) <code>pretab</code> <code>pletab</code> <code>pldisp</code> <code>plnsol</code> <code>eplot</code> <code>nplot</code> <code>kplot</code> <code>lplot</code> <code>aplot</code> <code>gplot</code> · 목록: <code>nlist</code> <code>elist</code> <code>klist</code> <code>llist</code> <code>alist</code> <code>etlist</code> <code>rlist</code> <code>mplist</code> <code>slist</code> <code>dlist</code> <code>flist</code> <code>sfelist</code></td></tr>
+<tr><td>결과</td><td><code>prnsol</code>(u, rot) <code>prrsol</code> <code>etable</code>(LINK180: smisc 1, ls 1 · BEAM188: smisc 1~6, 14~19, 31~40) <code>pretab</code> <code>pletab</code> <code>plls</code>(BMD·SFD) <code>andscl</code>(애니메이션) <code>/dscale</code> <code>/eshape</code> <code>pldisp</code> <code>plnsol</code> <code>eplot</code> <code>nplot</code> <code>kplot</code> <code>lplot</code> <code>aplot</code> <code>gplot</code> · 목록: <code>nlist</code> <code>elist</code> <code>klist</code> <code>llist</code> <code>alist</code> <code>etlist</code> <code>rlist</code> <code>mplist</code> <code>slist</code> <code>dlist</code> <code>flist</code> <code>sfelist</code></td></tr>
 <tr><td>APDL</td><td><code>이름=식</code> <code>*set</code> <code>*do</code>/<code>*enddo</code> <code>*if,…,then</code>/<code>*elseif</code>/<code>*else</code>/<code>*endif</code> <code>*get</code> <code>*stat</code> <code>*afun</code> · 함수: sqrt abs sin cos tan atan exp log nx ny nz kx ky nelem ux uy uz rotx roty rotz node kp distnd</td></tr>
 </table>
 
 <div class="note">
 <p><b>실제 ANSYS와 다른 점</b> — 연습용이라 다음은 단순화했습니다. 시험 전에는 꼭 학교 ANSYS로 확인하세요.</p>
 <ul>
-<li>BEAM188은 단면 도심을 지나는 <b>Timoshenko 보</b>로 계산합니다. 전단중심 효과(C형강 비틀림 연성), 뒴(warping), SECOFFSET의 오프셋은 계산에 반영하지 않습니다. 그래서 C형강 문제는 비틀림 결과가 ANSYS와 다를 수 있습니다.</li>
+<li>BEAM188은 <b>Timoshenko 보</b>로 계산합니다. SECOFFSET(USER·ORIGIN)은 노드와 단면 도심을 강체로 잇는 방식으로 계산에 반영합니다. 전단중심 효과(C형강 비틀림 연성)와 뒴(warping)은 반영하지 않으므로, C형강 비틀림 결과는 ANSYS와 다를 수 있습니다(SHRC는 도심으로 취급).</li>
 <li>단면 성질은 직사각형 조각으로 계산합니다(필렛 없음). 비틀림 상수 J는 얇은 벽 근사입니다. etable 단면력의 부호는 ANSYS와 다를 수 있습니다.</li>
 <li>PLANE182/PLANE42는 평면응력(KEYOPT(3)=2면 평면변형), 단위 두께(KEYOPT(3)=3이면 두께 = 실상수/단면)입니다. <code>amesh</code>는 자유 삼각형 메쉬(퇴화 4절점)로, 노드·요소 번호와 개수는 ANSYS와 다릅니다.</li>
 <li>옛 요소(LINK1, LINK8, BEAM3, PLANE42)와 실상수 <code>r</code>, COMBIN14는 수업 파일을 돌릴 수 있게 지원하지만, 시험 답안은 수업 방식대로 LINK180/BEAM188 + SECTYPE/SECDATA로 쓰세요. BEAM3은 Euler 보입니다.</li><li>그래픽 창의 기호(구속 삼각형, 힘 화살표)와 색 띠는 ANSYS와 비슷하게 그렸지만 똑같지는 않습니다.</li>

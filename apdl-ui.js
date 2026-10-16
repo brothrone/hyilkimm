@@ -28,6 +28,7 @@
         msgbox(errs.length ? 'Error' : 'Warning', t, errs.length ? 'e' : 'w');
       } else if (eng.lastCmd === 'SOLVE' && eng.result) msgbox('Note', 'Solution is done!', 'n');
     }
+    view.query = null; if (eng.lastCmd === 'ANDSCL' || eng.lastCmd === 'ANIM') startAnim(); else if (opt.record !== false) stopAnim();
     updStatus(); draw();
     return r;
   }
@@ -81,18 +82,20 @@
       var id = 'mwf' + i, lab = '<label for="' + id + '"><b>[' + spec.cmd + ']</b> ' + esc(fd.label) + '</label>', ctl;
       if (fd.opts) ctl = '<select id="' + id + '">' + fd.opts.map(function (o) { var v = Array.isArray(o) ? o[0] : o, t = Array.isArray(o) ? o[1] : o; return '<option value="' + esc(v) + '"' + (v === fd.def ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select>';
       else if (fd.check) ctl = '<span class="mw-chk"><input type="checkbox" id="' + id + '"' + (fd.def ? ' checked' : '') + '><span>' + (fd.def ? 'On' : 'Off') + '</span></span>';
-      else ctl = '<input id="' + id + '" value="' + esc(fd.def === undefined ? '' : fd.def) + '" autocomplete="off">';
+      else { ctl = '<input id="' + id + '" value="' + esc(fd.def === undefined ? '' : fd.def) + '" autocomplete="off">'; var pt = spec.cmd !== 'N' && spec.cmd !== 'K' ? pickType(fd.label) : null; if (pt) ctl = '<span class="mw-pk">' + ctl + '<button type="button" data-pick="' + i + '" data-pt="' + pt + '" title="그래픽 창에서 골라 넣기">Pick</button></span>'; }
       html += '<div class="mw-row">' + lab + ctl + '</div>';
     });
     if (spec.note) html += '<p class="mw-dnote">' + spec.note + '</p>';
     html += '<div class="mw-cmdprev">명령: <code id="mwPrev"></code></div></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="apply">Apply</button><button type="button" data-act="cancel">Cancel</button><button type="button" data-act="help">Help</button></div></div>';
     dlg.innerHTML = html; dlg.hidden = false;
     var vals = function () { return (spec.fields || []).map(function (fd, i) { var el = $('#mwf' + i); return fd.check ? (el.checked ? 1 : 0) : el.value.trim(); }); };
-    var build = function () { return typeof spec.build === 'function' ? spec.build(vals()) : fill(spec.build, vals()); };
+    var buildV = function (v) { return typeof spec.build === 'function' ? spec.build(v) : fill(spec.build, v); };
+    var build = function () { var v = vals(), mi = -1; v.forEach(function (x, i) { if (mi < 0 && typeof x === 'string' && /\s/.test(x) && dlg.querySelector('[data-pick="' + i + '"]')) mi = i; }); if (mi < 0) return buildV(v); return v[mi].split(/\s+/).map(function (tok) { var w = v.slice(); w[mi] = tok; return buildV(w); }).join('\n'); };
     var upd = function () { $('#mwPrev').textContent = build().split('\n').join('  $  '); dlg.querySelectorAll('.mw-chk').forEach(function (c) { c.lastChild.textContent = c.firstChild.checked ? 'On' : 'Off'; }); };
     dlg.querySelectorAll('input,select').forEach(function (el) { el.addEventListener('input', upd); el.addEventListener('change', upd); });
     upd(); var first = dlg.querySelector('input,select'); if (first) first.focus();
     dlg.onclick = function (e) {
+      var pb = e.target.getAttribute('data-pick'); if (pb !== null) { var inp = $('#mwf' + pb); dlg.hidden = true; startPick(e.target.getAttribute('data-pt'), spec.title, function (ids) { dlg.hidden = false; if (ids) { inp.value = ids.join(' '); upd(); } inp.focus(); }); return; }
       var a = e.target.getAttribute('data-act'); if (!a) return;
       if (a === 'cancel') { dlg.hidden = true; return; }
       if (a === 'help') { window.open('ref.html', '_blank'); return; }
@@ -227,7 +230,8 @@
     ] }],
     ['General Postproc', { proc: '/POST1', kids: [
       ['Read Results', { kids: [['Last Set', { cmd: 'SET,LAST' }]] }],
-      ['Plot Results', { kids: [['Deformed Shape', { dlg: 'PLDISP' }], ['Contour Plot', { kids: [['Nodal Solu', { dlg: 'PLNSOL' }]] }]] }],
+      ['Plot Results', { kids: [['Deformed Shape', { dlg: 'PLDISP' }], ['Contour Plot', { kids: [['Nodal Solu', { dlg: 'PLNSOL' }], ['Elem Table', { dlg: 'PLETAB' }], ['Line Elem Res', { dlg: 'PLLS' }]] }]] }],
+      ['Query Results', { kids: [['Nodal Solu', { act: function () { queryPick('U'); } }], ['Reaction Solu', { act: function () { queryPick('RF'); } }]] }],
       ['List Results', { kids: [['Nodal Solution', { dlg: 'PRNSOL' }], ['Reaction Solu', { cmd: 'PRRSOL' }]] }],
       ['Element Table', { kids: [['Define Table', { dlg: 'ETABLE' }], ['Plot Elem Table', { dlg: 'PLETAB' }], ['List Elem Table', { dlg: 'PRETAB' }]] }]
     ] }],
@@ -237,6 +241,9 @@
     ['Finish', { cmd: 'FINISH' }]
   ];
 
+  D.PLLS = { title: 'Plot Line-Element Results', cmd: 'PLLS', fields: [{ label: 'LabI  Elem table item at node I', def: 'MI' }, { label: 'LabJ  Elem table item at node J', def: 'MJ' }, { label: 'Fact  Optional scale factor', def: '1' }], build: 'PLLS,{0},{1},{2}', note: 'BEAM188 SMISC: MY = 2 / 15, MZ = 3 / 16, SFZ = 5 / 18, SFY = 6 / 19 (I / J)<br>K 없이 XY 평면 보 → 모멘트도 ETABLE,MI,SMISC,3 / ETABLE,MJ,SMISC,16, 전단력도 6 / 19<br>방향점으로 element z 를 위로 둔 보 → MY (2 / 15), SFZ (5 / 18)<br>BEAM3: MZ = SMISC 6 / 12, SFY = 2 / 8' };
+  D.ANDSCL = { title: 'Animation of Deformed Shape', cmd: 'ANDSCL', fields: [{ label: 'NFRAM  No. of frames', def: '10' }, { label: 'DELAY  Time delay (sec)', def: '0.1' }, { label: 'NCYCL  No. of cycles', def: '5' }], build: 'ANDSCL,{0},{1},{2}' };
+  D.DSCALE = { title: 'Displacement Display Scaling', cmd: '/DSCALE', fields: [{ label: 'DMULT  Displacement scale factor', opts: [['AUTO', 'Auto calculated'], ['1', '1.0 (true scale)'], ['10', '10'], ['100', '100'], ['1000', '1000']], def: 'AUTO' }], build: '/DSCALE,1,{0}' };
   D.VIEW = { title: 'Viewing Direction', cmd: '/VIEW', fields: [{ label: 'WN  Window number', def: '1' }, { label: 'XV  coords of view point', def: '1' }, { label: 'YV', def: '1' }, { label: 'ZV', def: '1' }], build: '/VIEW,{0},{1},{2},{3}', note: '(XV,YV,ZV) 쪽에서 원점을 바라봅니다. 0,0,1 = Front, 1,1,1 = Iso' };
 
   function buildTree(items, depth) {
@@ -268,7 +275,7 @@
     ['Select', 0, [['Entities…', function () { dialog(D.NSEL); }], '-', ['Everything', 'ALLSEL']]],
     ['List', 0, [['Keypoints', 'KLIST'], ['Lines', 'LLIST'], ['Areas', 'ALIST'], ['Nodes', 'NLIST'], ['Elements', 'ELIST'], '-', ['Properties › Element Types', 'ETLIST'], ['Properties › Real Constants', 'RLIST'], ['Properties › All Materials', 'MPLIST'], ['Properties › Section Properties', 'SLIST'], '-', ['Loads › DOF Constraints', 'DLIST'], ['Loads › Nodal Loads', 'FLIST'], ['Loads › Surface Loads', 'SFELIST'], '-', ['Other › Parameters', '*STATUS']]],
     ['Plot', 0, [['Replot', '/REPLOT'], '-', ['Keypoints', 'KPLOT'], ['Lines', 'LPLOT'], ['Areas', 'APLOT'], ['Nodes', 'NPLOT'], ['Elements', 'EPLOT'], '-', ['Multi-Plots', 'GPLOT']]],
-    ['PlotCtrls', 4, [['Pan Zoom Rotate…', function () { setDyn(!view.dyn); }], ['View Settings › Viewing Direction…', function () { dialog(D.VIEW); }], '-', ['Numbering…', function () { D.PNUM.fields.forEach(function (f, i) { f.def = !!eng.pnum[['KP', 'LINE', 'AREA', 'NODE', 'ELEM'][i]]; }); dialog(D.PNUM); }], ['Symbols… (구속·하중 표시 켜기/끄기)', function () { view.noBC = !view.noBC; draw(); }], '-', ['Capture Image…', capture], ['Reset Plot Ctrls…', function () { setDir([0, 0, 1]); run('/PNUM,KP,0\n/PNUM,LINE,0\n/PNUM,AREA,0\n/PNUM,NODE,0\n/PNUM,ELEM,0', { quiet: true }); }]]],
+    ['PlotCtrls', 4, [['Pan Zoom Rotate…', function () { setDyn(!view.dyn); }], ['View Settings › Viewing Direction…', function () { dialog(D.VIEW); }], '-', ['Numbering…', function () { D.PNUM.fields.forEach(function (f, i) { f.def = !!eng.pnum[['KP', 'LINE', 'AREA', 'NODE', 'ELEM'][i]]; }); dialog(D.PNUM); }], ['Symbols… (구속·하중 표시 켜기/끄기)', function () { view.noBC = !view.noBC; draw(); }], '-', ['Style › Displacement Scaling…', function () { dialog(D.DSCALE); }], ['Animate › Deformed Shape…', function () { dialog(D.ANDSCL); }], ['Capture Image…', capture], ['Reset Plot Ctrls…', function () { setDir([0, 0, 1]); run('/PNUM,KP,0\n/PNUM,LINE,0\n/PNUM,AREA,0\n/PNUM,NODE,0\n/PNUM,ELEM,0', { quiet: true }); }]]],
     ['WorkPlane', 0, [['Display Working Plane', function () { view.wp = !view.wp; draw(); }], ['Offset WP to › XYZ Locations…', function () { dialog(D.WPAVE); }], ['Offset WP to › Global Origin', 'WPAVE,0,0,0'], '-', ['Local Coordinate Systems › Create Local CS…', function () { dialog(D.LOCAL); }], ['Change Active CS to › Global Cartesian', 'CSYS,0'], ['Change Active CS to › Global Cylindrical', 'CSYS,1']]],
     ['Parameters', 1, [['Scalar Parameters…', function () { dialog(D.PARAM); }], ['List Parameters', '*STATUS']]],
     ['Macro', 0, [['Execute Data Block…', openRead], ['Create Macro… (Session Editor)', openSession]]],
@@ -451,6 +458,7 @@
   svg.addEventListener('contextmenu', function (e) { e.preventDefault(); });
   svg.addEventListener('pointerdown', function (e) {
     var r = svg.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    if (view.picking && e.button === 0) { doPick(x, y); e.preventDefault(); return; }
     var mode = view.box ? 'box' : (view.dyn && e.button === 0) || (e.ctrlKey && e.button === 2) || (e.button === 2 && view.dyn) ? 'rot' : (e.ctrlKey && e.button === 1) ? 'zoom' : 'pan';
     pushView(); drag = { x: e.clientX, y: e.clientY, x0: x, y0: y, mode: mode }; svg.setPointerCapture(e.pointerId);
     if (mode === 'box') { boxEl = document.createElementNS(NS, 'rect'); boxEl.setAttribute('fill', 'none'); boxEl.setAttribute('stroke', '#fff'); boxEl.setAttribute('stroke-dasharray', '4 3'); svg.appendChild(boxEl); }
@@ -513,24 +521,26 @@
     var p = s.plot || { kind: 'auto' }, kind = p.kind;
     var hasE = Object.keys(s.elems).length, hasN = Object.keys(s.nodes).length, hasA = Object.keys(s.areas).length, hasL = Object.keys(s.lines).length, hasK = Object.keys(s.kps).length;
     if (kind === 'auto') kind = hasE ? 'elem' : hasN ? 'node' : hasA ? 'area' : hasL ? 'line' : hasK ? 'kp' : 'none';
-    var res = /DISP|NSOL|ESOL|ETAB/.test(kind) && s.solved;
-    if (!res && /DISP|NSOL|ESOL|ETAB/.test(kind)) kind = 'elem';
+    var res = /DISP|NSOL|ESOL|ETAB|PLLS/.test(kind) && s.solved;
+    if (!res && /DISP|NSOL|ESOL|ETAB|PLLS/.test(kind)) kind = 'elem';
+    var pk = view.pk = { node: [], kp: [], elem: [], line: [], area: [] };
     var used = {}, e, k; for (e in s.elems) s.elems[e].n.forEach(function (n) { used[n] = 1; });
     var showNode = function (n) { return !hasE || used[n] || !s.kOnly[n]; };
     var P3 = [];
     if (/kp|line|area|all/.test(kind)) { for (k in s.kps) P3.push(s.kps[k].x); for (k in s.lines) s.lines[k].pts.forEach(function (q) { P3.push(q); }); for (k in s.areas) s.areas[k].regions.forEach(function (r) { r.forEach(function (q) { P3.push([q[0], q[1], 0]); }); }); }
     if (kind === 'node' || kind === 'elem' || res || kind === 'all') for (k in s.nodes) if (showNode(k)) P3.push(s.nodes[k].x);
-    var label = { kp: 'KEYPOINTS', line: 'LINES', area: 'AREAS', node: 'NODES', elem: 'ELEMENTS', all: '', DISP: 'DISPLACEMENT', NSOL: 'NODAL SOLUTION', ESOL: 'ELEMENT SOLUTION', ETAB: 'ELEMENT SOLUTION', none: '' }[kind] || '';
+    var label = { kp: 'KEYPOINTS', line: 'LINES', area: 'AREAS', node: 'NODES', elem: 'ELEMENTS', all: '', DISP: 'DISPLACEMENT', NSOL: 'NODAL SOLUTION', ESOL: 'ELEMENT SOLUTION', ETAB: 'ELEMENT SOLUTION', PLLS: 'LINE STRESS', none: '' }[kind] || '';
     var tl = [label];
     if (s.pnum.KP && /kp|line|area/.test(kind)) tl.push('KP NUM'); if (s.pnum.LINE && /line|area/.test(kind)) tl.push('LINE NUM'); if (s.pnum.AREA && kind === 'area') tl.push('AREA NUM');
     if (s.pnum.NODE && /node|elem/.test(kind)) tl.push('NODE NUM'); if (s.pnum.ELEM && kind === 'elem') tl.push('ELEM NUM');
 
-    var R = view.R, Pj = function (q) { return [R[0][0] * q[0] + R[0][1] * q[1] + R[0][2] * q[2], R[1][0] * q[0] + R[1][1] * q[1] + R[1][2] * q[2]]; };
+    var plls = null, R = view.R, Pj = function (q) { return [R[0][0] * q[0] + R[0][1] * q[1] + R[0][2] * q[2], R[1][0] * q[0] + R[1][1] * q[1] + R[1][2] * q[2]]; };
     var lo = [1e99, 1e99, 1e99], hi = [-1e99, -1e99, -1e99];
     P3.forEach(function (q) { for (var i = 0; i < 3; i++) { lo[i] = Math.min(lo[i], q[i]); hi[i] = Math.max(hi[i], q[i]); } });
     var size = P3.length ? Math.max(hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]) || 1 : 1, umax = 0;
     if (res) for (k in s.nodes) if (s.nodes[k].u && showNode(k)) umax = Math.max(umax, Math.hypot(s.nodes[k].u[0], s.nodes[k].u[1], s.nodes[k].u[2]));
-    var dsc = res && umax > 0 ? 0.08 * size / umax : 0;
+    var dsc = res && umax > 0 && kind !== 'PLLS' ? (eng.dscale > 0 ? eng.dscale : 0.08 * size / umax) : 0;
+    if (dsc && view.animK !== undefined) dsc *= view.animK;
     var defX = function (n) { var nd = s.nodes[n]; if (!dsc || !nd.u) return nd.x; return [nd.x[0] + nd.u[0] * dsc, nd.x[1] + nd.u[1] * dsc, nd.x[2] + nd.u[2] * dsc]; };
     var all2 = P3.map(Pj); if (dsc) for (k in s.nodes) if (showNode(k)) all2.push(Pj(defX(k)));
     var x0 = 1e99, x1 = -1e99, y0 = 1e99, y1 = -1e99; all2.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); });
@@ -570,9 +580,10 @@
     // 요소
     if (kind === 'elem' || res || kind === 'all') {
       var XY = function (n) { return S2(defX(n)); }, XY0 = function (n) { return S2(s.nodes[n].x); };
-      var faces = [], esh = eng.eshape;
+      var faces = [], esh = eng.eshape && kind !== 'PLLS';
       if (res && (kind === 'DISP' ? p.und !== 0 : p.und)) for (e in s.elems) drawElem(e, XY0, true);
-      for (e in s.elems) drawElem(e, res ? XY : XY0, false);
+      for (e in s.elems) { drawElem(e, res ? XY : XY0, false); var pe = s.elems[e].n.map(res ? XY : XY0), nn2 = s.elems[e].kind === 'plane' && s.elems[e].n[2] === s.elems[e].n[3] ? 3 : pe.length; var cxp = 0, cyp = 0; pe.slice(0, nn2).forEach(function (q) { cxp += q[0]; cyp += q[1]; }); pk.elem.push([e, cxp / nn2, cyp / nn2]); }
+      if (kind === 'PLLS') drawPLLS();
       faces.sort(function (a, b) { return a.d - b.d; }).forEach(function (f) { el('polygon', { points: f.pts.map(function (q) { return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' '), fill: f.c, stroke: f.st, 'stroke-width': 0.5, 'stroke-linejoin': 'round' }, g0); });
     }
     function shade(hex, k) { var n = parseInt(hex.slice(1), 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255; return 'rgb(' + Math.round(r * k) + ',' + Math.round(g * k) + ',' + Math.round(b * k) + ')'; }
@@ -610,6 +621,13 @@
       if (!ghost && s.pnum.ELEM && (kind === 'elem' || res)) { var cxx = 0, cyy = 0, nn = E.kind === 'plane' && E.n[2] === E.n[3] ? 3 : E.n.length; pts.slice(0, nn).forEach(function (q) { cxx += q[0]; cyy += q[1]; }); txt(cxx / nn, cyy / nn - 3, e, { fill: '#fff', 'font-size': 11.5, 'font-family': MONO, 'text-anchor': 'middle' }, g0); }
     }
 
+    for (k in s.nodes) if (showNode(k)) { var qp = S2(res ? defX(k) : s.nodes[k].x); pk.node.push([k, qp[0], qp[1]]); }
+    for (k in s.kps) { var qkp = S2(s.kps[k].x); pk.kp.push([k, qkp[0], qkp[1]]); }
+    for (k in s.lines) { var Lp = s.lines[k].pts, mq2 = S2(Lp[Math.floor(Lp.length / 2)]); pk.line.push([k, mq2[0], mq2[1]]); }
+    for (k in s.areas) { var cA = centroid(s.areas[k].regions[0]), qa = S2([cA[0], cA[1], 0]); pk.area.push([k, qa[0], qa[1]]); }
+    // 선택(picking) 표시
+    if (view.picking) view.picking.ids.forEach(function (id) { var hit = pk[view.picking.type].filter(function (q) { return q[0] === id; })[0]; if (hit) el('rect', { x: hit[1] - 6, y: hit[2] - 6, width: 12, height: 12, fill: 'none', stroke: '#ffff00', 'stroke-width': 1.6 }, g0); });
+    if (view.query) view.query.forEach(function (qq) { var hit = pk.node.filter(function (z) { return z[0] === String(qq.id); })[0]; if (!hit) return; var ls = qq.t.split('\n'), bw = 8 + 7.2 * Math.max.apply(null, ls.map(function (l) { return l.length; })), bh = 4 + ls.length * 13, bx = Math.min(hit[1] + 12, W - F - bw - 4), by = Math.max(F + 4, hit[2] - bh - 8); el('line', { x1: hit[1], y1: hit[2], x2: bx, y2: by + bh, stroke: '#ffff00' }, g0); el('rect', { x: bx, y: by, width: bw, height: bh, fill: '#000', stroke: '#ffff00' }, g0); ls.forEach(function (l, i) { txt(bx + 4, by + 13 + i * 13, l, { fill: '#ffff00', 'font-size': 11.5, 'font-family': MONO }, g0); }); });
     // 노드
     if (kind === 'node' || (kind === 'elem' && s.pnum.NODE) || (res && s.pnum.NODE)) for (k in s.nodes) { if (!showNode(k)) continue; var qn = S2(res ? defX(k) : s.nodes[k].x); el('rect', { x: qn[0] - 1.5, y: qn[1] - 1.5, width: 3, height: 3, fill: '#fff' }, g0); if (s.pnum.NODE) txt(qn[0] + 4, qn[1] - 4, k, { fill: '#fff', 'font-size': 11.5, 'font-family': MONO }, g0); }
 
@@ -640,7 +658,21 @@
     if (tp[0] < F + 30 || tp[0] > W - F - 30 || tp[1] < F + 30 || tp[1] > H - F - 30) tp = [F + 45, H - F - (res ? 80 : 45)];
     [[1, 0, 0, 'X', '#ffffff'], [0, 1, 0, 'Y', '#a6ff00'], [0, 0, 1, 'Z', '#2f8bff']].forEach(function (a) { var q = Pj([a[0], a[1], a[2]]), Lt = sm ? 26 : 36, e2 = [tp[0] + q[0] * Lt, tp[1] - q[1] * Lt]; el('line', { x1: tp[0], y1: tp[1], x2: e2[0], y2: e2[1], stroke: a[4], 'stroke-width': 1.4 }); if (Math.hypot(q[0], q[1]) < 0.15) { txt(tp[0] + 3, tp[1] - 2, a[3], { fill: a[4], 'font-size': fs + 2, 'font-family': MONO }); return; } txt(e2[0] + (q[0] >= -0.1 ? 4 : -14), e2[1] + (q[1] > 0.5 ? -4 : 6), a[3], { fill: a[4], 'font-size': fs + 2, 'font-family': MONO }); });
 
+    function drawPLLS() { // PLLS,LabI,LabJ: 선 요소 결과를 요소에 수직인 사다리꼴(SFD·BMD)로
+      var A = s.etab[p.li].vals, B = s.etab[p.lj].vals, mx = 0, e2; plls = { lo: 1e99, hi: -1e99 };
+      for (e2 in s.elems) { if (s.elems[e2].kind === 'plane') continue; var vi = A[e2] || 0, vj = B[e2] || 0; mx = Math.max(mx, Math.abs(vi), Math.abs(vj)); if (vi < plls.lo) { plls.lo = vi; plls.elo = e2; } if (vj < plls.lo) { plls.lo = vj; plls.elo = e2; } if (vi > plls.hi) { plls.hi = vi; plls.ehi = e2; } if (vj > plls.hi) { plls.hi = vj; plls.ehi = e2; } }
+      if (!mx) return; var kpx = (p.fact || 1) * 0.12 * Math.min(W, H) / mx;
+      for (e2 in s.elems) {
+        var E = s.elems[e2]; if (E.kind === 'plane') continue; var a = S2(s.nodes[E.n[0]].x), b = S2(s.nodes[E.n[1]].x), dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); if (L < 1e-6) continue;
+        var nx = -dy / L, ny = dx / L; if (ny > 1e-9 || (Math.abs(ny) < 1e-9 && nx > 0)) { nx = -nx; ny = -ny; } // + 값은 화면 위(또는 왼쪽)로
+        var vi = A[e2] || 0, vj = B[e2] || 0;
+        for (var q = 0; q < 8; q++) { var t0 = q / 8, t1 = (q + 1) / 8, v0 = vi + (vj - vi) * t0, v1 = vi + (vj - vi) * t1, p0 = [a[0] + dx * t0, a[1] + dy * t0], p1 = [a[0] + dx * t1, a[1] + dy * t1];
+          el('polygon', { points: [p0, p1, [p1[0] + nx * v1 * kpx, p1[1] + ny * v1 * kpx], [p0[0] + nx * v0 * kpx, p0[1] + ny * v0 * kpx]].map(function (z) { return z[0].toFixed(1) + ',' + z[1].toFixed(1); }).join(' '), fill: SPEC[band((v0 + v1) / 2, plls.lo, plls.hi)], stroke: SPEC[band((v0 + v1) / 2, plls.lo, plls.hi)], 'stroke-width': 0.5 }, g0); }
+        el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: '#fff', 'stroke-width': 1.2 }, g0);
+      }
+    }
     // 제목 블록·범례
+    if (kind === 'PLLS' && plls) { tl.push('STEP=1', 'SUB =1', 'TIME=1', p.li + '    ' + p.lj, 'MIN =' + gfmt(plls.lo), 'ELEM=' + plls.elo, 'MAX =' + gfmt(plls.hi), 'ELEM=' + plls.ehi); legend(plls.lo, plls.hi, W, H, F, sm); res = false; }
     if (res) {
       if (kind === 'DISP' || kind === 'NSOL') tl.push('STEP=1', 'SUB =1', 'TIME=1');
       if (field) tl.push(flab, 'RSYS=0');
@@ -652,6 +684,110 @@
   }
   function legend(lo, hi, W, H, F, sm) { var w = Math.min(84, (W - 2 * F - 40) / 9), x = (W - w * 9) / 2, y = H - F - (sm ? 46 : 52); for (var i = 0; i < 9; i++) { el('rect', { x: x + i * w, y: y, width: w, height: 13, fill: SPEC[i] }); if (!sm || i % 2 === 0) txt(x + i * w, y + 28 + (i % 2) * (sm ? 0 : 0), gfmt(lo + (hi - lo) * i / 9), { fill: '#fff', 'font-size': sm ? 9 : 11, 'font-family': MONO, 'text-anchor': 'middle' }); } txt(x + 9 * w, y + 28, gfmt(hi), { fill: '#fff', 'font-size': sm ? 9 : 11, 'font-family': MONO, 'text-anchor': 'middle' }); }
 
+
+  // ================= 그래픽 선택 (Picking) =================
+  function pickType(lab) {
+    if (/^(NODE1?|NODE2|[IJKL]  Node|NODE  \(ALL)/.test(lab)) return 'node';
+    if (/^(KPOI|P1  Keypoint|P2  Keypoint)/.test(lab)) return 'kp';
+    if (/^(Elem|IEL1|IEL2)/.test(lab)) return 'elem';
+    if (/^NL1/.test(lab)) return 'line';
+    if (/^NA[12]/.test(lab)) return 'area';
+    return null;
+  }
+  var TYPEN = { node: 'Nodes', kp: 'Keypoints', elem: 'Elements', line: 'Lines', area: 'Areas' };
+  function startPick(type, title, cb) {
+    stopAnim();
+    var w = $('#mwPick'); if (!w) { w = document.createElement('div'); w.id = 'mwPick'; w.className = 'mw-pick'; $('.mw-win').appendChild(w); }
+    view.picking = { type: type, ids: [], unpick: false, cb: cb };
+    w.innerHTML = '<div class="mw-dlgtitle"><span>' + esc(title || ('Pick ' + TYPEN[type])) + '</span></div><div class="mw-pickbody"><div class="mw-pkrow"><label><input type="radio" name="mwpu" value="0" checked> Pick</label><label><input type="radio" name="mwpu" value="1"> Unpick</label></div><div class="mw-pkrow"><label><input type="radio" checked disabled> Single</label></div><div class="mw-pkinfo">Count&nbsp;&nbsp;&nbsp;= <b id="mwPkCnt">0</b><br>Maximum = <span id="mwPkMax">0</span><br>Minimum = <span id="mwPkMin">0</span><br>' + TYPEN[type].slice(0, -1) + ' No. = <span id="mwPkLast"></span></div><div class="mw-pkhint">그래픽 창에서 ' + ({ node: '노드', kp: '키포인트', elem: '요소', line: '선', area: '면' }[type]) + '를 클릭하세요.</div></div><div class="mw-pkbtns"><button type="button" data-pk="ok">OK</button><button type="button" data-pk="all">Pick All</button><button type="button" data-pk="reset">Reset</button><button type="button" data-pk="cancel">Cancel</button></div>';
+    w.hidden = false; svg.style.cursor = 'crosshair'; draw();
+    w.onchange = function (e) { if (e.target.name === 'mwpu') view.picking.unpick = e.target.value === '1'; };
+    w.onclick = function (e) {
+      var a = e.target.getAttribute('data-pk'); if (!a) return; var pkg = view.picking;
+      if (a === 'reset') { pkg.ids = []; pkInfo(); draw(); return; }
+      if (a === 'all') { pkg.ids = (view.pk[type] || []).map(function (q) { return q[0]; }); pkInfo(); draw(); return; }
+      endPick(a === 'ok' ? (pkg.ids.length ? pkg.ids.slice() : null) : null);
+    };
+  }
+  function endPick(ids) { var pkg = view.picking; view.picking = null; var w = $('#mwPick'); if (w) w.hidden = true; svg.style.cursor = ''; draw(); if (pkg && pkg.cb) pkg.cb(ids); }
+  function pkInfo() { var ids = view.picking.ids.map(Number); $('#mwPkCnt').textContent = ids.length; $('#mwPkMax').textContent = ids.length ? Math.max.apply(null, ids) : 0; $('#mwPkMin').textContent = ids.length ? Math.min.apply(null, ids) : 0; $('#mwPkLast').textContent = ids.length ? ids[ids.length - 1] : ''; }
+  function doPick(x, y) {
+    var pkg = view.picking, list = (view.pk && view.pk[pkg.type]) || [], best = null, bd = 22;
+    list.forEach(function (q) { var d = Math.hypot(q[1] - x, q[2] - y); if (d < bd) { bd = d; best = q[0]; } });
+    if (best === null) { flash('가까운 ' + TYPEN[pkg.type] + ' 없음 — 더 가까이 클릭하세요'); return; }
+    var i = pkg.ids.indexOf(best); if (pkg.unpick) { if (i > -1) pkg.ids.splice(i, 1); } else if (i < 0) pkg.ids.push(best);
+    pkInfo(); draw();
+  }
+  function queryPick(what) {
+    if (!eng.result) { msgbox('Error', 'No results are available. 먼저 /SOLU → SOLVE 하세요.', 'e'); return; }
+    if (eng.proc !== 'O') cmd1('/POST1');
+    startPick('node', what === 'RF' ? 'Query Reaction Solution' : 'Query Nodal Solution (DOF Solution)', function (ids) {
+      if (!ids) return; var rows = [], q = [];
+      ids.forEach(function (n) {
+        var u = eng.nodeU(+n), t;
+        if (what === 'RF') { var r = eng.reactionN(+n); t = r ? 'FX=' + gfmt(r[0]) + '\nFY=' + gfmt(r[1]) + '\nFZ=' + gfmt(r[2]) + (r[3] || r[4] || r[5] ? '\nMX=' + gfmt(r[3]) + '\nMY=' + gfmt(r[4]) + '\nMZ=' + gfmt(r[5]) : '') : '(구속 없음)'; }
+        else t = 'UX=' + gfmt(u[0]) + '\nUY=' + gfmt(u[1]) + '\nUZ=' + gfmt(u[2]) + '\nUSUM=' + gfmt(Math.hypot(u[0], u[1], u[2]));
+        q.push({ id: n, t: 'NODE=' + n + '\n' + t }); rows.push('NODE ' + n + ':  ' + t.replace(/\n/g, '   '));
+      });
+      view.query = q; draw(); eng.p(''); eng.p(' QUERY ' + (what === 'RF' ? 'REACTION' : 'NODAL') + ' SOLUTION'); rows.forEach(function (r) { eng.p('  ' + r); }); flushOut(eng.out.length - rows.length - 2);
+    });
+  }
+
+  // ================= 애니메이션 (ANDSCL) =================
+  var animRAF = null;
+  function startAnim() {
+    stopAnim(); var a = eng.anim; if (!a) return; var per = Math.max(0.2, a.nfram * (a.delay || 0.1)) * 1000, t0 = performance.now(), cyc = a.ncycl || 5;
+    flash('Animation — ' + cyc + '회 반복 (다른 명령을 입력하면 멈춤)');
+    var step = function (now) { var t = (now - t0) / per; if (t >= cyc) { stopAnim(); return; } var fr = Math.floor((t % 1) * a.nfram + 1e-9) / Math.max(1, a.nfram - 1); view.animK = Math.min(1, fr); draw(); animRAF = requestAnimationFrame(step); };
+    animRAF = requestAnimationFrame(step);
+  }
+  function stopAnim() { if (animRAF) cancelAnimationFrame(animRAF); animRAF = null; if (view.animK !== undefined) { delete view.animK; draw(); } }
+
+  // ================= 명령 도우미 (입력 칸 위 문법 표시) =================
+  var SYN = {
+    '/CLEAR': 'Read|데이터베이스 지우기', '/PREP7': '|전처리기', '/SOLU': '|해석 처리기', '/POST1': '|후처리기', 'FINISH': '|처리기 나가기', '/TITLE': 'Title|그림 아래 제목',
+    '/PNUM': 'Label, KEY|번호 표시 (KP LINE AREA NODE ELEM, 1=켜기)', '/ESHAPE': 'SCALE, KEY|보를 단면 모양으로 그리기', '/VIEW': 'WN, XV, YV, ZV|보는 방향', '/AUTO': 'WN|화면 맞춤', '/REPLOT': 'Label|다시 그리기', '/DSCALE': 'WN, DMULT|변형 확대 배율 (1=실제)', '/PSF': 'Item, Comp, KEY, KSHELL, Color|면하중 기호 표시', '/PBC': 'Item, --, KEY, MIN, MAX, ABS|구속 기호 표시',
+    '*SET': 'Par, VALUE, VAL2, VAL3, VAL4, VAL5, VAL6, VAL7, VAL8, VAL9, VAL10|파라미터 정의 (= 와 같음)', '*GET': 'Par, Entity, ENTNUM, Item1, IT1NUM, Item2, IT2NUM|결과·모델 값을 파라미터로', '*DO': 'Par, IVAL, FVAL, INC|반복 시작', '*ENDDO': '|반복 끝',
+    '*IF': 'VAL1, Oper1, VAL2, Base1, VAL3, Oper2, VAL4, Base2|조건문 (Oper: EQ NE LT GT LE GE, Base: THEN)', '*ELSEIF': 'VAL1, Oper1, VAL2, Conj, VAL3, Oper2, VAL4|조건문', '*ELSE': '|조건문', '*ENDIF': '|조건문 끝', '*STATUS': 'Par|파라미터 목록', '*AFUN': 'Lab|각도 단위 (DEG / RAD)',
+    'SAVE': 'Fname, Ext, --, Slab|DB 저장', 'RESUME': 'Fname, Ext, --, NOPAR, KNOPLOT|DB 불러오기',
+    'ET': 'ITYPE, Ename, KOP1, KOP2, KOP3, KOP4, KOP5, KOP6, INOPR|요소 종류 (LINK180 BEAM188 PLANE182 …)', 'KEYOPT': 'ITYPE, KNUM, VALUE|요소 옵션', 'R': 'NSET, R1, R2, R3, R4, R5, R6|실상수 (옛 요소)', 'RMORE': 'R7, R8, R9, R10, R11, R12|실상수 추가',
+    'SECTYPE': 'SECID, Type, Subtype, Name, REFINEKEY|단면 (BEAM: RECT CSOLID CTUBE I CHAN HREC ASEC / LINK)', 'SECDATA': 'VAL1, VAL2, VAL3, VAL4, VAL5, VAL6, VAL7, VAL8, VAL9, VAL10, VAL11, VAL12|단면 치수', 'SECOFFSET': 'Location, OFFSET1, OFFSET2, CG-Y, CG-Z, SH-Y, SH-Z|단면 위치 (CENT SHRC ORIGIN USER)', 'SECNUM': 'SECID|현재 단면 번호',
+    'TYPE': 'ITYPE|현재 요소 종류', 'MAT': 'MAT|현재 재료', 'REAL': 'NSET|현재 실상수', 'MP': 'Lab, MAT, C0, C1, C2, C3, C4|재료 (EX PRXY NUXY GXY DENS)',
+    'CSYS': 'KCN|좌표계 (0 직교, 1 원통)', 'LOCAL': 'KCN, KCS, XC, YC, ZC, THXY, THYZ, THZX, PAR1, PAR2|국부 좌표계', 'WPAVE': 'X1, Y1, Z1, X2, Y2, Z2, X3, Y3, Z3|작업평면 이동', 'WPOFFS': 'XOFF, YOFF, ZOFF|작업평면 평행이동', 'WPROTA': 'THXY, THYZ, THZX|작업평면 회전', 'WPCSYS': 'WN, KCN|작업평면을 좌표계에 맞춤',
+    'K': 'NPT, X, Y, Z|키포인트', 'L': 'P1, P2, NDIV, SPACE, XV1, YV1, ZV1, XV2, YV2, ZV2|선 (원통 CS면 호)', 'LSYMM': 'Ncomp, NL1, NL2, NINC, KINC, NOELEM, IMOVE|선 대칭복사', 'NUMMRG': 'Label, TOLER, GTOLER, Action, Switch|겹친 항목 합치기',
+    'LATT': 'MAT, REAL, TYPE, --, KB, KE, SECNUM|선 속성 (KB = 방향 키포인트)', 'ESIZE': 'SIZE, NDIV|요소 크기', 'LESIZE': 'NL1, SIZE, ANGSIZ, NDIV, SPACE, KFORC, LAYER1, LAYER2, KYNDIV|선별 분할', 'LMESH': 'NL1, NL2, NINC|선 메쉬',
+    'RECTNG': 'X1, X2, Y1, Y2|직사각형 면', 'BLC4': 'XCORNER, YCORNER, WIDTH, HEIGHT, DEPTH|직사각형 (모서리 기준)', 'BLC5': 'XCENTER, YCENTER, WIDTH, HEIGHT, DEPTH|직사각형 (중심 기준)', 'PCIRC': 'RAD1, RAD2, THETA1, THETA2|원 면 (작업평면 원점)', 'CYL4': 'XCENTER, YCENTER, RAD1, THETA1, RAD2, THETA2, DEPTH|원 면',
+    'AADD': 'NA1, NA2, NA3, NA4, NA5, NA6, NA7, NA8, NA9|면 합치기', 'ASBA': 'NA1, NA2, SEPO, KEEP1, KEEP2|면 빼기 (NA1 − NA2)', 'ADELE': 'NA1, NA2, NINC, KSWP|면 지우기', 'A': 'P1, P2, P3, P4, P5, P6, P7, P8, P9|키포인트로 면', 'AL': 'L1, L2, L3, L4, L5, L6, L7, L8, L9, L10|선으로 면', 'AMESH': 'NA1, NA2, NINC|면 메쉬', 'ACLEAR': 'NA1, NA2, NINC|면 메쉬 지우기',
+    'N': 'NODE, X, Y, Z, THXY, THYZ, THZX|노드', 'E': 'I, J, K, L, M, N, O, P|요소 (BEAM188 의 K = 방향 노드)', 'EN': 'IEL, I, J, K, L, M, N, O, P|번호 지정 요소', 'FILL': 'NODE1, NODE2, NFILL, NSTRT, NINC, ITIME, INC, SPACE|사이 노드 채우기',
+    'NGEN': 'ITIME, INC, NODE1, NODE2, NINC, DX, DY, DZ, SPACE|노드 복사', 'EGEN': 'ITIME, NINC, IEL1, IEL2, IEINC, MINC, TINC, RINC, CINC, SINC, DX, DY, DZ|요소 복사', 'NMODIF': 'NODE, X, Y, Z, THXY, THYZ, THZX|노드 수정', 'NROTAT': 'NODE1, NODE2, NINC|노드 좌표계 회전 (현재 CS 로)',
+    'NDELE': 'NODE1, NODE2, NINC|노드 지우기', 'EDELE': 'IEL1, IEL2, INC|요소 지우기', 'EMODIF': 'IEL, STLOC, I1, I2, I3, I4, I5, I6, I7, I8|요소 속성 수정',
+    'NSEL': 'Type, Item, Comp, VMIN, VMAX, VINC, KABS|노드 선택 (S R A U, LOC X …)', 'ESEL': 'Type, Item, Comp, VMIN, VMAX, VINC, KABS|요소 선택', 'ALLSEL': 'LabT, Entity|전부 선택',
+    'D': 'NODE, Lab, VALUE, VALUE2, NEND, NINC, Lab2, Lab3, Lab4, Lab5, Lab6|노드 구속 (UX UY UZ ROTX ROTY ROTZ ALL)', 'DDELE': 'NODE, Lab, NEND, NINC|구속 지우기', 'F': 'NODE, Lab, VALUE, VALUE2, NEND, NINC|노드 하중 (FX FY FZ MX MY MZ)', 'FDELE': 'NODE, Lab, NEND, NINC|하중 지우기',
+    'DK': 'KPOI, Lab, VALUE, VALUE2, KEXPND, Lab2, Lab3, Lab4, Lab5, Lab6|키포인트 구속', 'FK': 'KPOI, Lab, VALUE, VALUE2|키포인트 하중', 'SFBEAM': 'Elem, LKEY, Lab, VALI, VALJ, VAL2I, VAL2J, IOFFST, JOFFST, LENRAT|보 분포하중 (BEAM188: 1=−z, 2=−y)', 'SFEDELE': 'ELEM, LKEY, Lab|면하중 지우기',
+    'ANTYPE': 'Antype, Status, LDSTEP, SUBSTEP, Action|해석 종류 (STATIC)', 'SOLVE': 'Action|풀기', 'SET': 'Lstep, SBSTEP, Fact, KIMG, TIME, ANGLE, NSET, ORDER|결과 읽기', 'RSYS': 'KCN|결과 좌표계',
+    'PRNSOL': 'Item, Comp|노드 결과 출력 (U ROT S)', 'PRRSOL': 'Lab|반력 출력', 'ETABLE': 'Lab, Item, Comp, Option|요소 테이블 (SMISC LS NMISC S)', 'PRETAB': 'Lab1, Lab2, Lab3, Lab4, Lab5, Lab6, Lab7, Lab8, Lab9|요소 테이블 출력',
+    'PLDISP': 'KUND|변형 형상 (1 = 변형 전 같이)', 'PLNSOL': 'Item, Comp, KUND, Fact, FileID|노드 결과 등고선', 'PLESOL': 'Item, Comp, KUND, Fact|요소 결과 등고선', 'PLETAB': 'Itlab, Avglab|요소 테이블 그림', 'PLLS': 'LabI, LabJ, Fact, KUND, ViewUP|선 요소 결과도 (BMD·SFD)', 'ANDSCL': 'NFRAM, DELAY, NCYCL|변형 애니메이션',
+    'NPLOT': 'KNUM|노드 그림', 'EPLOT': '|요소 그림', 'KPLOT': 'NP1, NP2, NINC, Lab|키포인트 그림', 'LPLOT': 'NL1, NL2, NINC|선 그림', 'APLOT': 'NA1, NA2, NINC, Degen, Scale|면 그림', 'GPLOT': '|전체 그림',
+    'NLIST': 'NODE1, NODE2, NINC, Lcoord, SORT1, SORT2, SORT3|노드 목록', 'ELIST': 'IEL1, IEL2, INC, NNKEY, RKEY, PTKEY|요소 목록', 'KLIST': 'NP1, NP2, NINC, Lab|키포인트 목록', 'LLIST': 'NL1, NL2, NINC, Lab|선 목록', 'ALIST': 'NA1, NA2, NINC, Lab|면 목록',
+    'ETLIST': 'ITYP1, ITYP2, INC|요소 종류 목록', 'MPLIST': 'MAT1, MAT2, INC, Lab, TEVL|재료 목록', 'RLIST': 'NSET1, NSET2, NINC|실상수 목록', 'SLIST': 'SFIRST, SLAST, SINC, Details, Type|단면 목록', 'DLIST': 'NODE1, NODE2, NINC|구속 목록', 'FLIST': 'NODE1, NODE2, NINC|하중 목록', 'SFELIST': 'ELEM1, ELEM2, INC, Lab|면하중 목록'
+  };
+  var synEl = $('#mwSyn'), CMDS = Object.keys(SYN);
+  function synUpd() {
+    var v = input.value, i = v.indexOf(','), head = (i < 0 ? v : v.slice(0, i)).trim().toUpperCase();
+    if (!head || head[0] === '!' || /^[A-Z_][A-Z0-9_]*\s*=/.test(v.toUpperCase())) { synEl.hidden = true; return; }
+    var fmt = function (c, argi) { var d = SYN[c].split('|'), args = d[0] ? d[0].split(', ') : []; return '<div class="mw-synl"><b>' + esc(c) + '</b>' + args.map(function (a, k) { return ', <span' + (k === argi ? ' class="on"' : '') + '>' + esc(a) + '</span>'; }).join('') + '<em>' + esc(d[1] || '') + '</em></div>'; };
+    var full = SYN[head] ? head : CMDS.filter(function (c) { return head.length >= 4 && c.indexOf(head) === 0; })[0];
+    if (i > -1) { if (!full) { synEl.hidden = true; return; } synEl.innerHTML = fmt(full, v.split(',').length - 2); synEl.hidden = false; synEl.classList.remove('below'); return; }
+    var m = CMDS.filter(function (c) { return c.indexOf(head) === 0; }).sort(function (a, b) { return (a === head ? -1 : 0) - (b === head ? -1 : 0) || a.length - b.length || (a < b ? -1 : 1); }).slice(0, 7);
+    if (!m.length) { synEl.hidden = true; return; }
+    synEl.innerHTML = m.map(function (c) { return fmt(c, -1); }).join('') + (m.length > 1 ? '<div class="mw-synh">Tab = 첫 명령 채우기</div>' : ''); synEl.hidden = false; synEl._first = m[0]; synEl.classList.toggle('below', m.length > 2);
+  }
+  input.addEventListener('input', synUpd); input.addEventListener('focus', synUpd); input.addEventListener('blur', function () { setTimeout(function () { synEl.hidden = true; }, 150); });
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Tab' && !synEl.hidden && input.value.indexOf(',') < 0 && synEl._first) { e.preventDefault(); input.value = synEl._first.toLowerCase() + ','; synUpd(); }
+    else if (e.key === 'Enter' || e.key === 'Escape') synEl.hidden = true;
+  });
+  input.addEventListener('keyup', function (e) { if (e.key === 'ArrowUp' || e.key === 'ArrowDown') synUpd(); });
 
   // ================= 메모 (오른쪽) =================
   var MKEY = 'mapdl-trainer-memo', memo = { cur: 0, pages: [{ name: '메모 1', text: '' }] }, mmT = $('#mmText'), mmP = $('#mmPage'), mmTimer;
