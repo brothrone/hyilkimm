@@ -148,3 +148,38 @@ mark.now{outline:2px solid var(--accent-2)}
   body{font-size:11pt}
 }
 dl.pages dt{font-family:var(--sans);font-style:normal;font-size:15px}
+
+/* ---------- APDL 연습기 ---------- */
+.content.wide{max-width:none}
+.apdl{border:1px solid #9a9a9a;background:#d4d0c8;margin:12px 0 20px;font-size:13px}
+.ap-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:6px 8px;background:#ece9d8;border-bottom:1px solid #9a9a9a}
+.ap-btn,.ap-bar select{font:13px var(--sans);height:28px;padding:0 12px;border:1px solid #7a7a7a;border-radius:2px;background:linear-gradient(#fff,#e3e3e3);color:#111;cursor:pointer}
+.ap-btn.run{background:linear-gradient(#ffd56a,#ffb71b);border-color:#b07a00;font-weight:700}
+.ap-btn:hover{filter:brightness(.97)}
+.ap-info{color:#1a5fb4;font-size:12px}
+.ap-main{display:grid;grid-template-columns:minmax(300px,38%) 1fr;gap:6px;padding:6px}
+.ap-title{background:linear-gradient(#0a246a,#3a6ea5);color:#fff;font-weight:700;font-size:12px;padding:3px 8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ap-opts{display:flex;flex-wrap:wrap;gap:10px;margin-left:auto;font-weight:400}
+.ap-opts label{display:flex;align-items:center;gap:3px;cursor:pointer}
+.ap-opts select{height:20px;font-size:12px}
+.ap-edwrap,.ap-right{display:flex;flex-direction:column;min-width:0}
+.ap-ed{position:relative;display:flex;background:#fff;border:1px solid #7a7a7a;height:640px}
+.ap-gut{margin:0;padding:8px 6px 8px 4px;width:38px;flex:none;overflow:hidden;text-align:right;color:#999;background:#f3f3f3;border-right:1px solid #ddd;font:13px/1.5 var(--mono);user-select:none}
+.ap-gut span{display:block}
+.ap-gut .err{background:#ff5b5b;color:#fff}
+.ap-ed textarea{flex:1;border:0;outline:0;resize:none;padding:8px 10px;font:13px/1.5 var(--mono);color:#000;background:#fff;white-space:pre;overflow:auto;tab-size:2}
+.ap-svg{display:block;width:100%;height:400px;background:#000;border:1px solid #7a7a7a;touch-action:none;cursor:grab}
+.ap-out{margin:0;height:214px;overflow:auto;background:#fff;border:1px solid #7a7a7a;padding:8px 10px;font:12.5px/1.45 var(--mono);color:#000;white-space:pre}
+.ap-out .e{color:#c00;font-weight:700}
+.ap-out .w{color:#a15c00}
+.ap-out .ok{color:#16794a;font-weight:700}
+.ap-out .dim{color:#888}
+@media (max-width:860px){
+  .ap-main{grid-template-columns:1fr}
+  .ap-ed{height:340px}
+  .ap-svg{height:320px}
+}
+.runlink{margin:-10px 0 16px;font-size:13px}
+.runlink a{font-weight:700;text-decoration:none}
+.ap-bar select{max-width:100%;min-width:0;flex:1 1 220px}
+.apdl{max-width:100%;overflow:hidden}

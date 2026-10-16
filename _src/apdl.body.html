@@ -1,0 +1,62 @@
+<h1 id="top">APDL 연습기</h1>
+<p class="cmd-desc">브라우저에서 APDL 명령을 직접 실행해 보는 <b>중간고사 범위 전용 미니 해석기</b>입니다. 스크립트를 쓰고 <b>실행</b>(Ctrl+Enter)을 누르면 아래 그래픽 창과 출력 창에 결과가 나옵니다. 기출 풀이 스크립트는 <b>예제</b> 목록에서 바로 불러올 수 있습니다.</p>
+
+<div class="apdl">
+  <div class="ap-bar">
+    <button type="button" id="apRun" class="ap-btn run" title="Ctrl+Enter">▶ 실행</button>
+    <select id="apEx" aria-label="예제 불러오기"><option value="">예제 불러오기…</option></select>
+    <button type="button" id="apShare" class="ap-btn">링크 복사</button>
+    <button type="button" id="apClear" class="ap-btn">지우기</button>
+    <span id="apInfo" class="ap-info"></span>
+  </div>
+  <div class="ap-main">
+    <div class="ap-edwrap">
+      <div class="ap-title">Command Input</div>
+      <div class="ap-ed"><pre id="apGut" class="ap-gut" aria-hidden="true"></pre><textarea id="apEd" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="APDL 스크립트 편집기"></textarea></div>
+    </div>
+    <div class="ap-right">
+      <div class="ap-title">Graphics
+        <span class="ap-opts">
+          <label><select id="apView" aria-label="보기 방향"><option value="auto">자동</option><option value="xy">XY (정면)</option><option value="xz">XZ (위)</option><option value="yz">YZ (옆)</option><option value="iso">ISO</option><option value="free">드래그 회전</option></select></label>
+          <label><input type="checkbox" id="apNum">노드 번호</label>
+          <label><input type="checkbox" id="apEnum">요소 번호</label>
+          <label><input type="checkbox" id="apKnum">KP·선·면 번호</label>
+          <label><input type="checkbox" id="apBC" checked>구속·하중</label>
+          <label><input type="checkbox" id="apShowDef" disabled>결과(변형·색)</label>
+        </span>
+      </div>
+      <svg id="apSvg" class="ap-svg" role="img" aria-label="모델과 결과 그래픽"></svg>
+      <div class="ap-title">Output</div>
+      <pre id="apOut" class="ap-out" aria-live="polite"></pre>
+    </div>
+  </div>
+</div>
+
+<h2 id="support">지원하는 명령</h2>
+<table>
+<tr><th>분류</th><th>명령</th></tr>
+<tr><td>처리기</td><td><code>/prep7</code> <code>/solu</code> <code>solve</code> <code>/post1</code> <code>finish</code> <code>/title</code> <code>set</code></td></tr>
+<tr><td>요소·단면·재료</td><td><code>et</code>(LINK180, BEAM188, PLANE182) <code>keyopt</code> <code>sectype</code>(link · beam: rect, csolid, ctube, i, chan, hrec, asec) <code>secdata</code> <code>secoffset</code> <code>secnum</code> <code>mp</code>(ex, prxy/nuxy, gxy) <code>type</code> <code>mat</code></td></tr>
+<tr><td>좌표계·작업평면</td><td><code>csys</code> <code>local</code> <code>wpave</code> <code>wpoffs</code> <code>wprota</code> <code>wpcsys</code></td></tr>
+<tr><td>형상</td><td><code>k</code> <code>l</code>(원통좌표계면 원호) <code>lsymm</code> <code>nummrg</code> <code>latt</code> <code>esize</code> <code>lesize</code> <code>lmesh</code> · 면: <code>rectng</code> <code>blc4</code> <code>blc5</code> <code>pcirc</code> <code>cyl4</code> <code>aadd</code> <code>asba</code></td></tr>
+<tr><td>노드·요소</td><td><code>n</code> <code>e</code> <code>en</code> <code>fill</code> <code>ngen</code> <code>egen</code> <code>nmodif</code> <code>nrotat</code> <code>emodif</code> <code>nsel</code> <code>esel</code> <code>allsel</code></td></tr>
+<tr><td>하중·구속</td><td><code>d</code> <code>dk</code> <code>f</code> <code>fk</code> <code>sfbeam</code>(face 1·2·3, VALI→VALJ, 오프셋) <code>sfedele</code> <code>ddele</code> <code>fdele</code></td></tr>
+<tr><td>결과</td><td><code>prnsol</code>(u, rot) <code>prrsol</code> <code>etable</code>(LINK180: smisc 1, ls 1 · BEAM188: smisc 1~6, 14~19, 31~40) <code>pretab</code> <code>pletab</code> <code>pldisp</code> <code>plnsol</code> <code>eplot</code> <code>nplot</code> <code>kplot</code> <code>lplot</code> <code>aplot</code></td></tr>
+<tr><td>APDL</td><td><code>이름=식</code> <code>*set</code> <code>*do</code>/<code>*enddo</code> <code>*if,…,then</code>/<code>*elseif</code>/<code>*else</code>/<code>*endif</code> <code>*get</code> <code>*stat</code> <code>*afun</code> · 함수: sqrt abs sin cos tan atan exp log nx ny nz kx ky nelem ux uy uz rotx roty rotz node kp distnd</td></tr>
+</table>
+
+<div class="note">
+<p><b>실제 ANSYS와 다른 점</b> — 연습용이라 다음은 단순화했습니다. 시험 전에는 꼭 학교 ANSYS로 확인하세요.</p>
+<ul>
+<li>BEAM188은 단면 도심을 지나는 <b>Timoshenko 보</b>로 계산합니다. 전단중심 효과(C형강 비틀림 연성), 뒴(warping), SECOFFSET의 오프셋은 계산에 반영하지 않습니다. 그래서 C형강 문제는 비틀림 결과가 ANSYS와 다를 수 있습니다.</li>
+<li>단면 성질은 직사각형 조각으로 계산합니다(필렛 없음). 비틀림 상수 J는 얇은 벽 근사입니다. etable 단면력의 부호는 ANSYS와 다를 수 있습니다.</li>
+<li>PLANE182는 평면응력(KEYOPT(3)=2면 평면변형), 단위 두께입니다. 면 메쉬(<code>amesh</code>)는 지원하지 않으므로, Boolean으로 만든 면은 <code>aplot</code>으로 모양만 확인할 수 있습니다.</li>
+<li>옛 요소(LINK1, LINK8, BEAM3)와 실상수 <code>r</code>, COMBIN14는 수업 방식에 맞춰 지원하지 않습니다.</li>
+<li>2016~2025 기출 풀이 16개를 모두 이 연습기로 돌려 직접 계산한 검증값과 맞춰 보았습니다. 트러스와 봉은 일치하고, 보는 전단변형 차이로 몇 % 다릅니다.</li>
+</ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/polybooljs@1.2.0/dist/polybool.min.js"></script>
+<script src="apdl-engine.js"></script>
+<script src="apdl-examples.js"></script>
+<script src="apdl-ui.js"></script>

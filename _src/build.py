@@ -10,9 +10,10 @@ PAGES = [  # file, nav label, crumb, desc, deep (h3 in sidebar)
     ('trend.html', '족보 분석', 'Midterm Analysis', '기출 2016~2025 경향 분석, 올해 예상 문제, 공부 계획', False),
     ('exams.html', '기출 풀이', 'Past Exams', '2016~2025 (6개년) 중간고사 APDL 풀이 스크립트와 검증값', True),
     ('ref.html', '참고자료', 'Command Reference', 'ANSYS APDL 명령어 정리와 기출 유형별 스크립트', False),
+    ('apdl.html', '연습기', 'APDL Practice', '브라우저에서 APDL 스크립트를 실행해 보는 중간고사 범위 연습기', False),
 ]
 TITLES = {'index.html': '전산구조해석 중간고사', 'trend.html': '족보 분석 · 공부법',
-          'exams.html': '기출 풀이 2016~2025', 'ref.html': 'APDL 시험 참고자료'}
+          'exams.html': '기출 풀이 2016~2025', 'ref.html': 'APDL 시험 참고자료', 'apdl.html': 'APDL 연습기'}
 
 def strip(s): return re.sub(r'<[^>]+>', '', s).strip()
 
@@ -40,6 +41,14 @@ for f, *_ in PAGES:
         b = b[:j] + svgs.PCIRC + b[j:]
         b = b.replace('<div class="tbl">', '').replace('</table></div>', '</table>')
         b = b.replace('<code>sectype</code>의 단면에 적용', '<code>sectype</code>의 단면에 적용')
+    if f == 'exams.html':
+        import base64
+        def runlink(m):
+            txt = html.unescape(re.sub(r'<[^>]+>', '', m.group(1)))
+            if '/title' not in txt: return m.group(0)
+            code = base64.b64encode(txt.rstrip().encode('utf-8') + b'\n').decode()
+            return m.group(0) + '\n<p class="runlink"><a href="apdl.html#code=' + code + '">▶ 연습기에서 실행해 보기</a></p>'
+        b = re.sub(r'<pre><code>(.*?)</code></pre>', runlink, b, flags=re.S)
     if f == 'trend.html':
         b = b.replace('<div class="tbl">', '').replace('</table></div>', '</table>')
     bodies[f] = b
@@ -101,7 +110,7 @@ for k, (f, label, crumb, desc, deep) in enumerate(PAGES):
   <button class="ec" type="button" id="ecall">expand/collapse all</button>
   {sidebar(f)}
 </aside>
-<main class="content">
+<main class="content{' wide' if f == 'apdl.html' else ''}">
   <div class="ctop"><a href="{f}">{crumb} |</a><button class="pr" type="button" id="printbtn">Print page</button></div>
 {bodies[f]}
 </main>
@@ -113,3 +122,17 @@ for k, (f, label, crumb, desc, deep) in enumerate(PAGES):
 '''
     open(os.path.join(OUT, f), 'w').write(page)
     print(f, len(page))
+
+
+# 연습기 예제: 기출 풀이 페이지의 /title 이 있는 스크립트
+import json
+ex = [{'name': '빈 틀 (기본 순서)', 'code': '/prep7\n/title,my model\n! 요소·단면·재료\net,1,link180\nsectype,1,link\nsecdata,1\nmp,ex,1,30e6\n! 형상\nn,1,0,0\nn,2,10,0\ne,1,2\n! 구속·하중\nd,1,all\nd,2,uy,0\nd,2,uz,0\nf,2,fx,1000\nfinish\n/solu\nsolve\nfinish\n/post1\nprnsol,u,comp\nprrsol\n'}]
+body = bodies['exams.html']
+for m in re.finditer(r'<h3 id="p(\d{4}-\d)">(.*?)</h3>(.*?)(?=<h3 id=|<h2 id=|$)', body, re.S):
+    code = re.search(r'<pre><code>(.*?)</code></pre>', m.group(3), re.S)
+    if not code: continue
+    txt = html.unescape(re.sub(r'<[^>]+>', '', code.group(1)))
+    if '/title' not in txt: continue
+    ex.append({'name': m.group(1) + ' ' + html.unescape(strip(m.group(2))).split(' — ')[-1][:40], 'code': txt.rstrip() + '\n'})
+open(os.path.join(OUT, 'apdl-examples.js'), 'w').write('window.APDL_EXAMPLES = ' + json.dumps(ex, ensure_ascii=False, indent=0) + ';\n')
+print('apdl-examples.js', len(ex))
