@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>기출 풀이 2016~2025</title>
-<meta name="description" content="2016·2018·2021·2023·2025 중간고사 APDL 풀이 스크립트와 검증값">
+<meta name="description" content="2016~2025 (6개년) 중간고사 APDL 풀이 스크립트와 검증값">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,12 +27,12 @@
 <aside class="side" id="side" aria-label="목차">
   <div class="shd">Contents <span><button class="x" type="button" id="sbclose" aria-label="목차 닫기">✕</button></span></div>
   <button class="ec" type="button" id="ecall">expand/collapse all</button>
-  <ul class="tree"><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="index.html">홈 — Home</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#contents">Contents</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#matrix">연도별 출제 주제</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#files">원본 자료</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="trend.html">족보 분석 — Midterm Analysis</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#1-시험-형식">1. 시험 형식</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#2-연도별-출제-내용">2. 연도별 출제 내용</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#3-경향-분석">3. 경향 분석</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#4-공부법">4. 공부법</a></div></li></ul></li><li class="cur"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html">기출 풀이 — Past Exams</a></div><ul><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2016">2016년 중간고사 (Oct. 27, 2016)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2016-1">Problem 1 — 2단 원형 축의 비틀림 (BEAM188, CSOLID)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2016-2">Problem 2 — 양단 고정보 + 가운데 스프링, 최소 k (BEAM188 + LINK180)</a></div></li></ul></li><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2018">2018년 중간고사 (Oct. 23, 2018)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2018-1">Problem 1 — W310×52 보, 롤러 → 스프링 (BEAM188 + LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2018-2">Problem 2 — 2D 면 만들기 (Boolean)</a></div></li></ul></li><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2021">2021년 중간고사 (Oct. 27, 2021)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2021-1">Problem 1 — 테이퍼 판, 변위 δ 부여 (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2021-2">Problem 2 — 두 재료 오버행 프레임, C형강, 삼각 분포하중 (BEAM188)</a></div></li></ul></li><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2023">2023년 중간고사 (Oct. 24, 2023)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2023-1">Problem 1 — 양단 고정 복합 축봉 (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2023-2">Problem 2 — C310×45 보, 삼각 분포하중, 롤러 → 스프링 (BEAM188 + LINK180)</a></div></li></ul></li><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2025">2025년 중간고사 (Oct. 21, 2025)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-1">Problem 1 — local 원통좌표계 + NGEN + EGEN (PLANE182)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-2">Problem 2 — 발코니 트러스, 삼각함수 없이 경사 하중 (NROTAT / NMODIF)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-3">Problem 3 — W8×67 + C9×20 L자 보, SECOFFSET, 비틀림 (BEAM188)</a></div></li></ul></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="ref.html">참고자료 — Command Reference</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#0-기본-틀-모든-문제-공통">0. 기본 틀 (모든 문제 공통)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#1-요소-요약">1. 요소 요약</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#2-단면-sectype-secdata">2. 단면 (SECTYPE / SECDATA)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#3-beam188-방향-가장-많이-헷갈림">3. BEAM188 방향 (가장 많이 헷갈림)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#4-sfbeam-보-분포하중">4. SFBEAM (보 분포하중)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#5-형상-만들기-solid-modeling">5. 형상 만들기 (Solid modeling)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#6-메쉬">6. 메쉬</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#7-노드-요소-직접-생성-direct-generation">7. 노드 / 요소 직접 생성 (Direct generation)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#8-경계조건-하중">8. 경계조건 · 하중</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#9-후처리">9. 후처리</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#10-apdl-파라미터-함수">10. APDL 파라미터 / 함수</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#11-기출-유형별-스크립트">11. 기출 유형별 스크립트</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#12-에러경고-대처">12. 에러·경고 대처</a></div></li></ul></li></ul>
+  <ul class="tree"><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="index.html">홈 — Home</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#contents">Contents</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#matrix">연도별 출제 주제</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#files">원본 자료</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="trend.html">족보 분석 — Midterm Analysis</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#1-시험-형식">1. 시험 형식</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#2-연도별-출제-내용">2. 연도별 출제 내용</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#3-경향-분석">3. 경향 분석</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#4-공부법">4. 공부법</a></div></li></ul></li><li class="cur"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html">기출 풀이 — Past Exams</a></div><ul><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2016">2016년 중간고사 (Oct. 27, 2016)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2016-1">Problem 1 — 2단 원형 축의 비틀림 (BEAM188, CSOLID)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2016-2">Problem 2 — 양단 고정보 + 가운데 스프링, 최소 k (BEAM188 + LINK180)</a></div></li></ul></li><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2018">2018년 중간고사 (Oct. 23, 2018)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2018-1">Problem 1 — W310×52 보, 롤러 → 스프링 (BEAM188 + LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2018-2">Problem 2 — 2D 면 만들기 (Boolean)</a></div></li></ul></li><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2019">2019년 중간고사 (풀이 스크립트로 복원)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2019-1">Problem 1 — Example 4.5 오버행 프레임, I형 단면 (BEAM188)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2019-2">Problem 2 — 계단식 봉 (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2019-3">Problem 3 — local 좌표계와 LSYMM으로 대칭 선 만들기</a></div></li></ul></li><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2021">2021년 중간고사 (Oct. 27, 2021)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2021-1">Problem 1 — 테이퍼 판, 변위 δ 부여 (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2021-2">Problem 2 — 두 재료 오버행 프레임, C형강, 삼각 분포하중 (BEAM188)</a></div></li></ul></li><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2023">2023년 중간고사 (Oct. 24, 2023)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2023-1">Problem 1 — 양단 고정 복합 축봉 (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2023-2">Problem 2 — C310×45 보, 삼각 분포하중, 롤러 → 스프링 (BEAM188 + LINK180)</a></div></li></ul></li><li class=""><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2025">2025년 중간고사 (Oct. 21, 2025)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-1">Problem 1 — local 원통좌표계 + NGEN + EGEN (PLANE182)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-2">Problem 2 — 발코니 트러스, 삼각함수 없이 경사 하중 (NROTAT / NMODIF)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-3">Problem 3 — W8×67 + C9×20 L자 보, SECOFFSET, 비틀림 (BEAM188)</a></div></li></ul></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="ref.html">참고자료 — Command Reference</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#0-기본-틀-모든-문제-공통">0. 기본 틀 (모든 문제 공통)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#1-요소-요약">1. 요소 요약</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#2-단면-sectype-secdata">2. 단면 (SECTYPE / SECDATA)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#3-beam188-방향-가장-많이-헷갈림">3. BEAM188 방향 (가장 많이 헷갈림)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#4-sfbeam-보-분포하중">4. SFBEAM (보 분포하중)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#5-형상-만들기-solid-modeling">5. 형상 만들기 (Solid modeling)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#6-메쉬">6. 메쉬</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#7-노드-요소-직접-생성-direct-generation">7. 노드 / 요소 직접 생성 (Direct generation)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#8-경계조건-하중">8. 경계조건 · 하중</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#9-후처리">9. 후처리</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#10-apdl-파라미터-함수">10. APDL 파라미터 / 함수</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#11-기출-유형별-스크립트">11. 기출 유형별 스크립트</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#12-에러경고-대처">12. 에러·경고 대처</a></div></li></ul></li></ul>
 </aside>
 <main class="content">
   <div class="ctop"><a href="exams.html">Past Exams |</a><button class="pr" type="button" id="printbtn">Print page</button></div>
-<h1 id="top">기출 풀이 (2016 · 2018 · 2021 · 2023 · 2025)</h1>
-<p class="cmd-desc">시험지가 있는 5개년 중간고사 전 문제를 최신 요소(LINK180 / BEAM188 / PLANE182)로 푼 APDL 스크립트입니다. 수업 방식대로 <b>실상수(<code>r</code>)는 쓰지 않고 <code>sectype</code> / <code>secdata</code>로만</b> 단면을 넣었습니다.
+<h1 id="top">기출 풀이 (2016 · 2018 · 2019 · 2021 · 2023 · 2025)</h1>
+<p class="cmd-desc">6개년 중간고사 전 문제를(2019년은 풀이 스크립트로 복원) 최신 요소(LINK180 / BEAM188 / PLANE182)로 푼 APDL 스크립트입니다. 수업 방식대로 <b>실상수(<code>r</code>)는 쓰지 않고 <code>sectype</code> / <code>secdata</code>로만</b> 단면을 넣었습니다.
 문제마다 <b>모델링 방법 → 스크립트 → 검증값 → 주의할 점</b> 순서로 정리했습니다.</p>
 
 <div class="note">
@@ -245,6 +245,160 @@ asba,ab,all
 aplot
 <span class="c">! (메쉬까지 하려면) et,1,plane182 → esize,0.3 → amesh,all</span></code></pre>
 <p class="tip">필렛: 필렛 중심에서 모서리까지 거리는 2.6√2 = 3.68이다. 그래서 반지름 2.6 ~ 3.68의 1/4 링을 빼면 모서리가 R2.6으로 둥글게 된다. <code>pcirc</code>는 항상 WP 원점이 중심이므로 매번 <code>wpave</code>로 WP를 먼저 옮긴다. <code>csys,1</code> 상태에서 <code>wpave</code>의 좌표는 (R, θ)로 해석된다.</p>
+
+<!-- ======================= 2019 ======================= -->
+<h2 id="y2019">2019년 중간고사 (풀이 스크립트로 복원)</h2>
+<div class="note"><p>2019년은 시험지 PDF가 없습니다. <code>중간고사 19년.TXT</code>와 <code>중간고사 풀이.TXT</code>(“정석” 표시가 있는 수업 풀이)로 문제를 거꾸로 복원했습니다. 그래서 그림은 시험지가 아니라 스크립트 값으로 직접 그린 개략도입니다.</p></div>
+
+<h3 id="p2019-1">Problem 1 — Example 4.5 오버행 프레임, I형 단면 (BEAM188)</h3>
+<figure class="fig svgfig"><svg viewBox="0 0 520 300" role="img" aria-label="2019년 1번: 왼쪽 벽에 고정된 10 ft 보와 바닥에 고정된 9 ft 기둥, 보에 800 lb/ft 등분포하중">
+<defs><marker id="a19" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c4161c"/></marker></defs>
+<g font-family="Arial, sans-serif" font-size="12" fill="#222">
+<rect x="52" y="60" width="12" height="44" fill="#bbb"/><rect x="380" y="262" width="44" height="10" fill="#bbb"/>
+<line x1="64" y1="82" x2="402" y2="82" stroke="#245" stroke-width="8" opacity=".45"/><line x1="402" y1="82" x2="402" y2="262" stroke="#245" stroke-width="8" opacity=".45"/>
+<line x1="64" y1="40" x2="402" y2="40" stroke="#c4161c"/>
+<g stroke="#c4161c" marker-end="url(#a19)"><line x1="90" y1="40" x2="90" y2="74"/><line x1="146" y1="40" x2="146" y2="74"/><line x1="202" y1="40" x2="202" y2="74"/><line x1="258" y1="40" x2="258" y2="74"/><line x1="314" y1="40" x2="314" y2="74"/><line x1="370" y1="40" x2="370" y2="74"/></g>
+<text x="200" y="30" fill="#c4161c">800 lb/ft</text>
+<circle cx="64" cy="82" r="4" fill="#111"/><text x="44" y="122">1 (0,108)</text>
+<circle cx="402" cy="82" r="4" fill="#111"/><text x="410" y="78">2 (120,108)</text>
+<circle cx="402" cy="262" r="4" fill="#111"/><text x="430" y="266">3 (120,0)</text>
+<circle cx="64" cy="58" r="4" fill="#fff" stroke="#111"/><text x="72" y="62" font-size="11">K (위)</text>
+<circle cx="420" cy="262" r="0" /><circle cx="442" cy="172" r="4" fill="#fff" stroke="#111"/><text x="450" y="176" font-size="11">K (+X)</text>
+<text x="210" y="104">10 ft</text><text x="356" y="176">9 ft</text>
+</g></svg>
+<figcaption>Example 4.5 형상을 W12×45(d = 12.06, b<sub>f</sub> = 8.045, t<sub>f</sub> = 0.575, t<sub>w</sub> = 0.335 in)로 푼 문제. E = 30×10⁶ psi, 양 끝 고정, 보에 800 lb/ft. 개략도</figcaption></figure>
+<p class="sub">모델링</p>
+<ul>
+<li>I 단면의 높이(W3)는 <b>단면 z방향</b>이다. 그래서 보는 K 노드를 위(+Y), 기둥은 K 노드를 +X 쪽에 둬서 웨브를 프레임 평면 안에 세운다. 하중은 <b>face 1</b>(element −z = 아래)로 준다.</li>
+<li>옛 풀이의 “정석”은 K 노드를 단면 높이만큼 떨어진 곳(<code>n,4,0,108+12.06</code>)에 두었다. K는 방향만 정하므로 거리는 아무 값이어도 된다.</li>
+<li>“교수님이 인정해 준” 다른 풀이도 있다. 프레임을 global X–Z 평면에 그리면 K 노드 없이도 element z = global Z가 되어 강축으로 하중을 받는다. 다만 결과를 읽을 때 축이 바뀌므로 헷갈리기 쉽다.</li>
+</ul>
+<pre><code>/prep7
+/title,2019-1 frame W12x45
+et,1,beam188,,,3
+sectype,1,beam,i
+secdata,8.045,8.045,12.06,0.575,0.575,0.335   <span class="c">! W1,W2,W3,t1,t2,t3</span>
+mp,ex,1,30e6
+mp,prxy,1,0.3
+*do,i,1,21                         <span class="c">! 보 노드 1~21 : (0,108) ~ (120,108)</span>
+  n,i,(i-1)*6,108
+*enddo
+*do,i,1,18                         <span class="c">! 기둥 노드 22~39 : (120,102) ~ (120,0)</span>
+  n,21+i,120,108-i*6
+*enddo
+n,100,0,200                        <span class="c">! K (보 위쪽)</span>
+n,101,300,108                      <span class="c">! K (기둥 +X쪽)</span>
+*do,i,1,20
+  e,i,i+1,100
+*enddo
+*do,i,21,38
+  e,i,i+1,101
+*enddo
+d,1,all
+d,39,all
+esel,s,elem,,1,20                  <span class="c">! 보 요소만</span>
+sfbeam,all,1,pres,800/12           <span class="c">! lb/ft → lb/in, face 1 = 아래</span>
+allsel
+finish
+/solu
+solve
+finish
+/post1
+prnsol,u,comp                      <span class="c">! 노드 21 = 모서리, 노드 11 = 보 가운데</span>
+prnsol,rot,comp
+prrsol                             <span class="c">! ΣFY = 800 × 10 = 8000 lb</span></code></pre>
+<table class="res"><tr><th>결과</th><th>검증값 (오일러 평면 프레임, 필렛 제외 I = 341.6 in⁴)</th></tr>
+<tr><td>모서리 (노드 21)</td><td>UX = −1.69×10⁻⁴ in, UY = −9.70×10⁻⁴ in, ROTZ = +1.06×10⁻⁴ rad</td></tr>
+<tr><td>보 가운데 (노드 11)</td><td>UY = −5.59×10⁻³ in</td></tr>
+<tr><td>반력 노드 1</td><td>F<sub>X</sub> = 545 lb, F<sub>Y</sub> = 4,523 lb, M<sub>Z</sub> = 102,318 lb·in</td></tr>
+<tr><td>반력 노드 39</td><td>F<sub>X</sub> = −545 lb, F<sub>Y</sub> = 3,477 lb, M<sub>Z</sub> = 19,307 lb·in</td></tr>
+<tr><td>평형</td><td>4,523 + 3,477 = 8,000 lb ✔, ΣF<sub>X</sub> = 0 ✔</td></tr></table>
+<p class="tip">교재 Example 4.5(W12×26, A = 7.65, I = 204)라면 모서리 UY는 −1.64×10⁻³ in이다. 단면이 바뀌면 결과도 바뀌므로 문제에 나온 단면을 꼭 확인할 것.</p>
+
+<h3 id="p2019-2">Problem 2 — 계단식 봉 (LINK180)</h3>
+<figure class="fig svgfig"><svg viewBox="0 0 520 250" role="img" aria-label="2019년 2번: 위쪽이 고정되고 아래로 갈수록 폭이 줄어드는 5단 봉, 끝에 1000 lb">
+<defs><marker id="b19" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c4161c"/></marker></defs>
+<g font-family="Arial, sans-serif" font-size="12" fill="#222">
+<rect x="150" y="14" width="140" height="8" fill="#bbb"/>
+<rect x="163" y="22" width="114" height="38" fill="#9fc3e6" stroke="#245"/>
+<rect x="169" y="60" width="102" height="38" fill="#9fc3e6" stroke="#245"/>
+<rect x="175" y="98" width="90" height="38" fill="#9fc3e6" stroke="#245"/>
+<rect x="181" y="136" width="78" height="38" fill="#9fc3e6" stroke="#245"/>
+<rect x="187" y="174" width="66" height="38" fill="#9fc3e6" stroke="#245"/>
+<line x1="220" y1="212" x2="220" y2="244" stroke="#c4161c" stroke-width="2" marker-end="url(#b19)"/><text x="228" y="238" fill="#c4161c">1000 lb</text>
+<g font-size="11"><text x="300" y="45">① w = 1.9 in</text><text x="300" y="83">② 1.7</text><text x="300" y="121">③ 1.5</text><text x="300" y="159">④ 1.3</text><text x="300" y="197">⑤ 1.1</text></g>
+<text x="40" y="120">L = 10 in</text><text x="40" y="136">(구간당 2 in)</text><text x="40" y="160">t = 0.125 in</text>
+</g></svg>
+<figcaption>Moaveni Example 1.1(폭 2 → 1 in 테이퍼 판)을 5구간 계단 봉으로 근사. E = 10.4×10⁶ psi, 끝에 1000 lb. 개략도</figcaption></figure>
+<pre><code>/prep7
+/title,2019-2 stepped bar
+et,1,link180
+mp,ex,1,10.4e6
+mp,prxy,1,0.3
+*do,i,1,5
+  sectype,i,link
+  secdata,(2.1-0.2*i)*0.125        <span class="c">! 폭 1.9, 1.7, 1.5, 1.3, 1.1 × 두께 0.125</span>
+*enddo
+*do,i,1,6
+  n,i,0,-(i-1)*2
+*enddo
+*do,i,1,5
+  secnum,i
+  e,i,i+1
+*enddo
+d,1,all
+d,all,ux,0
+d,all,uz,0
+f,6,fy,-1000
+finish
+/solu
+solve
+finish
+/post1
+prnsol,u,y
+etable,axs,ls,1
+pretab,axs</code></pre>
+<table class="res"><tr><th>노드 / 요소</th><th>변위 [in]</th><th>축응력 [psi]</th></tr>
+<tr><td>노드 2 / 요소 ①</td><td>−0.000810</td><td>4,210.5</td></tr>
+<tr><td>노드 3 / 요소 ②</td><td>−0.001715</td><td>4,705.9</td></tr>
+<tr><td>노드 4 / 요소 ③</td><td>−0.002740</td><td>5,333.3</td></tr>
+<tr><td>노드 5 / 요소 ④</td><td>−0.003924</td><td>6,153.8</td></tr>
+<tr><td>노드 6 / 요소 ⑤</td><td>−0.005322</td><td>7,272.7</td></tr></table>
+<p class="tip">축응력은 σ = P/A로 손으로 바로 확인된다. 옛 풀이의 메모처럼 <code>plnsol</code> 같은 <b>절점 값 출력</b>은 노드 5에서 요소 ④, ⑤의 응력을 평균해서 보여 준다. 그래서 요소별 값은 <code>etable</code>로 읽어야 한다. 2021년 1번이 이 문제를 변위 부여 문제로 바꾼 것이다.</p>
+
+<h3 id="p2019-3">Problem 3 — local 좌표계와 LSYMM으로 대칭 선 만들기</h3>
+<figure class="fig svgfig"><svg viewBox="0 0 470 390" role="img" aria-label="2019년 3번 풀이로 만들어지는 선 16개: 바깥 네 모서리에서 가운데로 향하는 대칭 형상">
+<g font-family="Arial, sans-serif" font-size="12" fill="#222"><text x="30" y="362">K1 (0,0)</text><text x="122" y="362">K2 (15,0)</text><text x="208" y="223">K3 (27, 20.78)</text>
+<line x1="202.0" y1="348.0" x2="202.0" y2="16.0" stroke="#999" stroke-dasharray="4 4"/><line x1="36.0" y1="182.0" x2="368.0" y2="182.0" stroke="#999" stroke-dasharray="4 4"/>
+<line x1="40.0" y1="344.0" x2="202.0" y2="182.0" stroke="#bbb" stroke-dasharray="2 4"/>
+<text x="372" y="186" fill="#666">y = 27</text><text x="188" y="12" fill="#666">x = 27</text><text x="100" y="278" fill="#666">45°</text><line x1="40.0" y1="344.0" x2="130.0" y2="344.0" stroke="#c4161c" stroke-width="3"/><line x1="130.0" y1="344.0" x2="202.0" y2="219.3" stroke="#c4161c" stroke-width="3"/><line x1="40.0" y1="344.0" x2="40.0" y2="254.0" stroke="#0b59a8" stroke-width="3"/><line x1="40.0" y1="254.0" x2="164.7" y2="182.0" stroke="#0b59a8" stroke-width="3"/><line x1="364.0" y1="344.0" x2="274.0" y2="344.0" stroke="#777" stroke-width="1.6"/><line x1="274.0" y1="344.0" x2="202.0" y2="219.3" stroke="#777" stroke-width="1.6"/><line x1="364.0" y1="344.0" x2="364.0" y2="254.0" stroke="#777" stroke-width="1.6"/><line x1="364.0" y1="254.0" x2="239.3" y2="182.0" stroke="#777" stroke-width="1.6"/><line x1="40.0" y1="20.0" x2="130.0" y2="20.0" stroke="#777" stroke-width="1.6"/><line x1="130.0" y1="20.0" x2="202.0" y2="144.7" stroke="#777" stroke-width="1.6"/><line x1="40.0" y1="20.0" x2="40.0" y2="110.0" stroke="#777" stroke-width="1.6"/><line x1="40.0" y1="110.0" x2="164.7" y2="182.0" stroke="#777" stroke-width="1.6"/><line x1="364.0" y1="20.0" x2="274.0" y2="20.0" stroke="#777" stroke-width="1.6"/><line x1="274.0" y1="20.0" x2="202.0" y2="144.7" stroke="#777" stroke-width="1.6"/><line x1="364.0" y1="20.0" x2="364.0" y2="110.0" stroke="#777" stroke-width="1.6"/><line x1="364.0" y1="110.0" x2="239.3" y2="182.0" stroke="#777" stroke-width="1.6"/><circle cx="40.0" cy="344.0" r="3.5" fill="#111"/><circle cx="130.0" cy="344.0" r="3.5" fill="#111"/><circle cx="202.0" cy="219.3" r="3.5" fill="#111"/></g></svg>
+<figcaption>풀이 스크립트로 만들어지는 선 16개. <span style="color:#c4161c">빨강</span> = 직접 만든 L1, L2 → <span style="color:#0b59a8">파랑</span> = 45° 선 대칭 → 회색 = x = 27, y = 27 대칭. 스크립트 좌표로 직접 그린 그림</figcaption></figure>
+<p class="sub">모델링</p>
+<ul>
+<li>선 2개(L1: (0,0)–(15,0), L2: (15,0)에서 60° 방향 길이 24)만 직접 만든다. 나머지는 대칭 복사로 만든다.</li>
+<li><code>lsymm</code>은 <b>활성 좌표계(직교)의 축</b>을 기준으로 뒤집는다. 그래서 대칭축이 있는 곳에 <code>local</code>로 직교좌표계를 만들고 대칭시킨다. 45° 대칭은 THXY = 45로 돌린 좌표계를 쓴다.</li>
+<li>60° 방향 점은 삼각함수 대신 (15, 0)에 <b>원통 local 좌표계</b>를 두고 (R, θ) = (24, 60)으로 찍는다.</li>
+</ul>
+<pre><code>/prep7
+/title,2019-3 lsymm
+k,1,0,0
+k,2,15,0
+local,11,1,15,0                    <span class="c">! (15,0)에 원통좌표계</span>
+k,3,24,60                          <span class="c">! R = 24, θ = 60° → global (27, 20.78)</span>
+csys,0                             <span class="c">! 직선은 직교좌표계에서 (원통이면 원호가 됨)</span>
+l,1,2
+l,2,3
+local,11,0,0,0,0,45                <span class="c">! 45° 돌린 직교좌표계</span>
+lsymm,y,1,2                        <span class="c">! 45° 선에 대해 대칭 → 선 4개</span>
+local,11,0,27,20.8                 <span class="c">! x = 27 이 새 y축</span>
+lsymm,x,all                        <span class="c">! → 선 8개</span>
+local,11,0,20.8,27                 <span class="c">! y = 27 이 새 x축</span>
+lsymm,y,all                        <span class="c">! → 선 16개</span>
+csys,0
+nummrg,kp                          <span class="c">! 겹친 키포인트 합치기</span>
+/pnum,line,1
+lplot</code></pre>
+<p class="tip"><code>local</code>은 번호(11)를 다시 쓰면 그 좌표계를 덮어쓰고, 만들자마자 활성 좌표계가 된다. <code>lsymm</code> 결과 같은 위치에 키포인트가 겹치므로 마지막에 <code>nummrg,kp</code>로 합친다. <code>중간고사 대비.TXT</code>에는 가운데 (27, 27)에서 바깥으로 그리는 다른 버전도 있다. 시험 그림을 확인할 수 없으니 두 방법을 모두 익혀 둘 것.</p>
 
 <!-- ======================= 2021 ======================= -->
 <h2 id="y2021">2021년 중간고사 (Oct. 27, 2021)</h2>
