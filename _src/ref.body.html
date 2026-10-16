@@ -64,7 +64,7 @@ prrsol                    <span class="c">! 반력  (= prrfor)</span>
 <td><strong>PLANE182</strong> (2D 4절점)</td>
 <td>I J K L</td>
 <td>UX UY</td>
-<td>두께: KEYOPT(3)=3일 때 <code>r,1,THK</code></td>
+<td>보통 필요 없음 (KEYOPT(3)=0 평면응력, 단위 두께). 두께 입력(KEYOPT(3)=3)은 실상수가 필요해서 수업에서는 안 씀</td>
 <td>KEYOPT(3): 0 평면응력, 1 축대칭, 2 평면변형, 3 두께입력 평면응력</td>
 <td>PLANE42</td>
 </tr>
@@ -80,14 +80,15 @@ prrsol                    <span class="c">! 반력  (= prrfor)</span>
 <td>COMBIN14 (스프링)</td>
 <td>I, J</td>
 <td>KEYOPT(2)=1~3 → 1D UX/UY/UZ, 4~6 → 비틀림 ROTX/Y/Z</td>
-<td><code>r,1,k</code></td>
+<td><code>r,1,k</code> (실상수로만 받음)</td>
 <td>KEYOPT(2)</td>
-<td>—</td>
+<td>수업에서는 안 씀 → <b>LINK180 + <code>sectype,link</code></b>, A = kL/E</td>
 </tr>
 </tbody>
 </table></div>
 <blockquote>
 <p>옛 요소 LINK1·LINK8·BEAM3은 <strong>ANSYS 13.0(2010)부터 문서에서 빠진 요소</strong>(BEAM3은 10년 넘게 미지원), PLANE42는 archive. 족보 16~19년 풀이는 이 요소들을 쓰므로 <strong>LINK180/BEAM188/PLANE182로 바꿔 쓸 것</strong>. BEAM188은 <strong>real constant(<code>r</code>)를 무시</strong>하므로 반드시 <code>sectype/secdata</code>.</p>
+<p><strong>수업 방식: 실상수 <code>r</code>은 쓰지 않고 단면은 전부 <code>sectype</code> / <code>secdata</code>로 넣는다.</strong> 스프링도 COMBIN14(실상수 필요) 대신 LINK180으로 모델링한다.</p>
 <p>시험 지시가 "LINK180으로 스프링 모델링"이면 <strong>k = EA/L</strong> → <code>secdata,A</code> 에 <strong>A = k·L/E</strong>.</p>
 </blockquote>
 <hr />
@@ -664,7 +665,7 @@ A=k*L/E
 <hr />
 <h2 id="11-기출-유형별-스크립트">11. 기출 유형별 스크립트</h2>
 <blockquote>
-<p>⚠️ 아래 스크립트는 기출 그림을 보고 작성한 풀이 틀이다. 그림에서 애매한 치수/위치는 <code>!확인</code> 표시. <strong>시험 전 반드시 ANSYS에서 돌려서 확인할 것.</strong><br>2021·2023·2025년 문제 전체 풀이(그림·검증값 포함)는 <a href="exams.html">기출 풀이</a> 페이지에 있다.</p>
+<p>⚠️ 아래 스크립트는 기출 그림을 보고 작성한 풀이 틀이다. 그림에서 애매한 치수/위치는 <code>!확인</code> 표시. <strong>시험 전 반드시 ANSYS에서 돌려서 확인할 것.</strong><br>2016~2025년 기출 전체 풀이(그림·검증값 포함)는 <a href="exams.html">기출 풀이</a> 페이지에 있다.</p>
 </blockquote>
 <h3 id="11-1-2d-트러스-example-31-기본형">11-1. 2D 트러스 (Example 3.1) — 기본형</h3>
 <pre><code>/prep7

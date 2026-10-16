@@ -1,5 +1,5 @@
-<h1 id="top">기출 풀이 (2021 · 2023 · 2025)</h1>
-<p class="cmd-desc">최근 3개년 중간고사 전 문제를 최신 요소(LINK180 / BEAM188 / PLANE182)로 푼 APDL 스크립트입니다.
+<h1 id="top">기출 풀이 (2016 · 2018 · 2021 · 2023 · 2025)</h1>
+<p class="cmd-desc">시험지가 있는 5개년 중간고사 전 문제를 최신 요소(LINK180 / BEAM188 / PLANE182)로 푼 APDL 스크립트입니다. 수업 방식대로 <b>실상수(<code>r</code>)는 쓰지 않고 <code>sectype</code> / <code>secdata</code>로만</b> 단면을 넣었습니다.
 문제마다 <b>모델링 방법 → 스크립트 → 검증값 → 주의할 점</b> 순서로 정리했습니다.</p>
 
 <div class="note">
@@ -8,6 +8,210 @@
 보·프레임은 오일러 보 이론으로 계산해서, 전단변형까지 넣는 BEAM188(Timoshenko 보)과 소수점 아래 몇 %쯤 차이가 날 수 있습니다.
 <code>!확인</code> 표시는 시험지 그림이 흐려서 추정한 값입니다. 시험 전에 반드시 직접 돌려 보세요.</p>
 </div>
+
+<!-- ======================= 2016 ======================= -->
+<h2 id="y2016">2016년 중간고사 (Oct. 27, 2016)</h2>
+
+<h3 id="p2016-1">Problem 1 — 2단 원형 축의 비틀림 (BEAM188, CSOLID)</h3>
+<figure class="fig"><img src="img/exam/2016-1.png" alt="2016년 1번 그림: 양 끝이 고정된 지름 1.5 in와 1 in의 2단 축, D점에 200 lb·ft 토크" loading="lazy" width="1000" height="390"><figcaption>AB: G = 3.9×10⁶ psi, d = 1.5 in · BC: G = 4.0×10⁶ psi, d = 1 in · E = 10.4×10⁶ psi. 양단 고정, D점 T = 200 lb·ft. (a) D, B 비틀림각 (b) 양 끝 반력 토크</figcaption></figure>
+<p class="sub">모델링</p>
+<ul>
+<li>단면: <code>sectype,,beam,csolid</code>. <code>secdata</code>에는 <b>반지름</b>을 넣는다 (지름이 아님).</li>
+<li>G가 따로 주어졌다. <code>mp,prxy</code>를 <b>ν = E/(2G) − 1</b>로 넣으면 ANSYS가 계산하는 G가 주어진 값과 정확히 같아진다. 그래서 AB는 ν = 0.3333, BC는 ν = 0.3이다. <code>mp,gxy</code>로 G를 직접 넣어도 된다.</li>
+<li>토크 200 lb·ft = 2400 lb·in. 축이 global X 방향이므로 <code>f,node,mx</code>, 결과는 ROTX로 읽는다.</li>
+</ul>
+<pre><code>/prep7
+/title,2016-1 torsion shaft
+et,1,beam188,,,3
+sectype,1,beam,csolid
+secdata,1.5/2                      <span class="c">! 반지름 0.75 in</span>
+sectype,2,beam,csolid
+secdata,1/2                        <span class="c">! 반지름 0.5 in</span>
+mp,ex,1,10.4e6
+mp,prxy,1,10.4/(2*3.9)-1           <span class="c">! → G = 3.9e6</span>
+mp,ex,2,10.4e6
+mp,prxy,2,10.4/(2*4.0)-1           <span class="c">! → G = 4.0e6</span>
+n,1,0                              <span class="c">! A</span>
+n,2,2.5*12                         <span class="c">! D</span>
+n,3,3.5*12                         <span class="c">! B</span>
+n,4,5.5*12                         <span class="c">! C</span>
+mat,1 $ secnum,1
+e,1,2 $ e,2,3
+mat,2 $ secnum,2
+e,3,4
+d,1,all
+d,4,all
+f,2,mx,200*12
+finish
+/solu
+solve
+finish
+/post1
+prnsol,rot,comp                    <span class="c">! (a) 노드 2(D), 3(B)의 ROTX</span>
+prrsol                             <span class="c">! (b) 노드 1, 4의 MX</span></code></pre>
+<table class="res"><tr><th>결과</th><th>검증값 (해석해)</th></tr>
+<tr><td>(a) D점 비틀림각</td><td><b>0.0302 rad</b> (1.73°)</td></tr>
+<tr><td>(a) B점 비틀림각</td><td><b>0.0274 rad</b> (1.57°)</td></tr>
+<tr><td>(b) A점 반력 토크</td><td>1951 lb·in (162.6 lb·ft)</td></tr>
+<tr><td>(b) C점 반력 토크</td><td>449 lb·in (37.4 lb·ft)</td></tr></table>
+<p class="tip">해석해: 각 구간의 비틀림 강성은 k = GJ/L이다. J = πd⁴/32이고, AD 구간 k = 64,611, DB 구간 161,529, BC 구간 16,362 lb·in/rad다. D점에서 왼쪽(AD)과 오른쪽(DB와 BC를 직렬)이 병렬로 토크를 나눠 받는다. 반력 합은 1951 + 449 = 2400 lb·in으로 가한 토크와 같다. CSOLID 단면은 원을 셀로 나눠 근사하므로 ANSYS 값이 해석해와 조금 다를 수 있다. 그때는 원주 분할 수 N을 늘린다(<code>secdata,0.75,16</code>).</p>
+
+<h3 id="p2016-2">Problem 2 — 양단 고정보 + 가운데 스프링, 최소 k (BEAM188 + LINK180)</h3>
+<figure class="fig"><img src="img/exam/2016-2.png" alt="2016년 2번 그림: 양 끝 고정된 40 m 보에 1 kN/m 등분포하중, 가운데 P점에 길이 10 m 스프링" loading="lazy" width="1000" height="435"><figcaption>E = 210 GPa, A = 1×10⁻² m², I = 2×10⁻⁴ m⁴, 1 kN/m, 스프링 길이 10 m. P점 변위 ≤ 0.15 m 가 되는 최소 k (스프링은 LINK로)</figcaption></figure>
+<p class="sub">모델링</p>
+<ul>
+<li>A와 I만 주어졌으므로 <b><code>sectype,,beam,asec</code></b>를 쓴다. 순서는 A, Iyy, Iyz, Izz, Iw, J다. K 노드가 없으면 하중 방향이 element −y이므로 <b>Izz = 2e-4</b>로 넣고, 하중은 <b>face 2</b>로 준다. J는 주어지지 않았지만 0이면 강성행렬이 특이해지므로 아무 양수나 넣는다(결과와 무관).</li>
+<li>스프링: LINK180, <code>sectype,,link</code>, 단면적 <b>A = kL/E</b>.</li>
+<li>최소 k는 중첩법으로 구한다: 스프링 없이 δ₀ = wL⁴/384EI, 가운데 단위하중 유연도 f = L³/192EI, k = (δ₀/0.15 − 1)/f.</li>
+</ul>
+<pre><code>/prep7
+/title,2016-2 beam + spring
+et,1,beam188,,,3
+sectype,1,beam,asec
+secdata,1e-2,2e-4,0,2e-4,0,1e-4    <span class="c">! A, Iyy, Iyz, Izz, Iw, J(임의 양수)</span>
+mp,ex,1,210e9
+mp,prxy,1,0.3
+et,2,link180
+kmin=7333.4                        <span class="c">! 중첩법으로 구한 값 (아래)</span>
+sectype,2,link
+secdata,kmin*10/210e9              <span class="c">! A = kL/E = 3.49e-7 m²</span>
+*do,i,1,21                         <span class="c">! 2 m 간격, 노드 11 = P (x = 20 m)</span>
+  n,i,(i-1)*2
+*enddo
+n,22,20,-10                        <span class="c">! 스프링 바닥</span>
+type,1 $ mat,1 $ secnum,1
+*do,i,1,20
+  e,i,i+1
+*enddo
+type,2 $ mat,1 $ secnum,2
+e,11,22
+d,1,all
+d,21,all
+d,22,all
+esel,s,type,,1                     <span class="c">! 보 요소만 선택</span>
+sfbeam,all,2,pres,1000             <span class="c">! face 2 = element −y = 아래, 1 kN/m</span>
+allsel
+finish
+/solu
+solve
+finish
+/post1
+prnsol,u,y                         <span class="c">! 노드 11 UY ≈ −0.150 m</span></code></pre>
+<table class="res"><tr><th>결과</th><th>검증값</th></tr>
+<tr><td>스프링 없을 때 P점 변위 δ₀</td><td>wL⁴/384EI = <b>0.1587 m</b> (> 0.15라서 스프링이 필요)</td></tr>
+<tr><td>P점 유연도 f</td><td>L³/192EI = 7.94×10⁻⁶ m/N</td></tr>
+<tr><td>최소 k</td><td>(0.1587/0.15 − 1)/f = <b>7.33×10³ N/m</b></td></tr>
+<tr><td>LINK180 단면적</td><td>A = kL/E = 7333×10/210×10⁹ = <b>3.49×10⁻⁷ m²</b></td></tr></table>
+<p class="tip">옛 풀이(<code>중간고사 16년.txt</code>)의 LINK1 실상수 <code>r,2,0.0000004</code>(4×10⁻⁷)는 이 값을 반올림한 것이다. 최신 방식에서는 <code>sectype,,link</code> + <code>secdata</code>로 쓴다.</p>
+
+<!-- ======================= 2018 ======================= -->
+<h2 id="y2018">2018년 중간고사 (Oct. 23, 2018)</h2>
+
+<h3 id="p2018-1">Problem 1 — W310×52 보, 롤러 → 스프링 (BEAM188 + LINK180)</h3>
+<figure class="fig"><img src="img/exam/2018-1a.png" alt="2018년 1번 그림: 고정단과 x=5 m 롤러로 지지되고 25000 N/m 등분포하중을 받는 7.5 m 보" loading="lazy" width="1000" height="474"><figcaption>W310×52 (강재표: A = 6,650 mm², I<sub>x</sub> = 119×10⁶ mm⁴, I<sub>y</sub> = 10.2×10⁶ mm⁴, d = 317, b<sub>f</sub> = 167, t<sub>f</sub> = 13.2, t<sub>w</sub> = 7.6 mm), E = 200 GPa, 25,000 N/m</figcaption></figure>
+<figure class="fig"><img src="img/exam/2018-1c.png" alt="2018년 1번 (c) 그림: 롤러 대신 길이 3 m 스프링" loading="lazy" width="1000" height="624"><figcaption>(c) x = 5 m에 길이 3 m 스프링 → 끝단(x = 7.5 m) 변위 ≤ 15 mm 가 되는 최소 k (LINK)</figcaption></figure>
+<p class="sub">모델링</p>
+<ul>
+<li>강재표의 값을 그대로 쓰려면 <b><code>sectype,,beam,asec</code></b>를 쓴다. 단위는 m로 바꾼다: A = 6650e-6, I<sub>x</sub>(강축) = 119e-6, I<sub>y</sub>(약축) = 10.2e-6 m⁴.</li>
+<li>K 노드가 없으면 element y = global Y다. 하중은 face 2로 주고, 강축 I<sub>x</sub>는 <b>Izz</b> 자리에 넣는다.</li>
+<li>I 단면으로 풀 수도 있다: <code>sectype,,beam,i</code> + <code>secdata,0.167,0.167,0.317,0.0132,0.0132,0.0076</code>, K 노드를 위에 두고 face 1. 이 경우 필렛이 빠져서 I = 117×10⁻⁶ m⁴ 정도로 계산되어 변위가 1~2% 커진다.</li>
+</ul>
+<pre><code>/prep7
+/title,2018-1 W310x52
+et,1,beam188,,,3
+sectype,1,beam,asec
+secdata,6650e-6,10.2e-6,0,119e-6,0,0.31e-6   <span class="c">! A, Iyy(약축), Iyz, Izz(강축), Iw, J</span>
+mp,ex,1,200e9
+mp,prxy,1,0.3
+*do,i,1,31                         <span class="c">! 0.25 m 간격: 노드 21 = x 5 m, 노드 31 = x 7.5 m</span>
+  n,i,(i-1)*0.25
+*enddo
+*do,i,1,30
+  e,i,i+1
+*enddo
+d,1,all
+d,21,uy,0                          <span class="c">! 롤러</span>
+sfbeam,all,2,pres,25000            <span class="c">! face 2 = element −y = 아래</span>
+finish
+/solu
+solve
+finish
+/post1
+prnsol,u,comp                      <span class="c">! (a) 노드 31 UY</span>
+prnsol,rot,comp                    <span class="c">! (a) 노드 31, 21 ROTZ</span>
+prrsol                             <span class="c">! (b) ΣFY = 25000 × 7.5 = 187,500 N</span></code></pre>
+<table class="res"><tr><th>결과</th><th>검증값</th></tr>
+<tr><td>(a) x = 7.5 m 수직 변위</td><td><b>−8.55 mm</b></td></tr>
+<tr><td>(a) x = 7.5 m 회전</td><td>−4.10×10⁻³ rad</td></tr>
+<tr><td>(a) x = 5 m 회전</td><td>−1.37×10⁻³ rad</td></tr>
+<tr><td>(b) 반력</td><td>노드 1: F<sub>Y</sub> = 54,688 N, M<sub>Z</sub> = 39,063 N·m · 노드 21: F<sub>Y</sub> = 132,813 N</td></tr>
+<tr><td>(b) 평형</td><td>54,688 + 132,813 = 187,500 N = 25,000 × 7.5 ✔. 노드 1에 대한 모멘트도 확인: 132,813×5 + 39,063 = 703,125 = 187,500×3.75 ✔</td></tr></table>
+
+<p class="sub">(c) 스프링 최소 k</p>
+<ol>
+<li>롤러 없이 하중만 → 노드 21 변위 δ₀₂, 노드 31 변위 δ₀₃</li>
+<li>노드 21에 단위하중 1 N만 → 노드 21 변위 f₂₂, 노드 31 변위 f₃₂</li>
+<li>스프링 힘 R = −k·δ₂, δ₂ = δ₀₂/(1 + k f₂₂) → 끝단 δ₃ = δ₀₃ − f₃₂·k·δ₀₂/(1 + k f₂₂)</li>
+<li>|δ₃| = 0.015 m로 놓고 풀면 <b>k ≈ 3.55×10⁷ N/m</b>, LINK180 단면적 A = kL/E = 3.55×10⁷ × 3 / 200×10⁹ = <b>5.32×10⁻⁴ m²</b></li>
+</ol>
+<pre><code><span class="c">! (c) d,21,uy,0 (롤러) 대신</span>
+et,2,link180
+kmin=3.55e7
+sectype,2,link
+secdata,kmin*3/200e9               <span class="c">! A = kL/E</span>
+n,100,5,-3                         <span class="c">! 스프링 바닥 (길이 3 m)</span>
+type,2 $ secnum,2
+e,21,100
+d,100,all
+<span class="c">! → 노드 31 UY ≈ −15 mm 확인. k를 조금 줄이면 15 mm를 넘는지도 확인</span></code></pre>
+<p class="tip">옛 풀이의 COMBIN14 <code>r,2,37e6</code>과 LINK1 <code>r,2,0.00055</code>는 이 값(3.55×10⁷, 5.32×10⁻⁴)과 거의 같다. COMBIN14는 스프링 상수를 <b>실상수 R로만</b> 받으므로, R을 쓰지 않는 수업 방식에서는 LINK180 + <code>sectype,link</code>로 푼다.</p>
+
+<h3 id="p2018-2">Problem 2 — 2D 면 만들기 (Boolean)</h3>
+<figure class="fig"><img src="img/exam/2018-2.png" alt="2018년 2번 그림: 위는 반원, 아래는 사각형인 판에 120도 원호 슬롯, 지름 3.6 구멍, 양옆 R1.8 홈, 긴 구멍, 아래 모서리 R2.6 필렛" loading="lazy" width="1000" height="989"><figcaption>폭 12.3(R 6.15 반원 + 높이 9.8 사각형), 120° 원호 슬롯(중심선 R4.1, 끝 R0.9), Ø3.6 구멍, 양옆 R1.8 홈, 4.5×2.4 긴 구멍(끝 R1.2), 아래 모서리 R2.6</figcaption></figure>
+<p class="sub">모델링 — 면 번호를 외우지 않는 방법</p>
+<ul>
+<li>Boolean을 하면 면 번호가 새로 매겨져서, 옛 풀이처럼 <code>asba,6,3</code> 같은 번호를 쓰면 하나만 틀려도 다 틀린다.</li>
+<li>그래서 <b>① 바깥 몸체를 <code>aadd,all</code>로 하나로 만들고 그 번호를 <code>*get</code>으로 저장한 뒤, ② 뺄 도형(cutter)을 전부 만들고, ③ <code>asba,몸체,all</code>로 한 번에 뺀다</b>. ASBA의 NA2 = ALL은 NA1을 뺀 선택된 모든 면이다.</li>
+<li>원점은 위쪽 반원의 중심(가로 가운데, 사각형 위 끝)으로 잡는다.</li>
+</ul>
+<pre><code>/prep7
+/title,2018-2 area
+<span class="c">! ① 바깥 몸체</span>
+pcirc,6.15                         <span class="c">! 위쪽 반원 (원 전체 → 아래 반은 사각형과 겹침)</span>
+rectng,-6.15,6.15,-9.8,0
+aadd,all
+*get,ab,area,,num,max              <span class="c">! 몸체 면 번호 (지금은 면이 하나뿐)</span>
+<span class="c">! ② 뺄 도형</span>
+pcirc,3.2,5,30,150                 <span class="c">! 120° 원호 슬롯 (R4.1 ± 0.9)</span>
+csys,1
+wpave,4.1,30                       <span class="c">! 원통좌표 (R, θ)로 WP 이동</span>
+pcirc,0.9
+wpave,4.1,150
+pcirc,0.9
+csys,0
+wpave,0,-2
+pcirc,1.8                          <span class="c">! Ø3.6 구멍</span>
+wpave,-6.15,-4.4
+pcirc,1.8                          <span class="c">! 왼쪽 R1.8 홈 (바닥에서 5.4)</span>
+wpave,6.15,-4.4
+pcirc,1.8                          <span class="c">! 오른쪽 홈</span>
+wpave,0,-7.8                       <span class="c">! 긴 구멍 중심 (바닥에서 2.0)</span>
+rectng,-2.25,2.25,-1.2,1.2
+wpoffs,-2.25
+pcirc,1.2
+wpoffs,4.5
+pcirc,1.2
+wpave,-6.15+2.6,-9.8+2.6           <span class="c">! 왼쪽 아래 필렛 중심</span>
+pcirc,2.6,2.6*sqrt(2),180,270      <span class="c">! 모서리 쪽 링 조각 = 깎아낼 부분</span>
+wpave,6.15-2.6,-9.8+2.6
+pcirc,2.6,2.6*sqrt(2),270,360
+wpave,0,0
+<span class="c">! ③ 한 번에 빼기</span>
+asba,ab,all
+/pnum,area,1
+aplot
+<span class="c">! (메쉬까지 하려면) et,1,plane182 → esize,0.3 → amesh,all</span></code></pre>
+<p class="tip">필렛: 필렛 중심에서 모서리까지 거리는 2.6√2 = 3.68이다. 그래서 반지름 2.6 ~ 3.68의 1/4 링을 빼면 모서리가 R2.6으로 둥글게 된다. <code>pcirc</code>는 항상 WP 원점이 중심이므로 매번 <code>wpave</code>로 WP를 먼저 옮긴다. <code>csys,1</code> 상태에서 <code>wpave</code>의 좌표는 (R, θ)로 해석된다.</p>
 
 <!-- ======================= 2021 ======================= -->
 <h2 id="y2021">2021년 중간고사 (Oct. 27, 2021)</h2>

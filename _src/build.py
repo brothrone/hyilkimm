@@ -8,11 +8,11 @@ import svgs
 PAGES = [  # file, nav label, crumb, desc, deep (h3 in sidebar)
     ('index.html', '홈', 'Home', '전산구조해석(ANSYS APDL) 중간고사 대비 자료', False),
     ('trend.html', '족보 분석', 'Midterm Analysis', '기출 2016~2025 경향 분석, 올해 예상 문제, 공부 계획', False),
-    ('exams.html', '기출 풀이', 'Past Exams', '2021·2023·2025 중간고사 APDL 풀이 스크립트와 검증값', True),
+    ('exams.html', '기출 풀이', 'Past Exams', '2016·2018·2021·2023·2025 중간고사 APDL 풀이 스크립트와 검증값', True),
     ('ref.html', '참고자료', 'Command Reference', 'ANSYS APDL 명령어 정리와 기출 유형별 스크립트', False),
 ]
 TITLES = {'index.html': '전산구조해석 중간고사', 'trend.html': '족보 분석 · 공부법',
-          'exams.html': '기출 풀이 2021·2023·2025', 'ref.html': 'APDL 시험 참고자료'}
+          'exams.html': '기출 풀이 2016~2025', 'ref.html': 'APDL 시험 참고자료'}
 
 def strip(s): return re.sub(r'<[^>]+>', '', s).strip()
 
