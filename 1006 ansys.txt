@@ -1,0 +1,57 @@
+10/06
+Example 3.1 - top down 
+/prep7
+
+Et,1,link180
+sectype,1,link
+secdata,8
+mp,ex,1,1.9e6
+mp,nuxy,1,0.3
+
+esize,0,1
+
+k,1,0,0,0
+k,2,36,0
+k,3,0,36
+k,4,36,36
+k,5,72,36
+
+l,1,2
+l,2,3
+l,3,4
+l,2,4
+l,2,5
+l,4,5
+
+
+dk,1,ux,0
+dk,1,uy,0
+dk,3,ux,0
+dk,3,uy,0
+
+fk,4,fy,-500
+fk,5,fy,-500
+
+save
+
+lmesh,all 
+=
+lmesh,1
+lmesh,2
+lmesh,3
+lmesh,4
+lmesh,5
+lmesh,6
+
+/solu
+solve
+
+/post1
+set
+etable,Axstress,ls,1 
+etable,Axforce,smisc,1
+
+<Axstress, Axforce 라는 table 보기 : PRETAB>
+
+pletab,Axstress (컬러로 PLOT)
+pretab,Axstress,Axforce (print table)

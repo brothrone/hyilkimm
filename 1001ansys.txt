@@ -1,0 +1,76 @@
+/prep7
+
+<ET,refnum,Ename>
+et,1,link180
+
+<sectype,refnum,Type>
+sectype,1,link
+
+<secdata>
+Links
+Type: LINK
+Link sections are referenced by the LINK33, LINK180, LINK228, and CABLE280 elements.
+
+Data to provide in the value fields:
+VAL1 = Area
+
+secdata,8
+
+<mp : https://ansyshelp.ansys.com/account/secured?returnURL=%2FViews%2FSecured%2Fcorp%2Fv261%2Fen%2Fans_cmd%2FHlp_C_MP.html>
+<MP, Lab, MAT, C0, C1, C2, C3, C4>
+
+mp,ex,1,1.9e6
+mp,nuxy,1,0.3
+
+=====Modeling=======
+n,1,0,0,0
+n,2,3*12,0 (1ft = 12inch)
+n,3,0,3*12
+n,4,3*12,3*12
+n,5,6*12,3*12
+
+(DEFAULT) : mat=1 , type=1, real =1 , csys=0 , secn =1 
+그래서 위에 et,mp 의 refnum 을 1 로 설정 
+
+e,1,2
+e,2,3
+e,3,4
+e,2,4
+e,2,5
+e,4,5
+
+(/psymb,/pnum,/pbc 사용)
+
+<DOF constraints : D,node,lab>
+d,1,ux,0,,3,2,uy
+=
+d,1,ux,0
+d,1,uy,0
+d,3,ux,0
+d,3,uy,0
+(node 1, 3 은 고정)
+
+<FORCE>
+f,4,fy,-500,,5
+=
+f,4,fy,-500
+f,5,fy,-500
+
+save
+
+/solu
+solve
+
+General Postproc - Plot Results - Deformed shape 
+
+<각 element 별 stress 보는법>
+
+/post1
+set
+etable,Axstress,ls,1 
+etable,Axforce,smisc,1
+
+<Axstress, Axforce 라는 table 보기 : PRETAB>
+
+pletab,Axstress (컬러로 PLOT)
+pretab,Axstress,Axforce (print table)
