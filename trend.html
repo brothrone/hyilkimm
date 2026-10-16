@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>족보 분석·공부법</title>
+<meta name="description" content="기출 2016~2025 경향 분석, 올해 예상 문제, 7일 공부 계획">
+<link rel="stylesheet" href="style.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html">전산구조해석</a>
+    <nav class="nav"><a href="index.html">홈</a><a href="trend.html" aria-current="page">족보 분석·공부법</a><a href="ref.html">시험 참고자료</a></nav>
+    <button class="theme" type="button" id="theme">테마</button>
+  </div>
+</header>
+<main class="wrap doc">
+
+<h1 id="전산구조해석-중간고사-족보-경향-분석-공부법">전산구조해석 중간고사 — 족보 경향 분석 &amp; 공부법</h1>
+<blockquote>
+<p>자료: <code>전산구조해석 16·18·21·23·25년 중간.pdf</code>, <code>중간고사 16·18·19년.txt</code>, <code>중간고사 대비.TXT</code>, <code>중간고사 풀이.TXT</code>, 수업 스크립트(9/30~10/21), <code>강의자료(2026).pdf</code>, <code>BEAM188.pdf</code>
+교재: Moaveni, <em>Finite Element Analysis: Theory and Application with ANSYS</em> (수업예제 사진의 Example 4.5 출처)</p>
+</blockquote>
+<hr />
+<h2 id="1-시험-형식">1. 시험 형식</h2>
+<ul>
+<li>모든 해 공통 문구: <strong>"Write down the ANSYS commands on your answer sheet."</strong>
+  → 결과값만이 아니라 <strong>명령어 전체를 답안지에 써야 함</strong>. 명령어 철자·인자 순서를 손으로 쓸 수 있을 만큼 외워야 한다.</li>
+<li>문제 수: 2문제(16·18·21·23년) → <strong>3문제(25년)</strong>. 문제당 (a)(b)(c)(d) 소문항.</li>
+<li>단위는 문제마다 섞여 나온다(in·lb·ft / m·N·GPa / mm·cm). <strong>ft→in(×12), cm²→m²(×1e-4), mm⁴→m⁴(×1e-12)</strong> 환산 실수가 가장 흔한 감점 포인트.</li>
+</ul>
+<h2 id="2-연도별-출제-내용">2. 연도별 출제 내용</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>연도</th>
+<th>문제</th>
+<th>내용</th>
+<th>요소</th>
+<th>핵심 명령</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2016</td>
+<td>1</td>
+<td>지름 다른 2단 축, 양단 고정, 중간 토크 200 lb·ft → D·B 비틀림각, 반력 토크</td>
+<td>BEAM188 (CSOLID)</td>
+<td><code>sectype,,beam,csolid</code>, <code>mp,gxy</code>, <code>f,,mx</code>, <code>prrsol</code></td>
+</tr>
+<tr>
+<td></td>
+<td>2</td>
+<td>등분포하중 양단고정 보 + 가운데 스프링 → 변위 ≤ 0.15 m 되는 <strong>최소 k</strong></td>
+<td>BEAM3 + LINK1</td>
+<td><code>sfbeam</code>, 스프링을 LINK로 (k=EA/L)</td>
+</tr>
+<tr>
+<td>2018</td>
+<td>1</td>
+<td>W310×52 보, 고정+롤러, 등분포 25 kN/m → 변위·회전, <strong>평형 검증</strong>, (c) 롤러를 스프링으로 바꿔 끝단 ≤ 15 mm 되는 <strong>최소 k</strong></td>
+<td>BEAM188 (ASEC) + LINK1/COMBIN14</td>
+<td>강재표에서 A, Ix, Iy 찾기, <code>sfbeam</code>, <code>prrsol</code></td>
+</tr>
+<tr>
+<td></td>
+<td>2</td>
+<td>원·사각형·슬롯으로 된 복잡한 2D 면 만들기</td>
+<td>(형상만)</td>
+<td><code>pcirc</code>, <code>rectng</code>, <code>wpave/wpoffs</code>, <code>csys,1</code>, <code>aadd</code>, <code>asba</code></td>
+</tr>
+<tr>
+<td>2019*</td>
+<td>1</td>
+<td>Example 4.5 오버행 프레임, I형 단면</td>
+<td>BEAM188 (I)</td>
+<td>방향 노드(K), <code>sfbeam,,,pres,800/12</code></td>
+</tr>
+<tr>
+<td></td>
+<td>2</td>
+<td>단면적이 계단식으로 줄어드는 봉 (5요소)</td>
+<td>LINK1</td>
+<td><code>r</code>을 요소마다 바꾸기, <code>etable</code></td>
+</tr>
+<tr>
+<td></td>
+<td>3</td>
+<td>대칭 형상 선 만들기</td>
+<td>—</td>
+<td><code>local</code>, <code>lsymm</code></td>
+</tr>
+<tr>
+<td>2021</td>
+<td>1</td>
+<td>테이퍼 판(폭 2→1 in), 끝단 <strong>변위 δ 부여</strong> → y=7.5 in 변위를 δ로 표현</td>
+<td><strong>LINK180만</strong></td>
+<td>계단 근사, <code>d,node,uy,δ</code></td>
+</tr>
+<tr>
+<td></td>
+<td>2</td>
+<td>Example 4.5 변형: <strong>C형강</strong>, <strong>두 재료</strong>(강·알루미늄), <strong>삼각 분포하중</strong></td>
+<td><strong>BEAM188</strong></td>
+<td><code>sectype,,beam,chan</code>, <code>mat</code> 전환, <code>sfbeam</code> VALI/VALJ</td>
+</tr>
+<tr>
+<td>2023</td>
+<td>1</td>
+<td>양단 고정 복합 축봉(3구간, 가운데 2부재 병렬), 20 kN → D·F 변위, 각 부재 축력·응력</td>
+<td>LINK180</td>
+<td>중간점에 노드, <code>etable,,smisc,1</code> / <code>ls,1</code></td>
+</tr>
+<tr>
+<td></td>
+<td>2</td>
+<td><strong>C310×45</strong> 보, 고정+롤러, 삼각 분포하중(중앙 최대 25 kN/m) → 반력, 평형 검증, 변위·회전, 스프링 <strong>최소 k</strong> (LINK180)</td>
+<td>BEAM188 (CHAN) + LINK180</td>
+<td><code>sfbeam</code> VALI/VALJ, <code>prrsol</code></td>
+</tr>
+<tr>
+<td>2025</td>
+<td>1</td>
+<td>1/4 원환 메쉬를 <strong>local 원통좌표계 + NGEN + EGEN</strong>으로 만들기</td>
+<td>PLANE182</td>
+<td><code>local,11,1</code>, <code>ngen</code>, <code>egen</code>, <code>fill</code></td>
+</tr>
+<tr>
+<td></td>
+<td>2</td>
+<td>Example 3.1 발코니 트러스, 60° 경사 하중을 <strong>삼각함수 없이</strong> (a) NROTAT (b) NMODIF로</td>
+<td>LINK180</td>
+<td><code>nrotat</code>, <code>nmodif</code></td>
+</tr>
+<tr>
+<td></td>
+<td>3</td>
+<td>W8×67 + C9×20 L자 외팔보, 삼각 분포하중, <strong>SECOFFS</strong>로 단면 맞추기 → 최대 굽힘응력, C점 비틀림각, (b) 비틀림 0 되게 하는 반대 모멘트</td>
+<td>BEAM188 (I, CHAN)</td>
+<td><code>secoffs</code>, <code>etable</code> 굽힘응력, 중첩법</td>
+</tr>
+</tbody>
+</table></div>
+<p>* 2019년은 시험지 PDF가 없고 <code>중간고사 19년.TXT</code>·<code>중간고사 풀이.TXT</code> 스크립트로 추정한 내용.</p>
+<h2 id="3-경향-분석">3. 경향 분석</h2>
+<h3 id="1-매년-나오는-것-반드시-손으로-쓸-수-있어야-함">(1) 매년 나오는 것 — 반드시 손으로 쓸 수 있어야 함</h3>
+<ol>
+<li><strong>트러스 / 축부재 (LINK180)</strong> — 16·19·21·23·25년. 거의 매년 1문제.
+   - Example 3.1(발코니 트러스), 3.2(3D 트러스), 계단식/테이퍼 봉이 뼈대.
+   - 출력: 절점 변위(<code>prnsol,u</code>), 요소 축력·축응력(<code>etable,,smisc,1</code> / <code>etable,,ls,1</code> → <code>pretab</code>).</li>
+<li><strong>보·프레임 (BEAM188 + 단면)</strong> — 18·19·21·23·25년. 매년.
+   - <strong>실제 형강 단면</strong>(W310×52, C310×45, W8×67, C9×20)을 표에서 찾아 <code>secdata</code>에 넣게 함.
+   - 분포하중은 <code>sfbeam</code>. <strong>최근 3번(21·23·25)은 모두 삼각(선형 변화) 분포하중</strong> → <code>sfbeam,elem,2,pres,VALI,VALJ</code> 필수.</li>
+<li><strong>스프링으로 바꿔서 "최소 k" 구하기</strong> — 16·18·23년 (3번). LINK로 스프링을 모델링(k = EA/L).</li>
+<li><strong>평형 조건으로 FEA 검증</strong> — 18·23년. 반력 합 = 전체 하중인지 <code>prrsol</code>로 확인.</li>
+</ol>
+<h3 id="2-변화-방향">(2) 변화 방향</h3>
+<ul>
+<li><strong>옛날 요소 → 최신 요소</strong>: 16~19년은 LINK1·LINK8·BEAM3(현재 ANSYS에서 없어진 요소), <strong>21년부터 LINK180·BEAM188·PLANE182만 사용</strong>. 올해 시험도 최신 요소 기준으로 공부.
+  <code>R</code>(real constant) 대신 <strong><code>SECTYPE</code>/<code>SECDATA</code></strong> 로 단면 입력.</li>
+<li><strong>명령어 자체를 지정하는 문제가 늘어남</strong>: 25년에 "NGEN·EGEN 사용", "NROTAT·NMODIF 사용", "SECOFFS 사용", "삼각함수 사용 금지"처럼 특정 명령을 쓰라고 함. → <strong>도움말에서 수업 때 짚어준 명령(SECOFFS, SFBEAM, NROTAT/NMODIF, NGEN/EGEN, LOCAL)</strong> 이 출제 1순위.</li>
+<li><strong>비틀림(torsion)</strong> 이 16년 이후 25년에 다시 나옴 (C형강의 전단중심 ≠ 도심 → 하중이 비틀림을 만듦 → SECOFFS가 그래서 나옴).</li>
+<li>문제 수가 3문제로 늘고, 형상 만들기(2D 면/메쉬) 문제가 1문제씩 섞임 (18년 Boolean, 19년 lsymm, 25년 NGEN/EGEN).</li>
+</ul>
+<h3 id="3-올해2026-예상">(3) 올해(2026) 예상</h3>
+<p>수업 진도(9/30 PLANE42 판 → 10/01·06·07 트러스 → 10/13 BEAM188 → 10/21 프레임+SFBEAM)와 도움말 캡처(BEAM188, LINK180, <strong>SECOFFS</strong>, <strong>SFBEAM</strong>)를 보면:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>가능성</th>
+<th>예상 문제</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>★★★</td>
+<td>Example 4.5 계열 프레임 / 외팔보를 BEAM188 + 형강 단면 + 삼각 분포하중(<code>sfbeam</code> VALI·VALJ)으로. 변위·회전·반력, 평형 검증</td>
+</tr>
+<tr>
+<td>★★★</td>
+<td>트러스(Example 3.1 / 3.2 계열) LINK180 — 축력·축응력, 최대 변위. 경사 하중은 NROTAT/NMODIF 가능성</td>
+</tr>
+<tr>
+<td>★★☆</td>
+<td>지점을 스프링(LINK180)으로 바꿔 최소 k</td>
+</tr>
+<tr>
+<td>★★☆</td>
+<td>SECOFFS로 단면 위치 맞추기, 비틀림각(ROT)</td>
+</tr>
+<tr>
+<td>★★☆</td>
+<td>2D 형상 만들기(Boolean, WP 이동, local 좌표계) + PLANE182 메쉬 / NGEN·EGEN 직접 생성</td>
+</tr>
+<tr>
+<td>★☆☆</td>
+<td>계단식/테이퍼 봉에 변위 경계조건 부여</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="4-공부법">4. 공부법</h2>
+<h3 id="원칙">원칙</h3>
+<ol>
+<li><strong>눈으로 보지 말고 손으로 쓴다.</strong> 시험은 답안지에 명령어를 쓰는 방식이다. 족보 문제를 빈 종이에 명령어로 처음부터 끝까지 써 본 뒤 ANSYS에 붙여 넣어 돌려서 확인한다.</li>
+<li><strong>한 문제 = 하나의 고정된 틀</strong>로 쓴다: <code>/prep7</code> → 요소·단면·재료 → 형상(k/l 또는 n/e) → 메쉬 → 경계조건·하중 → <code>/solu</code> <code>solve</code> → <code>/post1</code> 출력. (<a href="ref.html">시험 참고자료</a>의 "기본 틀" 참고)</li>
+<li><strong>결과를 손계산으로 검증</strong>하는 습관: 반력 합 = 하중, 트러스는 절점 평형, 외팔보는 공식(δ = PL³/3EI, wL⁴/8EI)과 비교.</li>
+</ol>
+<h3 id="일정-시험-전-약-1주-기준">일정 (시험 전 약 1주 기준)</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>일차</th>
+<th>할 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>수업 스크립트(9/30~10/21) 다시 치고 돌려 보기. <a href="ref.html">시험 참고자료</a>의 명령어 표를 한 번 직접 써 보기</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>트러스</strong>: Example 3.1, 3.2, 문제 3.3~3.8(<code>중간고사 대비.TXT</code>)을 LINK180 + <code>sectype,link</code>로 다시 쓰기. 2023-1, 2025-2(NROTAT/NMODIF 두 방법 모두)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>보 기본</strong>: 2018-1(a)(b), 2023-2(a)~(c), Example 4.5(2D·3D). 강재표 → <code>secdata</code> 순서 맞추기, <code>sfbeam</code> VALI/VALJ</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>스프링 최소 k</strong>: 2016-2, 2018-1(c), 2023-2(d). 아래 "중첩법" 공식으로 2번 풀어서 k 구하기</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>형상·좌표계</strong>: 2018-2(Boolean), 2019-3(<code>local</code>+<code>lsymm</code>), 2025-1(<code>local</code>+<code>ngen</code>+<code>egen</code>), Exercise A·B·C</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>비틀림·SECOFFS</strong>: 2016-1, 2021-2, 2025-3. <code>secoffs</code> 옵션과 비틀림각(ROTX/ROTZ) 읽는 법</td>
+</tr>
+<tr>
+<td>7</td>
+<td>시간 재고 실전 연습: 최근 기출(25 → 23 → 21) 한 세트씩 100% 손으로 쓰고 돌려서 채점. 참고자료 최종 정리</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="자주-틀리는-것-체크리스트">자주 틀리는 것 체크리스트</h3>
+<ul>
+<li>[ ] 단위 통일 (ft·in, cm²·m², mm⁴·m⁴, lb/ft → lb/in = /12)</li>
+<li>[ ] 결과를 볼 지점(D, F, y=7.5 in, 하중 꺾이는 점)에 <strong>노드가 있는가</strong> → 없으면 키포인트/노드를 그 위치에 추가</li>
+<li>[ ] 삼각 하중의 꼭짓점·지점 위치에 노드가 있는가 (요소마다 VALI→VALJ 선형)</li>
+<li>[ ] BEAM188 방향: 하중이 element −y로 가는지 (<code>/eshape,1</code> + <code>eplot</code>로 단면 방향 확인), 강축 I가 하중을 받는지</li>
+<li>[ ] 2D 문제를 BEAM188로 풀 때 <strong>면외 자유도(UZ, ROTX, ROTY) 구속</strong> 또는 <code>d,all</code>로 고정 지점 처리, 롤러는 UY만</li>
+<li>[ ] LINK180 트러스는 2D라도 <code>UZ</code> 구속이 필요할 수 있음(평면 트러스면 모든 노드 <code>d,all,uz,0</code>)</li>
+<li>[ ] <code>mp,prxy</code>(또는 <code>nuxy</code>) 빠뜨림 → BEAM188은 G 계산에 필요</li>
+<li>[ ] <code>/post1</code> 전에 <code>finish</code>, 결과 읽기 <code>set,last</code></li>
+<li>[ ] 스프링 문제에서 k → LINK180 단면적 A = kL/E (E·L은 아무 값이나 정해도 됨)</li>
+</ul>
+<h3 id="스프링-최소-k-빠르게-푸는-법-중첩법-선형이므로-정확">스프링 "최소 k" 빠르게 푸는 법 (중첩법, 선형이므로 정확)</h3>
+<ol>
+<li>스프링 없이 하중만 → 관심점 변위 <strong>δ₀</strong></li>
+<li>하중 없이 관심점(스프링 붙는 점)에 단위하중 1 → 관심점 변위 <strong>f</strong> (유연도)
+   - 관심점과 스프링 위치가 다르면 f_ss(스프링 점), f_ps(관심점) 두 값을 읽는다</li>
+<li>스프링 힘 R = k·δ_s, δ_s = δ₀ₛ/(1 + k·f_ss) → 관심점 변위 δ_p = δ₀ₚ − f_ps·k·δ₀ₛ/(1 + k·f_ss)</li>
+<li>δ_p = 허용값으로 놓고 k를 풀고, LINK180 단면적 <strong>A = k·L/E</strong> 를 넣어 다시 돌려 확인.
+   (시행착오로 k를 바꿔 가며 돌려도 되지만 시간이 오래 걸림)</li>
+</ol>
+<h3 id="비틀림-0으로-만드는-반대-모멘트-25-3b">비틀림 0으로 만드는 반대 모멘트 (25-3(b))</h3>
+<p>선형 해석이므로: 하중만 → 비틀림각 θ₀, 단위 모멘트 1만 → θ₁ ⇒ <strong>M = −θ₀/θ₁</strong>. 다시 돌려서 θ ≈ 0 확인.</p>
+</main>
+<footer>
+  <div class="wrap">교재: Moaveni, <em>Finite Element Analysis: Theory and Application with ANSYS</em> · 명령 문법: ANSYS Mechanical APDL 2025 R1 Command / Element Reference (ansyshelp.ansys.com)</div>
+</footer>
+<script>
+(function(){
+  var b=document.getElementById('theme'),r=document.documentElement;
+  function cur(){return r.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}
+  function label(){b.textContent=cur()==='dark'?'밝게':'어둡게'}
+  label();
+  b.onclick=function(){var n=cur()==='dark'?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('theme',n)}catch(e){}label()};
+})();
+</script>
+</body>
+</html>

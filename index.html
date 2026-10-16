@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>전산구조해석 중간고사</title>
+<meta name="description" content="ANSYS APDL 중간고사 대비 — 족보 경향 분석, 공부법, 시험 참고자료">
+<link rel="stylesheet" href="style.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html">전산구조해석</a>
+    <nav class="nav">
+      <a href="index.html" aria-current="page">홈</a>
+      <a href="trend.html">족보 분석·공부법</a>
+      <a href="ref.html">시험 참고자료</a>
+    </nav>
+    <button class="theme" type="button" id="theme">테마</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="hero">
+  <div class="eyebrow">부산대 항공우주공학과 · Computational Structural Analysis</div>
+  <h1>ANSYS APDL 중간고사 대비</h1>
+  <p class="lead">2016~2025년 기출 5회분과 수업 스크립트, 강의자료, ANSYS Help를 정리했습니다.
+  시험은 <strong>답안지에 ANSYS 명령어를 직접 쓰는</strong> 방식이라, 명령어를 손으로 쓸 수 있을 만큼 외우는 것이 목표입니다.</p>
+</section>
+
+<section class="grid g3" style="margin-top:22px">
+  <div class="card">
+    <div class="stat">2~3 <small>문제</small></div>
+    <p class="muted small">16~23년 2문제, 25년 3문제. 문제마다 (a)~(d) 소문항</p>
+  </div>
+  <div class="card">
+    <div class="stat">매년 <small>트러스 + 보</small></div>
+    <p class="muted small">LINK180 트러스·축부재 1문제, BEAM188 보·프레임 1문제가 뼈대</p>
+  </div>
+  <div class="card">
+    <div class="stat">3회 연속 <small>삼각 분포하중</small></div>
+    <p class="muted small">21·23·25년 모두 선형 변화 분포하중 → <code>sfbeam</code> VALI·VALJ</p>
+  </div>
+</section>
+
+<h2>바로 가기</h2>
+<div class="grid g2">
+  <a class="card" href="trend.html">
+    <h3>족보 경향 분석 · 공부법</h3>
+    <p class="muted">연도별 출제 내용, 반복 유형과 변화 방향, 올해 예상 문제, 7일 공부 계획, 자주 틀리는 것 체크리스트.</p>
+    <span class="go">열기 →</span>
+  </a>
+  <a class="card" href="ref.html">
+    <h3>시험 참고자료</h3>
+    <p class="muted">기본 틀, 요소·단면·SECOFFS·SFBEAM·좌표계·NGEN/EGEN·NROTAT/NMODIF 명령 정리, 기출 유형별 풀이 스크립트와 검증값.</p>
+    <span class="go">열기 →</span>
+  </a>
+</div>
+
+<h2>연도별 출제 주제</h2>
+<div class="tbl">
+<table class="matrix">
+  <thead>
+    <tr><th>주제</th><th>2016</th><th>2018</th><th>2019*</th><th>2021</th><th>2023</th><th>2025</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>트러스·축부재 (LINK)</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td></tr>
+    <tr><td>보·프레임 (BEAM)</td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td></tr>
+    <tr><td>실제 형강 단면 (W·C·I)</td><td><i class="dot"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td></tr>
+    <tr><td>삼각 분포하중</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot new"></i></td><td><i class="dot new"></i></td><td><i class="dot new"></i></td></tr>
+    <tr><td>스프링 최소 k</td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot on"></i></td><td><i class="dot"></i></td></tr>
+    <tr><td>평형 조건으로 검증</td><td><i class="dot"></i></td><td><i class="dot on"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot on"></i></td><td><i class="dot"></i></td></tr>
+    <tr><td>비틀림</td><td><i class="dot on"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot on"></i></td></tr>
+    <tr><td>2D 형상·메쉬 (Boolean, local, lsymm)</td><td><i class="dot"></i></td><td><i class="dot on"></i></td><td><i class="dot on"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot on"></i></td></tr>
+    <tr><td>명령 지정 (NGEN·EGEN, NROTAT·NMODIF, SECOFFS)</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot new"></i></td></tr>
+  </tbody>
+</table>
+</div>
+<div class="legend">
+  <span><i class="dot on"></i> 출제</span>
+  <span><i class="dot new"></i> 최근 새로 늘어난 유형</span>
+  <span>* 2019년은 시험지 없이 풀이 스크립트로 추정</span>
+</div>
+
+<div class="callout hot" style="margin-top:22px">
+  <p><strong>올해 1순위:</strong> 형강 단면 BEAM188 보에 삼각 분포하중(<code>sfbeam</code> VALI·VALJ) + 반력·평형 검증,
+  그리고 LINK180 트러스(경사 하중은 <code>nrotat</code>/<code>nmodif</code>).
+  수업에서 Help 페이지를 띄워 설명한 <code>SECOFFS</code>, <code>SFBEAM</code>, BEAM188, LINK180도 꼭 챙길 것.</p>
+</div>
+
+<h2>원본 자료</h2>
+<h3>기출 시험지</h3>
+<ul class="files">
+  <li><a href="%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%89%E1%85%A1%E1%86%AB%E1%84%80%E1%85%AE%E1%84%8C%E1%85%A9%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5%E1%86%A8%2016%E1%84%82%E1%85%A7%E1%86%AB%20%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB.pdf"><span class="ext">PDF</span>2016 중간</a></li>
+  <li><a href="%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%89%E1%85%A1%E1%86%AB%E1%84%80%E1%85%AE%E1%84%8C%E1%85%A9%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5%E1%86%A8%2018%E1%84%82%E1%85%A7%E1%86%AB%20%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB.pdf"><span class="ext">PDF</span>2018 중간</a></li>
+  <li><a href="%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%89%E1%85%A1%E1%86%AB%E1%84%80%E1%85%AE%E1%84%8C%E1%85%A9%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5%E1%86%A8%2021%E1%84%82%E1%85%A7%E1%86%AB%20%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB.pdf"><span class="ext">PDF</span>2021 중간</a></li>
+  <li><a href="%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%89%E1%85%A1%E1%86%AB%E1%84%80%E1%85%AE%E1%84%8C%E1%85%A9%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5%E1%86%A8%2023%E1%84%82%E1%85%A7%E1%86%AB%20%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB.pdf"><span class="ext">PDF</span>2023 중간</a></li>
+  <li><a href="%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%89%E1%85%A1%E1%86%AB%E1%84%80%E1%85%AE%E1%84%8C%E1%85%A9%E1%84%92%E1%85%A2%E1%84%89%E1%85%A5%E1%86%A8%2025%E1%84%82%E1%85%A7%E1%86%AB%20%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB.pdf"><span class="ext">PDF</span>2025 중간</a></li>
+</ul>
+
+<h3>기출 풀이 스크립트</h3>
+<ul class="files">
+  <li><a href="%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A9%E1%84%89%E1%85%A1%2016%E1%84%82%E1%85%A7%E1%86%AB.txt"><span class="ext">TXT</span>중간고사 16년</a></li>
+  <li><a href="%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A9%E1%84%89%E1%85%A1%2018%E1%84%82%E1%85%A7%E1%86%AB.txt"><span class="ext">TXT</span>중간고사 18년</a></li>
+  <li><a href="%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A9%E1%84%89%E1%85%A1%2019%E1%84%82%E1%85%A7%E1%86%AB.TXT"><span class="ext">TXT</span>중간고사 19년</a></li>
+  <li><a href="%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A9%E1%84%89%E1%85%A1%20%E1%84%91%E1%85%AE%E1%86%AF%E1%84%8B%E1%85%B5.TXT"><span class="ext">TXT</span>중간고사 풀이 (19년)</a></li>
+  <li><a href="%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB%E1%84%80%E1%85%A9%E1%84%89%E1%85%A1%20%E1%84%83%E1%85%A2%E1%84%87%E1%85%B5.TXT"><span class="ext">TXT</span>중간고사 대비 (교재 예제·문제)</a></li>
+</ul>
+
+<h3>수업 스크립트</h3>
+<ul class="files">
+  <li><a href="9_30.txt"><span class="ext">9/30</span>구멍 뚫린 판 · PLANE</a></li>
+  <li><a href="1001ansys.txt"><span class="ext">10/01</span>Ex 3.1 트러스 (노드 직접)</a></li>
+  <li><a href="1006%20ansys.txt"><span class="ext">10/06</span>Ex 3.1 트러스 (top-down)</a></li>
+  <li><a href="1006_1ansys.txt"><span class="ext">10/06</span>Ex 3.2 3D 트러스</a></li>
+  <li><a href="10_07.TXT"><span class="ext">10/07</span>Ex 3.1 · LINK1</a></li>
+  <li><a href="10_14.TXT"><span class="ext">10/14</span>Ex 3.2 · LINK8 (노드)</a></li>
+  <li><a href="10_14_2.txt"><span class="ext">10/14</span>Ex 3.2 · LINK8 (키포인트)</a></li>
+  <li><a href="1013.txt"><span class="ext">10/13</span>BEAM188 외팔보 · 방향 KP</a></li>
+  <li><a href="10_21.TXT"><span class="ext">10/21</span>Ex 4.5 프레임 · SFBEAM</a></li>
+</ul>
+
+<h3>강의자료 · Help 캡처</h3>
+<ul class="files">
+  <li><a href="%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8B%E1%85%B4%E1%84%8C%E1%85%A1%E1%84%85%E1%85%AD%282026%29.pdf"><span class="ext">PDF</span>강의자료 (2026)</a></li>
+  <li><a href="BEAM188.pdf"><span class="ext">PDF</span>BEAM188 단면·방향 노트</a></li>
+  <li><a href="beam188.png"><span class="ext">PNG</span>Help: BEAM188</a></li>
+  <li><a href="link180.png"><span class="ext">PNG</span>Help: LINK180</a></li>
+  <li><a href="secoffset.png"><span class="ext">PNG</span>Help: SECOFFS</a></li>
+  <li><a href="sfbeam.png"><span class="ext">PNG</span>Help: SFBEAM</a></li>
+  <li><a href="%E1%84%89%E1%85%AE%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%8B%E1%85%A8%E1%84%8C%E1%85%A6.png"><span class="ext">PNG</span>수업예제 (Ex 4.5)</a></li>
+  <li><a href="%E1%84%89%E1%85%AE%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%8B%E1%85%A8%E1%84%8C%E1%85%A61.png"><span class="ext">PNG</span>수업예제 (Ex 4.5 ANSYS)</a></li>
+</ul>
+
+</main>
+
+<footer>
+  <div class="wrap">교재: Moaveni, <em>Finite Element Analysis: Theory and Application with ANSYS</em> · 명령 문법: ANSYS Mechanical APDL Command / Element Reference</div>
+</footer>
+
+<script>
+(function(){
+  var b=document.getElementById('theme'),r=document.documentElement;
+  function cur(){return r.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}
+  function label(){b.textContent=cur()==='dark'?'밝게':'어둡게'}
+  label();
+  b.onclick=function(){var n=cur()==='dark'?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('theme',n)}catch(e){}label()};
+})();
+</script>
+</body>
+</html>
