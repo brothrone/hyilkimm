@@ -243,7 +243,7 @@
     this.p('  KEYOPT( 7-12)=' + kop.slice(7, 13).map(function (v) { return pad(v, 7); }).join(''));
     this.p(''); this.p(' CURRENT NODAL DOF SET IS  ' + this.allDofs().map(function (d) { return rpad(DOFS[d], 5); }).join(' '));
     this.p('  ' + (this.is2D() ? 'TWO' : 'THREE') + '-DIMENSIONAL MODEL');
-    if (t.legacy) this.note('Element type ' + name + ' is a legacy element (옛 요소). 최신 ANSYS 에서는 ' + ({ LINK1: 'LINK180', LINK8: 'LINK180', BEAM3: 'BEAM188', PLANE42: 'PLANE182', PLANE82: 'PLANE183' }[name]) + ' + SECTYPE/SECDATA 를 씁니다.');
+    if (t.legacy) this.warn('Element type ' + name + ' is a legacy (archived) element. 최신 ANSYS 에서는 ' + ({ LINK1: 'LINK180', LINK8: 'LINK180', BEAM3: 'BEAM188', PLANE42: 'PLANE182', PLANE82: 'PLANE183' }[name]) + ' + SECTYPE/SECDATA 를 씁니다.');
     if (name === 'PLANE183' || name === 'PLANE82') this.note('이 연습기는 ' + name + ' 를 4절점(PLANE182 방식)으로 계산합니다.');
   });
   reg('KEYOPT', 'P', function (f, N) { var et = this.ets[N(1)]; if (!et) throw new ApdlError('Element type ' + N(1) + ' is not defined.'); et.kop[N(2)] = N(3); this.p(' ELEMENT TYPE ' + pad(N(1), 8) + ' IS ' + et.name + '  KEYOPT(' + N(2) + ')= ' + N(3)); });
