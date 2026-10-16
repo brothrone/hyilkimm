@@ -42,7 +42,7 @@
     this.D = {}; this.F = {}; this.DK = {}; this.FK = {}; this.SFB = {};
     this.params = {}; this.afunDeg = false; this.nsel = null; this.esel = null;
     this.proc = 'B'; this.title = ''; this.result = null; this.etab = {}; this.etabOrder = [];
-    this.plot = { kind: 'auto' }; this.pnum = {}; this.curSec = null; this.lastNodes = []; this.solved = 0; this._once = {};
+    this.plot = { kind: 'auto' }; this.eshape = 0; this.pnum = {}; this.curSec = null; this.lastNodes = []; this.solved = 0; this._once = {};
   };
   Engine.prototype.p = function (s, k) { var self = this; String(s).split('\n').forEach(function (l) { self.out.push({ t: l, k: k || '' }); }); if (this.out.length > 30000) this.out.splice(0, this.out.length - 25000); };
   Engine.prototype.err = function (msg) { this.p(''); this.p(' *** ERROR ***', 'e'); this.p(' ' + msg.replace(/\n/g, '\n '), 'e'); this.nErr = (this.nErr || 0) + 1; if (this.curLine) this.errLines.push(this.curLine); };
@@ -196,7 +196,7 @@
   reg('/TITLE', 'A', function (f) { this.title = f.slice(1).join(','); this.p(' TITLE='); this.p('  ' + this.title); });
   reg('/COM', 'A', function (f) { this.p(' ' + f.slice(1).join(',')); });
   reg('/PSYMB /PBC /PSF /ESHAPE /VIEW /REPLOT /AUTO /DIST /FOCUS /ANGLE /UNITS /NOPR /GOPR /SHOW /EOF KEYW /UIS /CONFIG /NERR /GRAPHICS /TRIAD /PLOPTS /RGB /COLOR /EDGE /NUMBER /WINDOW /ZOOM /BATCH /FILNAME /CWD /DEVICE', 'A', function (f, N, S, name) {
-    if (name === '/ESHAPE') this.plot.eshape = N(1) ? 1 : 0; if (name === '/VIEW') this.view = [N(2), N(3), N(4)]; if (name === '/REPLOT' && this.lastPlot) this.plot = this.lastPlot;
+    if (name === '/ESHAPE') { this.eshape = N(1) ? 1 : 0; this.p(' ELEMENT SHAPE KEY = ' + this.eshape + (this.eshape ? '  (보·링크를 단면 모양으로 그림)' : '')); } if (name === '/VIEW') this.view = [N(2), N(3), N(4)]; if (name === '/REPLOT' && this.lastPlot) this.plot = this.lastPlot;
     if (name === '/PSYMB' && this.lab(f[1]) === 'NDIR') this.pnum.NDIR = N(2) === 1;
     this.p(' ' + name + (f.length > 1 ? ' ' + f.slice(1).join(',') : '') + '  (그래픽 설정)');
   });
@@ -344,7 +344,7 @@
       var Ln = self.lines[id]; if (!Ln) throw new ApdlError('Line ' + id + ' is not defined.'); if (Ln.meshed) return;
       var len = 0, seg = [0]; for (var i = 1; i < Ln.pts.length; i++) { len += norm(sub(Ln.pts[i], Ln.pts[i - 1])); seg.push(len); }
       var nd = Ln.ndiv || (Ln.size ? Math.max(1, Math.round(len / Ln.size)) : 0) || self.esz.ndiv || (self.esz.size ? Math.max(1, Math.round(len / self.esz.size)) : 0);
-      if (!nd) { nd = 1; self.noteOnce('No element size was specified (ESIZE 없음) — each line is meshed with 1 element.'); }
+      if (!nd) { var turn = 0, P = Ln.pts; for (var q = 1; q < P.length - 1; q++) { var d1 = C.sub(P[q], P[q - 1]), d2 = C.sub(P[q + 1], P[q]), cs = C.dot(d1, d2) / (Math.hypot(d1[0], d1[1], d1[2]) * Math.hypot(d2[0], d2[1], d2[2]) || 1); turn += Math.acos(Math.max(-1, Math.min(1, cs))) * 180 / Math.PI; } nd = Math.min(15, Math.max(3, Math.ceil(turn / 15 - 1e-9))); self.noteOnce('No element size was specified (ESIZE 없음) — default DESIZE is used: at least 3 elements per line (MINL=3), 15° per element on arcs (ANGL), at most 15 (MXEL).'); }
       var at = function (s) { for (var i = 1; i < seg.length; i++) if (s <= seg[i] + 1e-12) { var t = (s - seg[i - 1]) / ((seg[i] - seg[i - 1]) || 1); return add(Ln.pts[i - 1], scl(sub(Ln.pts[i], Ln.pts[i - 1]), t)); } return Ln.pts[Ln.pts.length - 1]; };
       var kn = function (k) { if (self.kpNode[k] && self.nodes[self.kpNode[k]]) return self.kpNode[k]; var nn = maxKey(self.nodes) + 1; self.addNode(nn, self.kps[k].x.slice()); self.kpNode[k] = nn; return nn; };
       var list = [kn(Ln.k[0])]; for (var j = 1; j < nd; j++) { var nn = maxKey(self.nodes) + 1; self.addNode(nn, at(len * j / nd)); list.push(nn); } list.push(kn(Ln.k[1]));

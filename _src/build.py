@@ -87,6 +87,9 @@ for k, (f, label, crumb, desc, deep) in enumerate(PAGES):
 <meta name="robots" content="noindex">
 <title>{TITLES[f]}</title>
 <meta name="description" content="{desc}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>

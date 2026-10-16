@@ -6,6 +6,9 @@
 <meta name="robots" content="noindex">
 <title>APDL 시험 참고자료</title>
 <meta name="description" content="ANSYS APDL 명령어 정리와 기출 유형별 스크립트">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -354,6 +357,43 @@ face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = 
 <ul>
 <li>확인: <code>/psf,pres,,2</code> + <code>eplot</code> 하중 화살표 표시, <code>sflist</code></li>
 <li>분포하중 단위: lb/ft → <strong>lb/in = /12</strong></li>
+</ul>
+<h3 id="수업-예제-i형강-프레임-분포하중">수업 예제: I형강 프레임 + 분포하중 (LATT 방향 키포인트 · SECOFFSET · /ESHAPE)</h3>
+<p>수업 시간 메모장 스크립트(<a href="sfbeam%20%EB%B6%84%ED%8F%AC%ED%95%98%EC%A4%91%20%28%EC%88%98%EC%97%85%29.txt">원본 txt</a>)를 그대로 옮기고 주석을 달았다. 원본 첫 줄 <code>sfbeam !분포하중</code>은 메모라서 빼고, 마지막 <code>pldisp</code> 앞에 <code>/post1</code>을 넣었다.</p>
+<pre><code>/clear                                    <span class="c">! 데이터베이스 지우고 새로 시작</span>
+/prep7                                    <span class="c">! 전처리기 들어가기</span>
+et,1,beam188                              <span class="c">! 요소 1번 = BEAM188 (3-D 보)</span>
+keyopt,1,3,3                              <span class="c">! KEYOPT(3)=3 → 3차 형상함수 (분포하중 정확도↑)</span>
+sectype,1,beam,i                          <span class="c">! 단면 1번 = I형강</span>
+secdata,6.49,6.49,12.22,0.38,0.38,0.23    <span class="c">! W1=6.49 W2=6.49 (플랜지 폭) W3=12.22 (높이) t1=t2=0.38 (플랜지 두께) t3=0.23 (웨브 두께) [in]</span>
+mp,ex,1,3e7                               <span class="c">! 탄성계수 E = 3×10^7 psi</span>
+k,1,0,108                                 <span class="c">! 키포인트 1 (0,108) — 보 왼쪽 끝</span>
+k,2,120,108                               <span class="c">! 키포인트 2 (120,108) — 모서리</span>
+k,3,120,0                                 <span class="c">! 키포인트 3 (120,0) — 기둥 아래 끝</span>
+k,4,0,109,0                               <span class="c">! 키포인트 4 (0,109,0) — 방향용 키포인트 (선에는 안 씀)</span>
+l,1,2                                     <span class="c">! 선 1 = 보 (KP1→KP2)</span>
+l,2,3                                     <span class="c">! 선 2 = 기둥 (KP2→KP3)</span>
+latt,,,,,4                                <span class="c">! LATT,MAT,REAL,TYPE,--,KB → KB=4 : 모든 선에 방향 키포인트 4 지정 (쉼표 5개!)</span>
+lmesh,1                                   <span class="c">! 선 1만 메쉬 (ESIZE 없음 → 기본 DESIZE: 선당 3개 이상)</span>
+sfbeam,all,1,pres,800/12                  <span class="c">! 지금 있는 요소(=보) 전부, face 1(−z 방향) 등분포 800 lb/ft = 800/12 lb/in</span>
+/eshape,1                                 <span class="c">! 보를 단면 모양(3-D)으로 그리기</span>
+eplot                                     <span class="c">! 요소 그림 → I형강 모양 확인</span>
+lmesh,2                                   <span class="c">! 선 2(기둥) 메쉬 — SFBEAM 뒤에 메쉬했으므로 기둥에는 하중 없음</span>
+secoff,user,0,12.22                       <span class="c">! SECOFFSET,USER,y=0,z=12.22 : 노드를 단면 z=12.22 쪽 면에 둠 (단면 1을 쓰는 모든 요소에 적용)</span>
+dk,1,all                                  <span class="c">! KP1 고정 (모든 자유도)</span>
+dk,3,all                                  <span class="c">! KP3 고정</span>
+/solu                                     <span class="c">! 해석 처리기</span>
+solve                                     <span class="c">! 풀기</span>
+/post1                                    <span class="c">! 후처리기 (PLDISP 는 POST1 명령)</span>
+pldisp,1                                  <span class="c">! 변형 형상 + 변형 전 모양</span>
+</code></pre>
+<p class="runlink"><a href="apdl.html#code=L2NsZWFyCi9wcmVwNwpldCwxLGJlYW0xODgKa2V5b3B0LDEsMywzCnNlY3R5cGUsMSxiZWFtLGkKc2VjZGF0YSw2LjQ5LDYuNDksMTIuMjIsMC4zOCwwLjM4LDAuMjMKbXAsZXgsMSwzZTcKaywxLDAsMTA4CmssMiwxMjAsMTA4CmssMywxMjAsMAprLDQsMCwxMDksMApsLDEsMgpsLDIsMwpsYXR0LCwsLCw0CmxtZXNoLDEKc2ZiZWFtLGFsbCwxLHByZXMsODAwLzEyCi9lc2hhcGUsMQplcGxvdApsbWVzaCwyCnNlY29mZix1c2VyLDAsMTIuMjIKZGssMSxhbGwKZGssMyxhbGwKL3NvbHUKc29sdmUKL3Bvc3QxCnBsZGlzcCwxCg==">▶ 연습기에서 실행해 보기</a></p>
+<ul>
+<li><strong><code>latt,,,,,4</code> — 쉼표 5개.</strong> LATT의 4번째 칸은 비어 있는 자리(--)이고 5번째가 KB(방향 키포인트)다. 쉼표를 4개만 쓰면 4가 빈 자리로 들어가 방향이 지정되지 않는다.</li>
+<li>BEAM188에서 K(방향점)는 <strong>element z축</strong>을 정한다. I형강 높이 W3는 단면 z 방향이므로, 보(선 1)는 z = +Y → <strong>높이가 세로(강축 휨)</strong>, 기둥(선 2)은 z ≈ −X → 높이가 프레임 평면 안. K를 안 주면 보의 높이가 Z(면 밖)로 누워 약축으로 휜다.</li>
+<li><code>sfbeam,all,1,…</code>: face 1 = element −z 방향 = 보에서는 −Y(아래). <code>all</code>은 <strong>그 순간 선택된 요소</strong>만 뜻하므로, 기둥을 메쉬하기 전에 쓰면 보에만 하중이 걸린다.</li>
+<li><code>secoff,user,0,12.22</code>: 단면 1의 오프셋은 메쉬 뒤에 바꿔도 단면 1을 쓰는 <strong>모든 요소</strong>(보·기둥)에 적용된다. /ESHAPE 그림에서 보가 선 아래로 매달리는 모양이 된다. 주석 처리된 <code>-6.11+0.38</code>은 다른 위치를 시험해 본 값.</li>
+<li>연습기 결과(Timoshenko, 오프셋 효과 미반영): 반력 FY = 4505 (KP1), 3495 (KP3), 합 8000 = 800/12 × 120 ✓</li>
 </ul>
 <hr />
 <h2 id="5-형상-만들기-solid-modeling">5. 형상 만들기 (Solid modeling)</h2>

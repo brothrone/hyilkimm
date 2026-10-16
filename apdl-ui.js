@@ -570,12 +570,34 @@
     // 요소
     if (kind === 'elem' || res || kind === 'all') {
       var XY = function (n) { return S2(defX(n)); }, XY0 = function (n) { return S2(s.nodes[n].x); };
+      var faces = [], esh = eng.eshape;
       if (res && (kind === 'DISP' ? p.und !== 0 : p.und)) for (e in s.elems) drawElem(e, XY0, true);
       for (e in s.elems) drawElem(e, res ? XY : XY0, false);
+      faces.sort(function (a, b) { return a.d - b.d; }).forEach(function (f) { el('polygon', { points: f.pts.map(function (q) { return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' '), fill: f.c, stroke: f.st, 'stroke-width': 0.5, 'stroke-linejoin': 'round' }, g0); });
+    }
+    function shade(hex, k) { var n = parseInt(hex.slice(1), 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255; return 'rgb(' + Math.round(r * k) + ',' + Math.round(g * k) + ',' + Math.round(b * k) + ')'; }
+    function eshapeElem(e, E, col) { // /ESHAPE,1: 보를 단면 모양으로 (SECOFFSET 위치 반영)
+      var me = eng.elems[e], sec = me && eng.secs[me.sec]; if (!sec || sec.type === 'LINK') return false;
+      var P; try { P = sec.props || M3.secProps(sec); } catch (x) { return false; }
+      var off = sec.off || 'CENT', oy = off === 'USER' ? (sec.offyz[0] || 0) : off === 'ORIGIN' ? 0 : P.cy || 0, oz = off === 'USER' ? (sec.offyz[1] || 0) : off === 'ORIGIN' ? 0 : P.cz || 0;
+      var loops = [];
+      if (P.circ) { [P.circ[1], P.circ[0]].forEach(function (r, i) { if (!r) return; var L = []; for (var q = 0; q < 16; q++) L.push([r * Math.cos(q * Math.PI / 8) - oy, r * Math.sin(q * Math.PI / 8) - oz]); loops.push({ pts: i ? L.reverse() : L, hole: !!i }); }); }
+      else if (P.rects) P.rects.forEach(function (r) { loops.push({ pts: [[r.y0 - oy, r.z0 - oz], [r.y1 - oy, r.z0 - oz], [r.y1 - oy, r.z1 - oz], [r.y0 - oy, r.z1 - oz]] }); });
+      else return false;
+      var A0 = s.nodes[E.n[0]].x, A1 = s.nodes[E.n[1]].x, ax = beamAxes(A0, A1, E.k, E.kind), B0 = res ? defX(E.n[0]) : A0, B1 = res ? defX(E.n[1]) : A1, vz = R[2];
+      var at = function (B, c) { return [B[0] + ax.y[0] * c[0] + ax.z[0] * c[1], B[1] + ax.y[1] * c[0] + ax.z[1] * c[1], B[2] + ax.y[2] * c[0] + ax.z[2] * c[1]]; };
+      var add = function (P3s, nrm3) { var d = 0, sp = P3s.map(function (q) { d += vz[0] * q[0] + vz[1] * q[1] + vz[2] * q[2]; return S2(q); }), nn = Math.hypot(nrm3[0], nrm3[1], nrm3[2]) || 1, k = 0.35 + 0.65 * Math.abs((vz[0] * nrm3[0] + vz[1] * nrm3[1] + vz[2] * nrm3[2]) / nn); faces.push({ pts: sp, d: d / P3s.length, c: shade(col, k), st: shade(col, 0.3) }); };
+      loops.forEach(function (lp) {
+        var L = lp.pts;
+        for (var i = 0; i < L.length; i++) { var c1 = L[i], c2 = L[(i + 1) % L.length], t = [ax.y[0] * (c2[0] - c1[0]) + ax.z[0] * (c2[1] - c1[1]), ax.y[1] * (c2[0] - c1[0]) + ax.z[1] * (c2[1] - c1[1]), ax.y[2] * (c2[0] - c1[0]) + ax.z[2] * (c2[1] - c1[1])]; add([at(B0, c1), at(B1, c1), at(B1, c2), at(B0, c2)], cr(ax.x, t)); }
+        if (!lp.hole) { add(L.map(function (c) { return at(B0, c); }), ax.x); add(L.map(function (c) { return at(B1, c); }), ax.x); }
+      });
+      return true;
     }
     function drawElem(e, XYf, ghost) {
       var E = s.elems[e], pts = E.n.map(XYf), me = eng.elems[e], col = MATCOL[((me && me.mat) || 1) - 1 & 7] || '#00ffff';
       if (!ghost && efield && efield[e] !== undefined) col = SPEC[band(efield[e], flo, fhi)];
+      if (!ghost && esh && E.kind === 'beam') { var fc = col; if (field) { var fa = field[E.n[0]], fb = field[E.n[1]]; if (fa !== undefined && fb !== undefined) fc = SPEC[band((fa + fb) / 2, flo, fhi)]; } if (eshapeElem(e, E, fc)) return; }
       if (E.kind === 'plane') {
         var poly = (E.n[2] === E.n[3] ? pts.slice(0, 3) : pts.slice(0, 4));
         if (!ghost && field) { var av = 0, c = 0; E.n.forEach(function (n) { if (field[n] !== undefined) { av += field[n]; c++; } }); col = SPEC[band(c ? av / c : 0, flo, fhi)]; }
