@@ -1,0 +1,51 @@
+# UAV 카메라 진동 로거 (ESP32 + ADXL345 x2 + microSD)
+
+3.5 kg급 무인기 기수 카메라의 진동을 측정한다. 센서1은 기체 쪽(입력), 센서2는 카메라 쪽(출력)에 붙여
+카메라 마운트의 **전달률(transmissibility)** 을 구하는 것이 목표다.
+
+## 기존 코드(폴링 + CSV)의 문제와 수정
+
+| 문제 | 영향 | 수정 |
+|---|---|---|
+| `(x1<<8)\|x0` 가 `byte`라 부호 없는 값이 됨 | **음의 가속도가 약 +2500 m/s²로 기록됨** (z=-1 LSB → 65535) | `int16_t`로 조합, PC에서 변환 |
+| ODR 800 Hz인데 400 Hz로 폴링 | 200~400 Hz 성분이 에일리어싱, 샘플 중복/누락 | 센서 FIFO(stream)로 전 샘플 읽기 |
+| `previousMicros = currentMicros` | 지연이 누적되어 주기가 늘어짐 | 고정 주기 태스크(`vTaskDelayUntil`) |
+| 한 루프에서 SD 쓰기 | SD 쓰기 지연(수십 ms)에 샘플 유실, 유실 표시 없음 | 센서(core1)/SD(core0) 분리, 큐 128블록, 유실 카운터 |
+| `millis()` 타임스탬프 | 1 ms 해상도(2.5 ms 주기에 부적합) | 블록마다 `esp_timer` us, PC에서 실제 fs 추정 |
+| 부팅마다 같은 CSV에 append | 비행이 섞이고 헤더 중복 | 부팅마다 `vib_NNN.bin` 새로 생성 |
+| 통신 확인 없음 | 배선 불량이어도 0만 기록 | DEVID(0xE5) 확인, 실패 시 LED 빠른 점멸 |
+| SD 실패 시 `writeCount%40==0` 가 매번 참 | 시리얼 도배 | 제거 (실패 시 정지) |
+
+## 배선 (ESP32 DevKit V1)
+
+| 신호 | GPIO |
+|---|---|
+| 센서 SCL(SCK) / SDA(MOSI) / SDO(MISO) | 18 / 23 / 19 (VSPI, 두 센서 공유) |
+| 센서1 CS / 센서2 CS | 15 / 4 |
+| SD SCK / MOSI / MISO / CS | 14 / 13 / 27 / 5 (HSPI) |
+| 센서 VCC | 3.3 V |
+| SD 모듈 VCC | 5 V (VIN) |
+
+GY-291은 CS를 GND가 아니라 GPIO에 연결해야 SPI 모드로 동작한다.
+
+## 사용
+
+1. Arduino IDE(ESP32 보드 패키지)로 `firmware/vibration_logger/vibration_logger.ino` 업로드. SD는 FAT32.
+2. 부팅하면 `/vib_000.bin`부터 자동 기록. 내장 LED가 1초마다 토글되면 정상.
+3. PC: `pip install numpy scipy matplotlib` 후
+   `python3 tools/vibview.py vib_000.bin` → `vib_000/` 에 CSV(m/s²)와 `psd.png`.
+   하드웨어가 없을 때는 `python3 tools/make_demo_log.py demo.bin` 으로 시험 가능.
+
+## 비행 전 확인 사항
+
+- 시리얼 모니터에서 `queueDrops=0`, `fifoFull` 이 늘지 않는지 확인 (늘면 유실 가능).
+- 정지 상태 6면(±X, ±Y, ±Z) 중력 측정으로 오프셋과 감도 확인 (ADXL345 감도는 개체차가 있다).
+- 센서 보드는 점퍼선에 매달지 말고 마운트에 **강체로 고정**. 만능기판이 얇으면 기판 자체 공진이 측정에 섞인다.
+- 점퍼선은 진동에 접촉 불량이 생기므로 비행용은 납땜. ESP32 전원은 모터/서보와 분리된 BEC에서 받고 큰 전해 커패시터를 붙인다.
+- 정확한 대역 선택: 프롭 회전 주파수와 블레이드 통과 주파수(회전수 x 날 수)를 계산해 ODR 대역폭(1600 Hz ODR = 800 Hz)이 충분한지 확인.
+
+## 한계 (정직한 메모)
+
+- ADXL345 노이즈 밀도는 약 0.3 mg/√Hz급이라 넓은 대역에서는 수 mg~10 mg RMS 수준이다. 카메라 진동(수십~수백 mg 이상)에는 충분하지만 미세 진동에는 ADXL355 등이 낫다.
+- 두 센서의 ODR이 서로 독립 클럭이라 샘플 단위 동기는 안 된다. PSD/전달률 분석에는 문제없지만 위상 분석은 하지 말 것.
+- 펌웨어는 ESP32 실물로 시험하지 않았다(컴파일 환경 없음). 파서와 분석 도구는 합성 로그로만 검증했다.
