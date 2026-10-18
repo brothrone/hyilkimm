@@ -46,7 +46,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("file")
     ap.add_argument("--out", default=None)
-    ap.add_argument("--nperseg", type=int, default=2048)
+    ap.add_argument("--nperseg", type=int, default=4096)
+    ap.add_argument("--rpm", type=float, default=None, help="프롭 회전수. 1P/BPF 고조파 표시")
+    ap.add_argument("--blades", type=int, default=3)
     a = ap.parse_args()
     odr, d = load(a.file)
     outdir = Path(a.out or Path(a.file).with_suffix(""))
@@ -72,6 +74,15 @@ def main():
             f, p = signal.welch(x, v["fs"], nperseg=min(a.nperseg, len(x)), window="hann")
             psd[(k, c)] = (f, p)
             ax[0].semilogy(f, p, label=f"S{k+1} {name}", lw=1)
+    marks = []
+    if a.rpm:
+        f1p = a.rpm / 60
+        marks = [(f1p * m, f"{m}P" if m % a.blades else f"{m // a.blades}xBPF") for m in range(1, 3 * a.blades + 1)
+                 if m % a.blades == 0 or m <= 2]
+    for axx in ax:
+        for fm, lab in marks:
+            axx.axvline(fm, color="gray", ls="--", lw=.6)
+            axx.text(fm, 1, lab, transform=axx.get_xaxis_transform(), fontsize=7, va="top", rotation=90)
     ax[0].set(xlabel="Hz", ylabel="PSD [g²/Hz]", title="Acceleration PSD")
     ax[0].legend(ncol=3); ax[0].grid(True, which="both", alpha=.3)
 
@@ -85,6 +96,19 @@ def main():
         ax[1].axhline(1, color="k", lw=.5); ax[1].legend(); ax[1].grid(True, which="both", alpha=.3)
     fig.tight_layout()
     fig.savefig(outdir / "psd.png", dpi=130)
+
+    fig2, axs = plt.subplots(len(d), 1, figsize=(9, 3.5 * len(d)), squeeze=False, sharex=True)
+    for row, (k, v) in enumerate(d.items()):
+        x = signal.detrend(v["acc"][:, 2])
+        f, tt, S = signal.spectrogram(x, v["fs"], nperseg=1024, noverlap=768)
+        im = axs[row, 0].pcolormesh(tt, f, 10 * np.log10(S + 1e-12), shading="auto")
+        axs[row, 0].set(ylabel=f"S{k+1} Z  Hz", title=f"Spectrogram S{k+1} Z [dB g²/Hz]")
+        for fm, _ in marks:
+            axs[row, 0].axhline(fm, color="w", ls="--", lw=.5)
+        fig2.colorbar(im, ax=axs[row, 0])
+    axs[-1, 0].set_xlabel("s")
+    fig2.tight_layout()
+    fig2.savefig(outdir / "spectrogram.png", dpi=130)
     print("저장:", outdir)
 
 

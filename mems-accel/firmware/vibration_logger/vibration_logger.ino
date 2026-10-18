@@ -23,11 +23,12 @@
 #define LED_PIN 2               // DevKit 내장 LED
 
 // ---------------- 샘플링 설정 ----------------
-// 1600 Hz ODR(대역폭 800 Hz) + 10 ms 주기 읽기. 3200 Hz가 필요하면
-// ODR_HZ=3200, BW_RATE_CODE=0x0F, POLL_MS=5 로 바꾼다.
-#define ODR_HZ        1600
-#define BW_RATE_CODE  0x0E
-#define POLL_MS       10
+// 3200 Hz ODR(대역폭 1600 Hz) + 5 ms 주기 읽기 (ADXL345 최대 설정).
+// 10000 RPM 3엽 프롭: 1P=167 Hz, BPF=500 Hz, 2xBPF=1 kHz, 3xBPF=1.5 kHz 까지 포함.
+// 1600 Hz가 충분하면 ODR_HZ=1600, BW_RATE_CODE=0x0E, POLL_MS=10 (데이터량 절반).
+#define ODR_HZ        3200
+#define BW_RATE_CODE  0x0F
+#define POLL_MS       5
 #define FIFO_WATERMARK 16
 
 // ---------------- ADXL345 레지스터 ----------------
@@ -39,7 +40,7 @@
 #define REG_FIFO_CTL    0x38
 #define REG_FIFO_STATUS 0x39
 
-#define SPI_HZ 2000000          // ADXL345 최대 5 MHz, 점퍼선이므로 2 MHz 유지
+#define SPI_HZ 4000000          // ADXL345 최대 5 MHz. 3200 Hz ODR은 SPI 2 MHz 이상 필요(데이터시트)
 
 // ---------------- 기록 형식 ----------------
 #define MAX_SAMPLES 32
@@ -195,7 +196,7 @@ void setup() {
   f.write((uint8_t *)&h, sizeof(h));
   f.flush();
 
-  blockQ = xQueueCreate(128, sizeof(Block));       // 약 0.6 s 분량 버퍼
+  blockQ = xQueueCreate(256, sizeof(Block));       // 5 ms 주기에서 약 0.6 s 분량 버퍼(약 51 KB)
   Serial.printf("기록 시작: %s (ODR %d Hz)\n", name, ODR_HZ);
 
   xTaskCreatePinnedToCore(writerTask, "writer", 6144, &f, 1, nullptr, 0);

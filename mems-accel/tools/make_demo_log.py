@@ -3,19 +3,20 @@
 import struct, sys
 import numpy as np
 
-ODR, N_MAX, POLL = 1600, 32, 0.010
+ODR, N_MAX, POLL = 3200, 32, 0.005
 rng = np.random.default_rng(0)
 dur = 20.0
-fs1, fs2 = 1600 * 1.01, 1600 * 0.98             # 두 센서의 실제 ODR이 다르다고 가정
+fs1, fs2 = 3200 * 1.01, 3200 * 0.98             # 두 센서의 실제 ODR이 다르다고 가정
 LSB = 0.0039
 
 
 def sig(fs, amp2):
     t = np.arange(int(dur * fs)) / fs
-    base = 0.30 * np.sin(2 * np.pi * 95 * t) + 0.12 * np.sin(2 * np.pi * 190 * t)
+    # 10000 RPM 3엽: 1P=166.7, BPF=500, 2xBPF=1000 Hz
+    base = 0.30 * np.sin(2 * np.pi * 166.7 * t) + 0.12 * np.sin(2 * np.pi * 500 * t) + 0.04 * np.sin(2 * np.pi * 1000 * t)
     y = base + 0.02 * rng.standard_normal(len(t))
     if amp2:
-        y = y * 0.6 + 0.5 * np.sin(2 * np.pi * 120 * t)
+        y = y * 0.6 + 0.05 * np.sin(2 * np.pi * 333 * t)
     z = 1.0 + y                                   # z축은 중력 1 g 포함
     xyz = np.column_stack([0.3 * y, 0.3 * y, z])
     return np.round(xyz / LSB).astype("<i2")
