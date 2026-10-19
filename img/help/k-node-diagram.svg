@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1010" width="1200" height="1010">
+<defs><marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#444"/></marker><marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a8a3a"/></marker><marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f5fbf"/></marker><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c4161c"/></marker><marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d77a00"/></marker></defs>
+<rect width="1200" height="1010" fill="#fff"/>
+<text x="600.0" y="38.0" font-size="22" fill="#111" font-weight="bold" text-anchor="middle" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">BEAM188 방향 노드 K — 왜 단면이 세워지는가 (2025-3: W 보 + C 기둥)</text>
+<text x="30.0" y="78.0" font-size="17" fill="#111" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">① 형상과 K 노드 (Y = 위, 보는 X 방향, 기둥은 +Z 방향)</text>
+<rect x="286.0" y="300.0" width="14" height="60" fill="#bbb"/>
+<line x1="300.0" y1="330.0" x2="564.0" y2="330.0" stroke="#8a98a6" stroke-width="12"/>
+<line x1="564.0" y1="330.0" x2="432.0" y2="462.0" stroke="#8a98a6" stroke-width="12"/>
+<circle cx="300.0" cy="330.0" r="6" fill="#222"/>
+<circle cx="564.0" cy="330.0" r="6" fill="#222"/>
+<circle cx="432.0" cy="462.0" r="6" fill="#222"/>
+<text x="266.0" y="382.0" font-size="14" fill="#222" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">A (고정)</text>
+<text x="574.0" y="352.0" font-size="14" fill="#222" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">B</text>
+<text x="402.0" y="488.0" font-size="14" fill="#222" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">C</text>
+<text x="330.0" y="364.0" font-size="14" fill="#455" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">W 보 (단면 1)</text>
+<text x="512.0" y="420.0" font-size="14" fill="#455" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">C 기둥 (단면 2)</text>
+<line x1="432.0" y1="330.0" x2="432.0" y2="110.0" stroke="#d77a00" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ao)"/>
+<line x1="498.0" y1="396.0" x2="498.0" y2="176.0" stroke="#d77a00" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ao)"/>
+<circle cx="432.0" cy="110.0" r="8" fill="#d77a00"/>
+<circle cx="498.0" cy="176.0" r="8" fill="#d77a00"/>
+<text x="444.0" y="104.0" font-size="14" fill="#d77a00" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">K100 (60, 100, 0) — W의 방향 노드</text>
+<text x="510.0" y="170.0" font-size="14" fill="#d77a00" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">K101 (120, 100, 60) — C의 방향 노드</text>
+<circle cx="432.0" cy="330.0" r="4" fill="#d77a00"/>
+<circle cx="498.0" cy="396.0" r="4" fill="#d77a00"/>
+<text x="406.0" y="352.0" font-size="12" fill="#d77a00" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">선 위의 발</text>
+<line x1="432.0" y1="330.0" x2="482.0" y2="330.0" stroke="#1f5fbf" stroke-width="3" marker-end="url(#ab)"/>
+<line x1="432.0" y1="330.0" x2="432.0" y2="270.0" stroke="#1a8a3a" stroke-width="3" marker-end="url(#ag)"/>
+<text x="488.0" y="334.0" font-size="16" fill="#1f5fbf" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">x</text>
+<text x="442.0" y="300.0" font-size="15" fill="#1a8a3a" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">z = +Y</text>
+<line x1="498.0" y1="396.0" x2="462.6" y2="431.4" stroke="#1f5fbf" stroke-width="3" marker-end="url(#ab)"/>
+<line x1="498.0" y1="396.0" x2="498.0" y2="336.0" stroke="#1a8a3a" stroke-width="3" marker-end="url(#ag)"/>
+<text x="468.6" y="435.4" font-size="16" fill="#1f5fbf" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">x</text>
+<text x="508.0" y="366.0" font-size="15" fill="#1a8a3a" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">z = +Y</text>
+<line x1="90.0" y1="470.0" x2="150.0" y2="470.0" stroke="#444" stroke-width="2" marker-end="url(#ak)"/>
+<text x="156.0" y="475.0" font-size="15" fill="#444" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">X</text>
+<line x1="90.0" y1="470.0" x2="90.0" y2="410.0" stroke="#444" stroke-width="2" marker-end="url(#ak)"/>
+<text x="85.0" y="404.0" font-size="15" fill="#444" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">Y (위)</text>
+<line x1="90.0" y1="470.0" x2="56.0" y2="504.0" stroke="#444" stroke-width="2" marker-end="url(#ak)"/>
+<text x="38.0" y="520.0" font-size="15" fill="#444" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">Z</text>
+<rect x="760" y="95" width="410" height="345" rx="8" fill="#f6f8fb" stroke="#c9d3df"/>
+<text x="776.0" y="126.0" font-size="17" fill="#111" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">K로 축을 정하는 3단계</text>
+<text x="776.0" y="158.0" font-size="16" fill="#1f5fbf" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">① x축</text>
+<text x="844.0" y="158.0" font-size="15" fill="#222" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">I → J (노드를 만든 순서)</text>
+<text x="776.0" y="188.0" font-size="16" fill="#1a8a3a" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">② z축</text>
+<text x="844.0" y="188.0" font-size="15" fill="#222" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">선에서 K로 수선을 내린 방향</text>
+<text x="776.0" y="218.0" font-size="15" fill="#555" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">(K까지의 거리는 상관없음, 방향만 쓴다)</text>
+<text x="776.0" y="248.0" font-size="16" fill="#444" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">③ y축</text>
+<text x="844.0" y="248.0" font-size="15" fill="#222" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">y = z × x (오른손 법칙)</text>
+<text x="776.0" y="290.0" font-size="16" fill="#c4161c" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">결과</text>
+<text x="776.0" y="318.0" font-size="15" fill="#222" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">W 보 : x = +X, z = +Y, y = −Z</text>
+<text x="776.0" y="344.0" font-size="15" fill="#222" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">C 기둥 : x = +Z, z = +Y, y = +X</text>
+<text x="776.0" y="376.0" font-size="15" fill="#c4161c" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">→ 두 부재 모두 z = 위(+Y)</text>
+<text x="776.0" y="402.0" font-size="15" fill="#c4161c" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">→ 단면 높이(W3)가 위로 선다</text>
+<text x="30.0" y="560.0" font-size="17" fill="#111" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">② 기둥 축 방향에서 본 단면 (기둥이 화면 쪽으로 뻗음 = x가 ⊙, X는 오른쪽, Y는 위)</text>
+<line x1="110.0" y1="950.0" x2="490.0" y2="950.0" stroke="#bbb" stroke-width="1"/>
+<g transform="translate(300,820) rotate(0)" fill="#9ec5ee" fill-opacity="0.85" stroke="#333" stroke-width="1.5"><rect x="-36" y="-70" width="72" height="12"/><rect x="-36" y="58" width="72" height="12"/><rect x="-6" y="-58" width="12" height="116"/></g>
+<line x1="300.0" y1="820.0" x2="300.0" y2="670.0" stroke="#d77a00" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ao)"/>
+<circle cx="300.0" cy="670.0" r="8" fill="#d77a00"/>
+<text x="300.0" y="590.0" font-size="16" fill="#1a8a3a" font-weight="bold" text-anchor="middle" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">올바름: K101을 기둥 바로 위에 둠</text>
+<text x="312.0" y="666.0" font-size="14" fill="#d77a00" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">K101</text>
+<line x1="300.0" y1="820.0" x2="300.0" y2="742.0" stroke="#1a8a3a" stroke-width="3" marker-end="url(#ag)"/>
+<text x="310.0" y="740.0" font-size="15" fill="#1a8a3a" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">z = +Y</text>
+<line x1="300.0" y1="820.0" x2="372.0" y2="820.0" stroke="#c4161c" stroke-width="3" marker-end="url(#ar)"/>
+<text x="378.0" y="826.0" font-size="15" fill="#c4161c" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">y = +X</text>
+<text x="300.0" y="930.0" font-size="14" fill="#1f5fbf" font-weight="normal" text-anchor="middle" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">⊙ x : 기둥 축 방향(화면 밖으로)</text>
+<text x="300.0" y="972.0" font-size="14" fill="#1a8a3a" font-weight="normal" text-anchor="middle" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">발→K = (0, 100) 수직 → 높이가 연직 → 강축으로 하중을 받음</text>
+<line x1="710.0" y1="950.0" x2="1090.0" y2="950.0" stroke="#bbb" stroke-width="1"/>
+<g transform="translate(900,820) rotate(-30.96375653207352)" fill="#f2b8b8" fill-opacity="0.85" stroke="#333" stroke-width="1.5"><rect x="-36" y="-70" width="72" height="12"/><rect x="-36" y="58" width="72" height="12"/><rect x="-6" y="-58" width="12" height="116"/></g>
+<line x1="900.0" y1="820.0" x2="810.0" y2="670.0" stroke="#d77a00" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ao)"/>
+<circle cx="810.0" cy="670.0" r="8" fill="#d77a00"/>
+<text x="900.0" y="590.0" font-size="16" fill="#c4161c" font-weight="bold" text-anchor="middle" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">잘못: 보의 K100을 기둥에도 공유</text>
+<text x="822.0" y="666.0" font-size="14" fill="#d77a00" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">K100</text>
+<line x1="900.0" y1="820.0" x2="863.9" y2="760.0" stroke="#1a8a3a" stroke-width="3" marker-end="url(#ag)"/>
+<text x="773.9" y="754.0" font-size="15" fill="#1a8a3a" font-weight="bold" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">z (기울어짐)</text>
+<line x1="900.0" y1="820.0" x2="900.0" y2="742.0" stroke="#999" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="908.0" y="740.0" font-size="13" fill="#999" font-weight="normal" text-anchor="start" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">연직</text>
+<text x="900.0" y="972.0" font-size="14" fill="#c4161c" font-weight="normal" text-anchor="middle" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">발→K = (−60, 100) → 약 31° 기울어진 z → 단면이 기움 ✗</text>
+<text x="600.0" y="1000.0" font-size="14" fill="#555" font-weight="normal" text-anchor="middle" font-family="Noto Sans CJK KR, Malgun Gothic, WenQuanYi Zen Hei, sans-serif">K 노드는 해석에 들어가지 않고 방향만 정한다 — 부재마다 그 부재 바로 위에 따로 만든다</text>
+</svg>
