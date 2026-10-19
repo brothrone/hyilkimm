@@ -120,6 +120,7 @@ figure.fig.help img{border:1px solid var(--line-2);background:#fff;padding:6px;w
 figure.fig.help figcaption{font-size:12.5px;line-height:1.5}
 figure.fig .src{color:#888;font-size:11.5px}
 figure.fig figcaption::before{content:"그림. ";font-weight:700;color:var(--fg)}
+figure.svgfig.wide svg{max-width:960px}
 figure.svgfig svg{display:block;width:100%;max-width:640px;height:auto;border:1px solid var(--line);background:#fff;color:#333}
 
 /* 파일 목록 */

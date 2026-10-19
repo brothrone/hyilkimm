@@ -197,7 +197,7 @@
   reg('/COM', 'A', function (f) { this.p(' ' + f.slice(1).join(',')); });
   reg('/PSYMB /PBC /PSF /ESHAPE /VIEW /REPLOT /AUTO /DIST /FOCUS /ANGLE /UNITS /NOPR /GOPR /SHOW /EOF KEYW /UIS /CONFIG /NERR /GRAPHICS /TRIAD /PLOPTS /RGB /COLOR /EDGE /NUMBER /WINDOW /ZOOM /BATCH /FILNAME /CWD /DEVICE', 'A', function (f, N, S, name) {
     if (name === '/ESHAPE') { this.eshape = N(1) ? 1 : 0; this.p(' ELEMENT SHAPE KEY = ' + this.eshape + (this.eshape ? '  (보·링크를 단면 모양으로 그림)' : '')); } if (name === '/VIEW') this.view = [N(2), N(3), N(4)]; if (name === '/REPLOT' && this.lastPlot) this.plot = this.lastPlot;
-    if (name === '/PSYMB' && this.lab(f[1]) === 'NDIR') this.pnum.NDIR = N(2) === 1;
+    if (name === '/PSYMB' && this.lab(f[1]) === 'NDIR') this.pnum.NDIR = N(2) === 1; if (name === '/PSYMB' && this.lab(f[1]) === 'ESYS') { this.pnum.ESYS = N(2) === 1; this.p(' ELEMENT COORDINATE SYSTEM SYMBOL KEY = ' + (N(2) === 1 ? 1 : 0) + '  (요소 x·y·z 축 표시)'); }
     this.p(' ' + name + (f.length > 1 ? ' ' + f.slice(1).join(',') : '') + '  (그래픽 설정)');
   });
   reg('/PNUM', 'A', function (f, N, S) { var key = S(1); this.pnum[key] = N(2) === 1; this.p(' ' + key + ' NUMBERING KEY = ' + (N(2) === 1 ? 1 : 0)); });

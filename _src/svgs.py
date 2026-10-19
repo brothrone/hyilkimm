@@ -36,28 +36,40 @@ SECTIONS = '''<figure class="fig svgfig">
 </figure>
 '''
 
-BEAM = '''<figure class="fig svgfig">
-<svg viewBox="0 0 640 260" role="img" aria-label="BEAM188 요소 좌표계: I에서 J로 x축, K 노드 쪽으로 z축, SFBEAM face 1은 -z 방향, face 2는 -y 방향">
+BEAM = '''<figure class="fig svgfig wide">
+<svg viewBox="0 0 960 340" role="img" aria-label="BEAM188 방향 세 경우: 보 위에 K를 두면 element z가 위로 서고 I형강 높이가 세로가 되어 face 1 하중이 아래로 작용, K가 없으면 z가 화면 밖으로 나와 단면이 누워 face 2가 아래, 기둥은 K를 옆에 두면 z가 K 쪽 수평이 된다">
 ''' + DEFS + '''
+<defs><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2e7d32"/></marker></defs>
 <g font-family="Arial, sans-serif" font-size="13" fill="#222">
-<line x1="110" y1="170" x2="470" y2="170" stroke="#245" stroke-width="10" stroke-linecap="round" opacity=".35"/>
-<circle cx="110" cy="170" r="6" fill="#111"/><text x="96" y="196" font-weight="bold">I</text>
-<circle cx="470" cy="170" r="6" fill="#111"/><text x="466" y="196" font-weight="bold">J</text>
-<circle cx="290" cy="40" r="6" fill="#fff" stroke="#111" stroke-width="2"/><text x="302" y="44" font-weight="bold">K (방향 노드)</text>
-<line x1="290" y1="160" x2="290" y2="50" stroke="#999" stroke-dasharray="4 4"/>
-<line x1="110" y1="170" x2="560" y2="170" stroke="#333" marker-end="url(#ah)"/><text x="566" y="175">x (I→J)</text>
-<line x1="110" y1="170" x2="110" y2="80" stroke="#333" marker-end="url(#ah)"/><text x="98" y="72">z (K 쪽)</text>
-<line x1="110" y1="170" x2="60" y2="215" stroke="#333" marker-end="url(#ah)"/><text x="36" y="232">y</text>
-<g stroke="#c4161c" marker-end="url(#ahr)">
-<line x1="170" y1="110" x2="170" y2="158"/><line x1="230" y1="110" x2="230" y2="158"/><line x1="350" y1="110" x2="350" y2="158"/><line x1="410" y1="110" x2="410" y2="158"/>
-</g>
-<text x="340" y="100" fill="#c4161c" font-weight="bold">LKEY 1 : −z 방향</text>
-<g stroke="#0b59a8" marker-end="url(#ahb)">
-<line x1="250" y1="230" x2="268" y2="180"/><line x1="390" y1="230" x2="408" y2="180"/>
-</g>
-<text x="420" y="236" fill="#0b59a8" font-weight="bold">LKEY 2 : −y 방향</text>
+<line x1="320" y1="10" x2="320" y2="330" stroke="#ddd"/><line x1="640" y1="10" x2="640" y2="330" stroke="#ddd"/>
+<text x="14" y="26" font-weight="bold" font-size="14">① 보 + K를 위(+Y)에 — 권장</text>
+<line x1="36" y1="180" x2="250" y2="180" stroke="#456" stroke-width="7" stroke-linecap="round" opacity=".45"/>
+<circle cx="36" cy="180" r="5" fill="#111"/><text x="22" y="202" font-weight="bold">I</text>
+<circle cx="250" cy="180" r="5" fill="#111"/><text x="246" y="202" font-weight="bold">J</text>
+<line x1="150" y1="174" x2="150" y2="76" stroke="#888" stroke-dasharray="4 4"/>
+<circle cx="150" cy="70" r="6" fill="#fff" stroke="#111" stroke-width="2"/><text x="162" y="75" font-weight="bold">K</text>
+<line x1="75" y1="128" x2="75" y2="170" stroke="#c4161c" stroke-width="1.6" marker-end="url(#ahr)"/><line x1="115" y1="128" x2="115" y2="170" stroke="#c4161c" stroke-width="1.6" marker-end="url(#ahr)"/><line x1="195" y1="128" x2="195" y2="170" stroke="#c4161c" stroke-width="1.6" marker-end="url(#ahr)"/><line x1="235" y1="128" x2="235" y2="170" stroke="#c4161c" stroke-width="1.6" marker-end="url(#ahr)"/><text x="60" y="120" fill="#c4161c" font-size="12">sfbeam,…,1,pres,w → 아래</text>
+<line x1="40" y1="270" x2="88" y2="270" stroke="#111" stroke-width="2" marker-end="url(#ah)"/><text x="94" y="275" fill="#111" font-weight="bold">x</text><line x1="40" y1="270" x2="40" y2="226" stroke="#0b59a8" stroke-width="2" marker-end="url(#ahb)"/><text x="46" y="220" fill="#0b59a8" font-weight="bold">z</text><circle cx="40" cy="270" r="7" fill="#fff" stroke="#2e7d32" stroke-width="1.6"/><path d="M36,266L44,274M44,266L36,274" stroke="#2e7d32" stroke-width="1.6"/><text x="28" y="292" fill="#2e7d32" font-weight="bold">y</text><g fill="#7cc3e8" stroke="#0b59a8"><rect x="232" y="248" width="36" height="5"/><rect x="248" y="253" width="4" height="30"/><rect x="232" y="283" width="36" height="5"/></g>
+<text x="190" y="314" font-size="12">단면 높이(z) = 세로 → <tspan font-weight="bold" fill="#0b59a8">강축</tspan></text><text x="334" y="26" font-weight="bold" font-size="14">② K 없음 (기본값)</text>
+<line x1="356" y1="180" x2="570" y2="180" stroke="#456" stroke-width="7" stroke-linecap="round" opacity=".45"/>
+<circle cx="356" cy="180" r="5" fill="#111"/><text x="342" y="202" font-weight="bold">I</text>
+<circle cx="570" cy="180" r="5" fill="#111"/><text x="566" y="202" font-weight="bold">J</text>
+<line x1="395" y1="128" x2="395" y2="170" stroke="#c4161c" stroke-width="1.6" marker-end="url(#ahr)"/><line x1="445" y1="128" x2="445" y2="170" stroke="#c4161c" stroke-width="1.6" marker-end="url(#ahr)"/><line x1="500" y1="128" x2="500" y2="170" stroke="#c4161c" stroke-width="1.6" marker-end="url(#ahr)"/><line x1="550" y1="128" x2="550" y2="170" stroke="#c4161c" stroke-width="1.6" marker-end="url(#ahr)"/><text x="380" y="120" fill="#c4161c" font-size="12">sfbeam,…,2,pres,w → 아래</text>
+<line x1="360" y1="270" x2="408" y2="270" stroke="#111" stroke-width="2" marker-end="url(#ah)"/><text x="414" y="275" fill="#111" font-weight="bold">x</text><line x1="360" y1="270" x2="360" y2="226" stroke="#2e7d32" stroke-width="2" marker-end="url(#ahg)"/><text x="366" y="220" fill="#2e7d32" font-weight="bold">y</text><circle cx="360" cy="270" r="7" fill="#fff" stroke="#0b59a8" stroke-width="1.6"/><circle cx="360" cy="270" r="2.2" fill="#0b59a8"/><text x="348" y="292" fill="#0b59a8" font-weight="bold">z</text><g fill="#7cc3e8" stroke="#0b59a8"><rect x="550" y="250" width="5" height="36"/><rect x="555" y="266" width="30" height="4"/><rect x="585" y="250" width="5" height="36"/></g>
+<text x="470" y="314" font-size="12">단면 높이(z) = 옆으로 → <tspan font-weight="bold" fill="#c4161c">약축!</tspan></text>
+<text x="334" y="60" font-size="12" fill="#555">y = global X-Y 평면 안 (보가 +X면 y = +Y)</text>
+<text x="334" y="78" font-size="12" fill="#555">z = 화면 밖(+Z) — I·CHAN·RECT 높이가 누움</text><text x="654" y="26" font-weight="bold" font-size="14">③ 기둥(I 위 → J 아래) + K를 옆에</text>
+<line x1="760" y1="60" x2="760" y2="250" stroke="#456" stroke-width="7" stroke-linecap="round" opacity=".45"/>
+<circle cx="760" cy="60" r="5" fill="#111"/><text x="740" y="64" font-weight="bold">I</text>
+<circle cx="760" cy="250" r="5" fill="#111"/><text x="740" y="262" font-weight="bold">J</text>
+<line x1="766" y1="155" x2="864" y2="155" stroke="#888" stroke-dasharray="4 4"/>
+<circle cx="870" cy="155" r="6" fill="#fff" stroke="#111" stroke-width="2"/><text x="880" y="160" font-weight="bold">K</text>
+<line x1="672" y1="236" x2="672" y2="282" stroke="#111" stroke-width="2" marker-end="url(#ah)"/><text x="678" y="298" fill="#111" font-weight="bold">x</text><line x1="672" y1="236" x2="718" y2="236" stroke="#0b59a8" stroke-width="2" marker-end="url(#ahb)"/><text x="724" y="241" fill="#0b59a8" font-weight="bold">z</text><circle cx="672" cy="236" r="7" fill="#fff" stroke="#2e7d32" stroke-width="1.6"/><path d="M668,232L676,240M676,232L668,240" stroke="#2e7d32" stroke-width="1.6"/><text x="660" y="258" fill="#2e7d32" font-weight="bold">y</text><g fill="#7cc3e8" stroke="#0b59a8"><rect x="875" y="250" width="5" height="36"/><rect x="880" y="266" width="30" height="4"/><rect x="910" y="250" width="5" height="36"/></g>
+<text x="790" y="314" font-size="12">높이(z) = X 방향 → <tspan font-weight="bold" fill="#0b59a8">강축</tspan></text>
+<text x="654" y="96" font-size="12" fill="#555">x = I→J = 아래(−Y)</text>
+<text x="654" y="114" font-size="12" fill="#555">z = 기둥에서 K 쪽 = +X</text>
 </g></svg>
-<figcaption>BEAM188 요소 좌표계와 <code>sfbeam</code> LKEY. I–J–K가 element x–z 평면을 만든다. 양(+)의 PRES는 face 1에서 −z, face 2에서 −y로 작용한다. K가 없으면 element y가 global XY 평면에 평행하다. 직접 그린 개략도</figcaption>
+<figcaption>BEAM188 방향 세 경우 (화면 = global X-Y 평면, 앞쪽이 +Z). ⊗ = 화면 안쪽, ⊙ = 화면 밖. 오른쪽 아래 작은 그림은 보 축 방향에서 본 단면. <b>z는 언제나 K를 향하고, y = z × x</b>.</figcaption>
 </figure>
 '''
 

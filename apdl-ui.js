@@ -628,6 +628,12 @@
         if (!ghost && field) { var f1 = field[E.n[0]], f2 = field[E.n[1]]; if (f1 !== undefined && f2 !== undefined) { for (var i = 0; i < 6; i++) { var t0 = i / 6, t1 = (i + 1) / 6, v = f1 + (f2 - f1) * (t0 + t1) / 2; el('line', { x1: pts[0][0] + (pts[1][0] - pts[0][0]) * t0, y1: pts[0][1] + (pts[1][1] - pts[0][1]) * t0, x2: pts[0][0] + (pts[1][0] - pts[0][0]) * t1, y2: pts[0][1] + (pts[1][1] - pts[0][1]) * t1, stroke: SPEC[band(v, flo, fhi)], 'stroke-width': wdt + 1 }, g0); } return; } }
         el('line', { x1: pts[0][0], y1: pts[0][1], x2: pts[1][0], y2: pts[1][1], stroke: ghost ? '#fff' : (E.kind === 'spring' ? '#ffff00' : col), 'stroke-width': ghost ? 0.8 : wdt, 'stroke-dasharray': ghost ? '4 3' : (E.kind === 'spring' ? '3 2' : '') }, g0);
       }
+      if (!ghost && s.pnum.ESYS && (E.kind === 'beam' || E.kind === 'beam3' || E.kind === 'link') && E.n.length >= 2) { // /PSYMB,ESYS,1: 요소 좌표계
+        var Q0 = s.nodes[E.n[0]].x, Q1 = s.nodes[E.n[1]].x, ax2 = beamAxes(Q0, Q1, E.k, E.kind), mid = [(Q0[0] + Q1[0]) / 2, (Q0[1] + Q1[1]) / 2, (Q0[2] + Q1[2]) / 2], Le = size * 0.07, m2 = S2(mid);
+        [[ax2.x, 'x', '#ffffff'], [ax2.y, 'y', '#a6ff00'], [ax2.z, 'z', '#2f8bff']].forEach(function (a) { if (E.kind === 'link' && a[1] !== 'x') return; var t2 = S2([mid[0] + a[0][0] * Le, mid[1] + a[0][1] * Le, mid[2] + a[0][2] * Le]), d2 = Math.hypot(t2[0] - m2[0], t2[1] - m2[1]);
+          if (d2 < 3) { el('circle', { cx: m2[0], cy: m2[1], r: 5, fill: 'none', stroke: a[2] }, g0); txt(m2[0] + 6, m2[1] + 14, a[1] + (R[2][0] * a[0][0] + R[2][1] * a[0][1] + R[2][2] * a[0][2] > 0 ? '⊙' : '⊗'), { fill: a[2], 'font-size': 11, 'font-family': MONO }, g0); return; }
+          el('line', { x1: m2[0], y1: m2[1], x2: t2[0], y2: t2[1], stroke: a[2], 'stroke-width': 1.4 }, g0); txt(t2[0] + 3, t2[1] - 3, a[1], { fill: a[2], 'font-size': 11, 'font-family': MONO }, g0); });
+      }
       if (!ghost && s.pnum.ELEM && (kind === 'elem' || res)) { var cxx = 0, cyy = 0, nn = E.kind === 'plane' && E.n[2] === E.n[3] ? 3 : E.n.length; pts.slice(0, nn).forEach(function (q) { cxx += q[0]; cyy += q[1]; }); txt(cxx / nn, cyy / nn - 3, e, { fill: '#fff', 'font-size': 11.5, 'font-family': MONO, 'text-anchor': 'middle' }, g0); }
     }
 
@@ -756,7 +762,7 @@
   // ================= 명령 도우미 (입력 칸 위 문법 표시) =================
   var SYN = {
     '/CLEAR': 'Read|데이터베이스 지우기', '/PREP7': '|전처리기', '/SOLU': '|해석 처리기', '/POST1': '|후처리기', 'FINISH': '|처리기 나가기', '/TITLE': 'Title|그림 아래 제목',
-    '/PNUM': 'Label, KEY|번호 표시 (KP LINE AREA NODE ELEM, 1=켜기)', '/ESHAPE': 'SCALE, KEY|보를 단면 모양으로 그리기', '/VIEW': 'WN, XV, YV, ZV|보는 방향', '/AUTO': 'WN|화면 맞춤', '/REPLOT': 'Label|다시 그리기', '/DSCALE': 'WN, DMULT|변형 확대 배율 (1=실제)', '/PSF': 'Item, Comp, KEY, KSHELL, Color|면하중 기호 표시', '/PBC': 'Item, --, KEY, MIN, MAX, ABS|구속 기호 표시',
+    '/PNUM': 'Label, KEY|번호 표시 (KP LINE AREA NODE ELEM, 1=켜기)', '/ESHAPE': 'SCALE, KEY|보를 단면 모양으로 그리기', '/VIEW': 'WN, XV, YV, ZV|보는 방향', '/AUTO': 'WN|화면 맞춤', '/REPLOT': 'Label|다시 그리기', '/DSCALE': 'WN, DMULT|변형 확대 배율 (1=실제)', '/PSF': 'Item, Comp, KEY, KSHELL, Color|면하중 기호 표시', '/PBC': 'Item, --, KEY, MIN, MAX, ABS|구속 기호 표시', '/PSYMB': 'Label, KEY|기호 표시 (ESYS,1 = 요소 좌표계 x·y·z)',
     '*SET': 'Par, VALUE, VAL2, VAL3, VAL4, VAL5, VAL6, VAL7, VAL8, VAL9, VAL10|파라미터 정의 (= 와 같음)', '*GET': 'Par, Entity, ENTNUM, Item1, IT1NUM, Item2, IT2NUM|결과·모델 값을 파라미터로', '*DO': 'Par, IVAL, FVAL, INC|반복 시작', '*ENDDO': '|반복 끝',
     '*IF': 'VAL1, Oper1, VAL2, Base1, VAL3, Oper2, VAL4, Base2|조건문 (Oper: EQ NE LT GT LE GE, Base: THEN)', '*ELSEIF': 'VAL1, Oper1, VAL2, Conj, VAL3, Oper2, VAL4|조건문', '*ELSE': '|조건문', '*ENDIF': '|조건문 끝', '*STATUS': 'Par|파라미터 목록', '*AFUN': 'Lab|각도 단위 (DEG / RAD)',
     'SAVE': 'Fname, Ext, --, Slab|DB 저장', 'RESUME': 'Fname, Ext, --, NOPAR, KNOPLOT|DB 불러오기',

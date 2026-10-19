@@ -253,7 +253,7 @@ aplot                               <span class="c">! 면 그리기</span>
 /title,2019-1 frame W12x45          <span class="c">! 제목 지정</span>
 et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 (3D 보), KEYOPT(3)=3 3차 형상함수</span>
 sectype,1,beam,i                    <span class="c">! 단면 1 정의: 보, I형</span>
-secdata,8.045,8.045,12.06,0.575,0.575,0.335  <span class="c">! 위·아래 플랜지 폭 8.045, 8.045 / 높이 12.06 / 플랜지 두께 0.575, 0.575 / 웨브 두께 0.335 — W1,W2,W3,t1,t2,t3</span>
+secdata,8.045,8.045,12.06,0.575,0.575,0.335  <span class="c">! 아래·위 플랜지 폭 8.045, 8.045 / 높이 12.06 / 아래·위 플랜지 두께 0.575, 0.575 / 웨브 두께 0.335 — W1,W2,W3,t1,t2,t3</span>
 mp,ex,1,30e6                        <span class="c">! 재료 1: 탄성계수 E = 30e6</span>
 mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 *do,i,1,21                          <span class="c">! 보 노드 1~21 : (0,108) ~ (120,108)</span>
@@ -435,7 +435,7 @@ pretab,axstress                     <span class="c">! 요소 표 값 출력 (요
 /title,2021-2 overhang frame C12x30  <span class="c">! 제목 지정</span>
 et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 (3D 보), KEYOPT(3)=3 3차 형상함수</span>
 sectype,1,beam,chan                 <span class="c">! 단면 1 정의: 보, C형(채널)</span>
-secdata,3.170,3.170,12.00,0.501,0.501,0.510  <span class="c">! 플랜지 폭 3.170, 3.170 / 높이 12.00 / 플랜지 두께 0.501, 0.501 / 웨브 두께 0.510</span>
+secdata,3.170,3.170,12.00,0.501,0.501,0.510  <span class="c">! 아래·위 플랜지 폭 3.170, 3.170 / 높이 12.00 / 아래·위 플랜지 두께 0.501, 0.501 / 웨브 두께 0.510</span>
 mp,ex,1,10e6                        <span class="c">! 재료 1: 탄성계수 E = 10e6 — 알루미늄 (보)</span>
 mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 mp,ex,2,30e6                        <span class="c">! 재료 2: 탄성계수 E = 30e6 — 강 (기둥)</span>
@@ -549,7 +549,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 /title,2023-2 C310x45               <span class="c">! 제목 지정</span>
 et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 (3D 보), KEYOPT(3)=3 3차 형상함수</span>
 sectype,1,beam,chan                 <span class="c">! 단면 1 정의: 보, C형(채널)</span>
-secdata,0.0805,0.0805,0.305,0.0127,0.0127,0.013  <span class="c">! 플랜지 폭 0.0805, 0.0805 / 높이 0.305 / 플랜지 두께 0.0127, 0.0127 / 웨브 두께 0.013 — bf, bf, d, tf, tf, tw [m]</span>
+secdata,0.0805,0.0805,0.305,0.0127,0.0127,0.013  <span class="c">! 아래·위 플랜지 폭 0.0805, 0.0805 / 높이 0.305 / 아래·위 플랜지 두께 0.0127, 0.0127 / 웨브 두께 0.013 — bf, bf, d, tf, tf, tw [m]</span>
 mp,ex,1,200e9                       <span class="c">! 재료 1: 탄성계수 E = 200e9</span>
 mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 *do,i,1,31                          <span class="c">! 0.25 m 간격: 노드 16 = 3.75 m, 노드 21 = 5 m(#2), 노드 31 = 7.5 m(#3)</span>
@@ -698,10 +698,10 @@ et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 
 mp,ex,1,30e6                        <span class="c">! 재료 1: 탄성계수 E = 30e6</span>
 mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 sectype,1,beam,i                    <span class="c">! 단면 1 정의: 보, I형</span>
-secdata,8.28,8.28,9,0.935,0.935,0.570  <span class="c">! 위·아래 플랜지 폭 8.28, 8.28 / 높이 9 / 플랜지 두께 0.935, 0.935 / 웨브 두께 0.570 — W8x67 : W1,W2,W3,t1,t2,t3</span>
+secdata,8.28,8.28,9,0.935,0.935,0.570  <span class="c">! 아래·위 플랜지 폭 8.28, 8.28 / 높이 9 / 아래·위 플랜지 두께 0.935, 0.935 / 웨브 두께 0.570 — W8x67 : W1,W2,W3,t1,t2,t3</span>
 secoff,cent                         <span class="c">! 보 노드를 단면 도심에 둔다 (기본값)</span>
 sectype,2,beam,chan                 <span class="c">! 단면 2 정의: 보, C형(채널)</span>
-secdata,2.648,2.648,9,0.413,0.413,0.448  <span class="c">! 플랜지 폭 2.648, 2.648 / 높이 9 / 플랜지 두께 0.413, 0.413 / 웨브 두께 0.448 — C9x20</span>
+secdata,2.648,2.648,9,0.413,0.413,0.448  <span class="c">! 아래·위 플랜지 폭 2.648, 2.648 / 높이 9 / 아래·위 플랜지 두께 0.413, 0.413 / 웨브 두께 0.448 — C9x20</span>
 secoff,user,0,4.5                   <span class="c">! 보 노드를 단면 원점에서 (y, z) = (0, 4.5) 위치에 둔다 — 웨브 바깥면 중간 높이  !확인</span>
 *do,i,1,21                          <span class="c">! 반복 시작: i = 1 ~ 21 — W : 노드 1(A) ~ 21(B), 6 in 간격</span>
   n,i,(i-1)*6,0,0                   <span class="c">! 노드 i 생성: x=(i-1)*6, y=0, z=0</span>
