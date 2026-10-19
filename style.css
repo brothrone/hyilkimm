@@ -350,3 +350,10 @@ main.content hr{display:none}
 .cscard .csw{color:#000}.cscard pre{margin:6px 0}.cscard footer{font:12px var(--ui)}
 .cssum{font-weight:600;margin:10px 0}.cserr{color:#b00020}
 .cs-opt[hidden]{display:none}
+
+/* 접이식 블록 (Class Notation) */
+details.fold>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"▶";font-size:.8em;color:#888;transition:transform .15s}
+details.fold[open]>summary::before{transform:rotate(90deg)}
+details.fold>summary>h3{margin:0}
