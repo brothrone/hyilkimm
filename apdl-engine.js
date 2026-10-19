@@ -161,6 +161,7 @@
     if (cmd.length >= 4) for (var i = 0; i < ORDER.length; i++) if (ORDER[i].indexOf(cmd) === 0) return { name: ORDER[i], c: CMD[ORDER[i]] };
     return null;
   };
+  var LISTWIN = { PRNSOL: 1, PRRSOL: 1, PRRFOR: 1, PRETAB: 1, NLIST: 1, ELIST: 1, KLIST: 1, LLIST: 1, ALIST: 1, MPLIST: 1, SLIST: 1, DLIST: 1, FLIST: 1, SFELIST: 1, SFLIST: 1 };
   Engine.prototype.run1 = function (cmd, f) {
     var r = this.resolve(cmd), pn = PROCNAME[this.proc];
     if (!r) throw new ApdlError(cmd + ' is not a recognized ' + pn + ' command, abbreviation, or macro.  This command will be ignored.' + (/^[*\/]?[A-Z][A-Z0-9]*$/.test(cmd) ? '' : '\n(This is not a command. Write notes after !.)'));
@@ -168,8 +169,14 @@
       var where = r.c.p.split('').map(function (x) { return x === 'P' ? '/PREP7' : x === 'S' ? '/SOLU' : x === 'O' ? '/POST1' : 'BEGIN'; }).join(', ');
       throw new ApdlError(r.name + ' is not a recognized ' + pn + ' command, abbreviation, or macro.  This command will be ignored.\n(' + r.name + ' is used in ' + where + '.)');
     }
-    var self = this;
+    var self = this, n0 = this.out.length;
     r.c.f.call(this, f, function (i, d) { return self.num(f[i], d); }, function (i) { return self.lab(f[i]); }, r.name);
+    if (LISTWIN[r.name]) { // 목록 출력 명령: 결과 줄을 Output Window의 별도 탭으로 보낸다 (오류·경고·NOTE 줄은 로그에 남김)
+      var ar = f.slice(1); while (ar.length && !String(ar[ar.length - 1]).trim()) ar.pop();
+      var lab = (r.name + (ar.length ? ',' + ar.join(',') : '')).toUpperCase().slice(0, 40), wid = (this.winSeq = (this.winSeq || 0) + 1), mv = 0;
+      for (var oi = n0; oi < this.out.length; oi++) { var oo = this.out[oi]; if (!oo.k) { oo.w = lab; oo.wid = wid; mv++; } }
+      if (mv) this.p(' (The listing is shown in the "' + lab + '" tab of the Output Window.)');
+    }
     var ap = AUTOPLOT[r.name]; // ANSYS 즉시 그리기(immediate mode): 만든 것을 바로 보여줌
     if (ap === 'keep') { if (!this.plot || this.plot.kind === 'auto' || this.plot.kind === 'kp' || this.plot.kind === 'line' || this.plot.kind === 'area') this.plot = { kind: keysN(this.elems).length ? 'elem' : 'node' }; }
     else if (ap) this.plot = { kind: ap };

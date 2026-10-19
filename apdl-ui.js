@@ -40,9 +40,37 @@
     });
     return res;
   }
+  // 목록 출력(PRNSOL, PRETAB, PRRSOL, NLIST …)은 Output Window 안의 별도 탭에 표시: 실제 ANSYS의 목록 창에 해당
+  var otabs = $('#mwOTabs'), wpan = {};
+  function selAll(el) { var r = document.createRange(); r.selectNodeContents(el); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+  function showTab(id) {
+    out.hidden = id !== 'out';
+    otabs.querySelectorAll('.t').forEach(function (t) { t.classList.toggle('on', t.getAttribute('data-t') === id); });
+    Object.keys(wpan).forEach(function (k) { wpan[k].pre.hidden = k !== id; });
+    var cur = id === 'out' ? out : wpan[id] && wpan[id].pre; if (cur) cur.scrollTop = id === 'out' ? cur.scrollHeight : 0;
+  }
+  function closeTab(id) { var w = wpan[id]; if (!w) return; w.pre.remove(); w.tab.remove(); delete wpan[id]; if (!Object.keys(wpan).length) otabs.hidden = true; showTab('out'); }
+  function resetTabs() { Object.keys(wpan).forEach(function (k) { wpan[k].pre.remove(); wpan[k].tab.remove(); }); wpan = {}; otabs.hidden = true; out.hidden = false; showTab('out'); }
+  function tabLine(o) {
+    var id = 'w' + o.wid, w = wpan[id];
+    if (!w) {
+      Object.keys(wpan).forEach(function (k) { if (wpan[k].label === o.w) closeTab(k); }); // 같은 명령을 다시 실행하면 그 탭을 새 결과로 교체
+      var pre = document.createElement('pre'); pre.className = 'mw-out mw-lst'; pre.hidden = true; pre.tabIndex = 0;
+      pre.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') { e.preventDefault(); selAll(pre); } });
+      out.parentNode.insertBefore(pre, out.nextSibling);
+      var tab = document.createElement('span'); tab.className = 't'; tab.setAttribute('data-t', id);
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = o.w; b.onclick = function () { showTab(id); };
+      var x = document.createElement('button'); x.type = 'button'; x.className = 'x'; x.textContent = '✕'; x.title = 'Close'; x.setAttribute('aria-label', 'Close tab'); x.onclick = function () { closeTab(id); };
+      tab.appendChild(b); tab.appendChild(x); otabs.appendChild(tab); otabs.hidden = false;
+      w = wpan[id] = { pre: pre, tab: tab, label: o.w }; showTab(id);
+    }
+    var d = document.createElement('div'); d.textContent = o.t || ' '; w.pre.appendChild(d);
+  }
+  var outTab = document.createElement('span'); outTab.className = 't on'; outTab.setAttribute('data-t', 'out');
+  var outB = document.createElement('button'); outB.type = 'button'; outB.textContent = 'Output'; outB.onclick = function () { showTab('out'); }; outTab.appendChild(outB); otabs.appendChild(outTab);
   function flushOut(from) {
     var frag = document.createDocumentFragment();
-    eng.out.slice(from).forEach(function (o) { var d = document.createElement('div'); d.textContent = o.t || ' '; if (o.k) d.className = o.k; frag.appendChild(d); });
+    eng.out.slice(from).forEach(function (o) { if (o.w) { tabLine(o); return; } var d = document.createElement('div'); d.textContent = o.t || ' '; if (o.k) d.className = o.k; frag.appendChild(d); });
     out.appendChild(frag);
     while (out.childNodes.length > 6000) out.removeChild(out.firstChild);
     out.scrollTop = out.scrollHeight;
@@ -53,7 +81,7 @@
     stAttr.innerHTML = '<span>mat=' + s.mat + '</span><span>type=' + s.type + '</span><span>real=' + s.real + '</span><span>csys=' + s.csys + '</span><span>secn=' + s.secn + '</span>';
     document.querySelectorAll('.mw-tree [data-proc]').forEach(function (el) { el.classList.toggle('cur', el.getAttribute('data-proc') === s.proc); });
   }
-  function fresh() { out.innerHTML = ''; eng = new window.ApdlEngine(); hist = []; hpos = -1; view.R = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]; view.zoom = 1; view.panX = view.panY = 0; view.stack = []; }
+  function fresh() { out.innerHTML = ''; resetTabs(); eng = new window.ApdlEngine(); hist = []; hpos = -1; view.R = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]; view.zoom = 1; view.panX = view.panY = 0; view.stack = []; }
   function cmd1(c) { hist.push(c); hpos = hist.length; refreshHist(); return run(c, { single: true }); }
 
   // ================= 명령 입력 콤보 =================
@@ -77,7 +105,7 @@
   // Output Window: 클릭하면 포커스를 받고 Ctrl+A로 출력 전체를 선택해서 Ctrl+C로 복사
   out.tabIndex = 0;
   out.addEventListener('keydown', function (e) {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') { e.preventDefault(); var r = document.createRange(); r.selectNodeContents(out); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') { e.preventDefault(); selAll(out); }
   });
   function runMany(t) { t.split('\n').forEach(function (l) { if (l.trim()) hist.push(l.trim()); }); hpos = hist.length; refreshHist(); run(t); }
   var hl = $('#mwHistList');
