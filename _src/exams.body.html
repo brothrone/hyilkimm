@@ -217,8 +217,6 @@ pcir,2.6,2.6*sqrt(2),270,360        <span class="c">! 작업평면 원점 중심
 wpave,0,0                           <span class="c">! 작업평면 원점을 x=0, y=0 로 이동</span>
 <span class="c">! ③ 한 번에 빼기</span>
 asba,ab,all                         <span class="c">! 면 ab에서 나머지 선택된 모든 면을 뺀다</span>
-/pnum,area,1                        <span class="c">! AREA 번호 표시 켜기</span>
-aplot                               <span class="c">! 면 그리기</span>
 <span class="c">! (메쉬까지 하려면) et,1,plane182 → esize,0.3 → amesh,all</span></code></pre>
 <p class="tip">필렛: 필렛 중심에서 모서리까지 거리는 2.6√2 = 3.68이다. 그래서 반지름 2.6 ~ 3.68의 1/4 링을 빼면 모서리가 R2.6으로 둥글게 된다. <code>pcir</code>는 항상 WP 원점이 중심이므로 매번 <code>wpave</code>로 WP를 먼저 옮긴다. <code>csys,1</code> 상태에서 <code>wpave</code>의 좌표는 (R, θ)로 해석된다.</p>
 
@@ -371,9 +369,7 @@ lsymm,x,all                         <span class="c">! 모든 선을 대칭 복�
 local,11,0,20.8,27                  <span class="c">! 로컬 좌표계 11(직교) 원점 (20.8, 27) → 바로 활성화 — y = 27 이 새 x축</span>
 lsymm,y,all                         <span class="c">! 모든 선을 대칭 복사 (Y 좌표 부호 반전, 활성 직교좌표계 기준) — → 선 16개</span>
 csys,0                              <span class="c">! 활성 좌표계 = 전역 직교 (X, Y, Z)</span>
-nummrg,kp                           <span class="c">! 같은 위치에 겹친 키포인트 합치기</span>
-/pnum,line,1                        <span class="c">! LINE 번호 표시 켜기</span>
-lplot                               <span class="c">! 선 그리기</span></code></pre>
+nummrg,kp                           <span class="c">! 같은 위치에 겹친 키포인트 합치기</span></code></pre>
 <p class="tip"><code>local</code>은 번호(11)를 다시 쓰면 그 좌표계를 덮어쓰고, 만들자마자 활성 좌표계가 된다. <code>lsymm</code> 결과 같은 위치에 키포인트가 겹치므로 마지막에 <code>nummrg,kp</code>로 합친다. <code>중간고사 대비.TXT</code>에는 가운데 (27, 27)에서 바깥으로 그리는 다른 버전도 있다. 시험 그림을 확인할 수 없으니 두 방법을 모두 익혀 둘 것.</p>
 
 <!-- ======================= 2021 ======================= -->
@@ -477,7 +473,7 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 <tr><td>UY</td><td>−7.6×10⁻⁴ in</td></tr>
 <tr><td>ROTZ</td><td>+2.2×10⁻⁴ rad</td></tr>
 <tr><td>반력 합 ΣFY</td><td>4000 lb</td></tr></table>
-<p class="tip">C형강은 전단중심이 도심과 달라서, 도심에 걸린 하중이 <b>비틀림</b>을 함께 만든다. 그래서 ANSYS에는 UZ, ROTX 같은 면외 변형도 조금 나온다. 단면 면적 8.79 in², I = 161.6 in⁴(필렛 제외)는 <code>slist</code>로 확인할 수 있다.</p>
+<p class="tip">C형강은 전단중심이 도심과 달라서, 도심에 걸린 하중이 <b>비틀림</b>을 함께 만든다. 그래서 ANSYS에는 UZ, ROTX 같은 면외 변형도 조금 나온다. 단면 면적 8.79 in², I = 161.6 in⁴(필렛 제외).</p>
 
 <!-- ======================= 2023 ======================= -->
 <h2 id="y2023">2023년 중간고사 (Oct. 24, 2023)</h2>
@@ -622,10 +618,7 @@ ngen,7,10,1,4,1,,15                 <span class="c">! θ 방향 15°씩 → 노�
 e,1,2,12,11                         <span class="c">! 요소 생성: 노드 1 → 2 → 12 → 11 (반시계 순서)</span>
 egen,3,1,1                          <span class="c">! 요소 1 복사: 총 3세트, 노드 번호 +1씩 — 반지름 방향 3개 (노드 번호 +1)</span>
 egen,6,10,1,3                       <span class="c">! 요소 1~3 복사: 총 6세트, 노드 번호 +10씩 — 원주 방향 6줄 (노드 번호 +10)</span>
-csys,0                              <span class="c">! 활성 좌표계 = 전역 직교 (X, Y, Z)</span>
-/pnum,node,1                        <span class="c">! NODE 번호 표시 켜기</span>
-/pnum,elem,1                        <span class="c">! ELEM 번호 표시 켜기</span>
-eplot                               <span class="c">! 요소 그리기</span></code></pre>
+csys,0                              <span class="c">! 활성 좌표계 = 전역 직교 (X, Y, Z)</span></code></pre>
 <table class="res"><tr><th>확인</th><th>값</th></tr>
 <tr><td>노드 수 / 요소 수</td><td>28 / 18</td></tr>
 <tr><td>노드 61 (R = 6, θ = 90°)</td><td>global (2, 8)</td></tr>
@@ -680,7 +673,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 <tr><td>(5) 2–5</td><td>−1224.7</td><td>−153.1</td></tr>
 <tr><td>(6) 4–5</td><td>+1366.0</td><td>+170.8</td></tr>
 <tr><td colspan="3">최대 변위: 노드 5, UX = 0.00647, UY = −0.02628, <b>|u| = 0.0271 in</b></td></tr></table>
-<p class="tip">(a)와 (b)의 답은 같아야 한다. 노드 좌표계를 돌리면 <code>f</code>, <code>d</code>는 회전된 방향으로 걸리지만 <code>prnsol</code> 출력은 기본값이 global(RSYS,0)이다. 회전된 노드 좌표계는 <code>/psymb,ndir,1</code>로 확인할 수 있다.</p>
+<p class="tip">(a)와 (b)의 답은 같아야 한다. 노드 좌표계를 돌리면 <code>f</code>, <code>d</code>는 회전된 방향으로 걸리지만 <code>prnsol</code> 출력은 기본값이 global(RSYS,0)이다.</p>
 
 <h3 id="p2025-3">Problem 3 — W8×67 + C9×20 L자 보, SECOFFSET, 비틀림 (BEAM188)</h3>
 <figure class="fig"><img src="img/exam/2025-3a.png" alt="2025년 3번 그림: 콘크리트 벽에 고정된 W형강 보 끝에 직각으로 C형강이 붙은 L자 구조, 삼각 분포하중 30000 lb/ft, C점에 비틀림 모멘트" loading="lazy" width="1100" height="569"><figcaption>A 고정, A–B W8×67 (10 ft, 가운데 최대 30,000 lb/ft 삼각하중), B–C C9×20 (10 ft). E = 30×10⁶ psi, ν = 0.3</figcaption></figure>

@@ -42,7 +42,7 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 <ul>
 <li><strong>단위는 ANSYS가 정하지 않는다</strong> → 입력을 한 단위계로 통일 (in-lb-psi / m-N-Pa).</li>
 <li>기본 attribute = <code>type,1</code> <code>mat,1</code> <code>real,1</code> <code>secn,1</code>. 여러 개면 메쉬·요소 생성 <strong>전에</strong> 바꿔 준다.</li>
-<li>확인용: <code>/pnum,node,1</code> <code>/pnum,elem,1</code> <code>/psymb,cs,1</code> <code>/pbc,all,,1</code> <code>nplot</code> <code>eplot</code> <code>/eshape,1</code>(단면 모양 보기) <code>slist</code>(단면 성질 목록)</li>
+<li>확인용: <code>/eshape,1</code> + <code>eplot</code> (보를 단면 모양으로 보기)</li>
 </ul>
 <hr />
 <h2 id="1-요소-요약">1. 요소 요약</h2>
@@ -82,14 +82,7 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 <td>KEYOPT(3): 0 평면응력, 1 축대칭, 2 평면변형, 3 두께입력 평면응력</td>
 <td>PLANE42</td>
 </tr>
-<tr>
-<td>PLANE183 (2D 8절점)</td>
-<td>8</td>
-<td>UX UY</td>
-<td>같음</td>
-<td>같음</td>
-<td>PLANE82</td>
-</tr>
+
 <tr>
 <td>COMBIN14 (스프링)</td>
 <td>I, J</td>
@@ -173,7 +166,7 @@ secn,SECID                          <span class="c">! 이후 만드는 요소의
 <ul>
 <li><b>단면 그림의 y, z = BEAM188의 element y, z.</b> 그래서 방향 노드 K로 element z를 위(+Y)로 세우면 I형강의 높이 W3가 세로가 된다(3장).</li>
 <li>선은 셀(적분점) 분할을 나타낸다 — 입력할 필요 없음(<code>csolid</code>의 N, T 같은 뒤쪽 값은 생략 가능).</li>
-<li><strong>I / CHAN 단면의 높이(W3)는 단면 z방향</strong> → 강축 = Iyy (<code>slist</code>로 확인: W12×26 → Iyy≈201.8, Izz≈17.3).</li>
+<li><strong>I / CHAN 단면의 높이(W3)는 단면 z방향</strong> → 강축 = Iyy (W12×26 → Iyy≈201.8, Izz≈17.3).</li>
 <li><strong>ASEC는 Iyy·Izz를 직접 넣기 때문에</strong> 하중 방향과 맞춰야 함: 하중이 element −y 방향이면 강축 I를 <strong>Izz</strong>에, −z 방향이면 <strong>Iyy</strong>에.</li>
 <li>단위 환산: 강재표 mm → m. A [mm²]×1e-6, I [10⁶ mm⁴]×1e-6 → m⁴ (예: W310×52 Ix=119×10⁶ mm⁴ = 119e-6 m⁴).</li>
 </ul>
@@ -232,7 +225,7 @@ secn,SECID                          <span class="c">! 이후 만드는 요소의
 <h3 id="k-확인">맞게 됐는지 확인</h3>
 <ul>
 <li><code>/eshape,1</code> → <code>eplot</code>: 보를 실제 단면 모양으로 그린다. I형강이 서 있으면 성공.</li>
-<li><code>/psymb,esys,1</code> → <code>eplot</code>: 요소마다 x·y·z 축을 표시한다(연습기도 지원).</li>
+
 <li>변위가 손계산보다 <b>10배쯤</b> 크면 → 약축으로 휘고 있는 것. K 위치부터 의심.</li>
 </ul>
 <pre><code><span class="c">! 예: Example 4.5 프레임 (W12×26, K 노드 사용) — '중간고사 풀이.TXT'의 정석 풀이</span>
@@ -286,7 +279,7 @@ face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = 
 <p>손으로 쓰기 편하려면 노드를 하중 꺾이는 점·지점에만 두고(요소 3~4개), KEYOPT(3)=3(3차)으로 해도 정확도가 충분하다. 결과 비교해 보고 쓸 것.</p>
 </blockquote>
 <ul>
-<li>확인: <code>/psf,pres,,2</code> + <code>eplot</code> 하중 화살표 표시, <code>sflist</code></li>
+
 <li>분포하중 단위: lb/ft → <strong>lb/in = /12</strong></li>
 </ul>
 <h3 id="수업-예제-i형강-프레임-분포하중">수업 예제: I형강 프레임 + 분포하중 (LATT 방향 키포인트 · SECOFFSET · /ESHAPE)</h3>
@@ -308,7 +301,6 @@ latt,,,,,4                          <span class="c">! LATT,MAT,REAL,TYPE,--,KB �
 lmesh,1                             <span class="c">! 선 1만 메쉬 (ESIZE 없음 → 기본 DESIZE: 선당 3개 이상)</span>
 sfbeam,all,1,pres,800/12            <span class="c">! 지금 있는 요소(=보) 전부, face 1(−z 방향) 등분포 800 lb/ft = 800/12 lb/in</span>
 /eshape,1                           <span class="c">! 보를 단면 모양(3-D)으로 그리기</span>
-eplot                               <span class="c">! 요소 그림 → I형강 모양 확인</span>
 lmesh,2                             <span class="c">! 선 2(기둥) 메쉬 — SFBEAM 뒤에 메쉬했으므로 기둥에는 하중 없음</span>
 secoff,user,0,12.22                 <span class="c">! SECOFFSET,USER,y=0,z=12.22 : 노드를 단면 z=12.22 쪽 면에 둠 (단면 1을 쓰는 모든 요소에 적용)</span>
 dk,1,all                            <span class="c">! KP1 고정 (모든 자유도)</span>
@@ -325,7 +317,7 @@ pldisp,1                            <span class="c">! 변형 형상 + 변형 전
 <li><code>sfbeam,all,1,…</code>: face 1 = element −z 방향 = 보에서는 −Y(아래). <code>all</code>은 <strong>그 순간 선택된 요소</strong>만 뜻하므로, 기둥을 메쉬하기 전에 쓰면 보에만 하중이 걸린다.</li>
 <li><code>secoff,user,0,12.22</code>: 단면 1의 오프셋은 메쉬 뒤에 바꿔도 단면 1을 쓰는 <strong>모든 요소</strong>(보·기둥)에 적용된다. /ESHAPE 그림에서 보가 선 아래로 매달리는 모양이 된다. 주석 처리된 <code>-6.11+0.38</code>은 다른 위치를 시험해 본 값.</li>
 <li>연습기 결과(Timoshenko, SECOFFSET 반영): 반력 FY = 4705 (KP1), 3295 (KP3), 합 8000 = 800/12 × 120 ✓. 오프셋을 빼면(CENT) 4505 / 3495 — 노드 위치가 바뀌면 프레임 강성 분포가 달라져 반력도 바뀐다.</li>
-<li>모멘트도 보기: 이 예제는 방향점 때문에 element z가 위쪽이라 굽힘모멘트가 <b>MY</b> → <code>/post1</code> → <code>etable,mi,smisc,2</code> → <code>etable,mj,smisc,15</code> → <code>plls,mi,mj</code>. (K 없이 XY 평면에 놓인 보는 MZ = <code>smisc,3</code> / <code>smisc,16</code>, 전단력 SFY = 6 / 19)</li>
+
 </ul>
 <hr />
 <h2 id="5-형상-만들기-solid-modeling">5. 형상 만들기 (Solid modeling)</h2>
@@ -358,21 +350,13 @@ pldisp,1                            <span class="c">! 변형 형상 + 변형 전
 <td><code>rect,X1,X2,Y1,Y2</code></td>
 <td>WP 기준, 양 끝 좌표</td>
 </tr>
-<tr>
-<td>사각형</td>
-<td><code>blc4,XCORNER,YCORNER,W,H</code> / <code>blc5,XCENTER,YCENTER,W,H</code></td>
-<td>모서리+폭·높이 / 중심+폭·높이</td>
-</tr>
+
 <tr>
 <td>원/도넛/부채꼴</td>
 <td><code>pcir,RAD1,RAD2,THETA1,THETA2</code></td>
 <td><strong>항상 WP 원점 중심</strong>. RAD1·RAD2 순서 무관. <code>pcir,1</code> 원, <code>pcir,0.4,1</code> 도넛, <code>pcir,2.6,3.67,-180,-90</code> 1/4</td>
 </tr>
-<tr>
-<td>원 (중심 지정)</td>
-<td><code>cyl4,XC,YC,RAD1,THETA1,RAD2,THETA2</code></td>
-<td>인자 순서가 pcirc와 다름</td>
-</tr>
+
 <tr>
 <td>합치기</td>
 <td><code>aadd,NA1,NA2,...</code> / <code>aadd,all</code></td>
@@ -383,21 +367,13 @@ pldisp,1                            <span class="c">! 변형 형상 + 변형 전
 <td><code>asba,NA1,NA2,SEPO,KEEP1,KEEP2</code></td>
 <td>NA1에서 NA2를 뺌. 기본은 둘 다 삭제되고 <strong>새 면 번호</strong>가 생김 → <code>/pnum,area,1</code> <code>aplot</code>으로 번호 확인. 남기려면 KEEP</td>
 </tr>
-<tr>
-<td>겹치기/붙이기</td>
-<td><code>aovlap</code> / <code>aglue</code></td>
-<td>glue: 경계 공유(재질 다른 면 연결)</td>
-</tr>
+
 <tr>
 <td>대칭 복사</td>
-<td><code>lsymm,Ncomp,NL1,NL2,NINC</code> / <code>arsym</code></td>
+<td><code>lsymm,Ncomp,NL1,NL2,NINC</code></td>
 <td>Ncomp=X → x 좌표 부호 반전(YZ면 대칭). <strong>활성 좌표계가 직교(local 직교 포함)여야 함</strong> → 19년 풀이처럼 <code>local,11,0,...</code>로 대칭축을 옮겨서 사용</td>
 </tr>
-<tr>
-<td>복사</td>
-<td><code>kgen,ITIME,NP1,NP2,NINC,DX,DY,DZ</code> / <code>lgen</code> / <code>agen</code></td>
-<td>ITIME = 원본 포함 총 개수. 원통 csys: kgen은 dR,dθ,dZ / <strong>lgen은 dR 무시(dθ,dZ만)</strong></td>
-</tr>
+
 </tbody>
 </table></div>
 <h3 id="좌표계-작업평면">좌표계 / 작업평면</h3>
@@ -413,12 +389,12 @@ pldisp,1                            <span class="c">! 변형 형상 + 변형 전
 <tr>
 <td>활성 좌표계</td>
 <td><code>csys,KCN</code></td>
-<td>0 직교, 1 원통(R,θ,Z), 2 구, 4 = WP</td>
+<td>0 직교, 1 원통(R,θ,Z)</td>
 </tr>
 <tr>
 <td>로컬 좌표계</td>
 <td><code>local,KCN,KCS,XC,YC,ZC,THXY,THYZ,THZX</code></td>
-<td>KCN &gt; 10. KCS 0 직교, 1 원통, 2 구. 원점은 global 직교좌표. 만들면 <strong>바로 활성화</strong>됨</td>
+<td>KCN &gt; 10. KCS 0 직교, 1 원통. 원점은 global 직교좌표. 만들면 <strong>바로 활성화</strong>됨</td>
 </tr>
 <tr>
 <td>WP 원점 이동</td>
@@ -430,15 +406,11 @@ pldisp,1                            <span class="c">! 변형 형상 + 변형 전
 <td><code>wpoff,DX,DY,DZ</code></td>
 <td><strong>현재 WP</strong> 기준</td>
 </tr>
+
 <tr>
-<td>WP 회전</td>
-<td><code>wprota,THXY,THYZ,THZX</code></td>
-<td></td>
-</tr>
-<tr>
-<td>WP 원위치</td>
-<td><code>wpcsys,-1,0</code> (원점과 방향 모두 global로). <code>wpave,0,0,0</code>은 원점만 옮기고 <code>wprota</code> 회전은 남는다 (좌표는 현재 활성 좌표계 기준)</td>
-<td></td>
+<td>WP 원점으로</td>
+<td><code>wpave,0,0</code> (<code>csys,0</code>일 때)</td>
+<td>2018-2처럼 구멍마다 WP를 옮겨 쓴 뒤 되돌릴 때</td>
 </tr>
 </tbody>
 </table></div>
@@ -455,9 +427,6 @@ mat,1                               <span class="c">! 이후 만드는 요소의
 secn,1                              <span class="c">! 이후 만드는 요소의 단면 번호 = 1 — 메쉬 전에 속성 지정 (또는 latt / aatt)</span>
 lmesh,all                           <span class="c">! 선 메쉬 (LINK/BEAM 요소 생성) — 선 → LINK/BEAM</span>
 amesh,all                           <span class="c">! 면 메쉬 (PLANE 요소 생성) — 면 → PLANE</span>
-mshape,0,2d                         <span class="c">! 요소 모양 = 사각형</span>
-mshkey,1                            <span class="c">! 매핑 메쉬 — (선택) 사각형 매핑 메쉬</span>
-aclear,all / lclear,all             <span class="c">! 면 메쉬 지우기</span>
 </code></pre>
 <blockquote>
 <p><strong>트러스(LINK)는 선 하나 = 요소 하나</strong> (<code>esize,,1</code>). 중간에 노드가 생기면 핀 절점이 생겨 불안정해진다.</p>
@@ -491,7 +460,7 @@ aclear,all / lclear,all             <span class="c">! 면 메쉬 지우기</span
 <tr>
 <td>요소</td>
 <td><code>e,I,J,K,L</code> (<code>en,ID,I,J,...</code>)</td>
-<td>현재 type/mat/secnum 적용</td>
+<td>현재 type/mat/secn 적용</td>
 </tr>
 <tr>
 <td>요소 복사</td>
@@ -501,18 +470,14 @@ aclear,all / lclear,all             <span class="c">! 면 메쉬 지우기</span
 <tr>
 <td>노드 좌표계 회전</td>
 <td><code>nrotat,NODE1,NODE2,NINC</code></td>
-<td>노드 좌표계를 <strong>활성 좌표계</strong> 방향으로 회전 (이전 회전 덮어씀). <code>/psymb,ndir,1</code>로 확인</td>
+<td>노드 좌표계를 <strong>활성 좌표계</strong> 방향으로 회전 (이전 회전 덮어씀)</td>
 </tr>
 <tr>
 <td>노드 수정</td>
 <td><code>nmodif,NODE,X,Y,Z,THXY,THYZ,THZX</code></td>
 <td>빈칸은 기존 값 유지 → <code>nmodif,5,,,,-60</code> 회전만</td>
 </tr>
-<tr>
-<td>요소 속성 수정</td>
-<td><code>emodif,IEL,MAT,2</code> (TYPE/REAL/SECNUM도)</td>
-<td></td>
-</tr>
+
 </tbody>
 </table></div>
 <blockquote>
@@ -532,8 +497,6 @@ e,1,2,12,11                         <span class="c">! 요소 생성: 노드 1 �
 egen,2,1,1                          <span class="c">! 요소 1 복사: 총 2세트, 노드 번호 +1씩 — 반지름 방향 2개</span>
 egen,6,10,1,2                       <span class="c">! 요소 1~2 복사: 총 6세트, 노드 번호 +10씩 — 원주 방향 6줄</span>
 csys,0                              <span class="c">! 활성 좌표계 = 전역 직교 (X, Y, Z)</span>
-/pnum,node,1                        <span class="c">! NODE 번호 표시 켜기</span>
-eplot                               <span class="c">! 요소 그리기</span>
 </code></pre>
 <blockquote>
 <p>반지름 분할 수, 원주 분할 수(각도 증분)는 그림을 세서 맞춘다. 반지름 n분할이면 <code>fill</code>로 n−1개, <code>egen,n,1,1</code>.</p>
@@ -620,16 +583,8 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 <td><code>sfbeam</code></td>
 <td>§4</td>
 </tr>
-<tr>
-<td>요소 면 압력</td>
-<td><code>sfe,ELEM,LKEY,PRES,KVAL,VAL1...</code></td>
-<td>PLANE 면 하중</td>
-</tr>
-<tr>
-<td>선 압력</td>
-<td><code>sfl,LINE,PRES,VALI,VALJ</code></td>
-<td>PLANE 모델의 선</td>
-</tr>
+
+
 </tbody>
 </table></div>
 <ul>
@@ -649,7 +604,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 <tbody>
 <tr>
 <td>결과 읽기</td>
-<td><code>/post1</code> → <code>set,last</code> (또는 <code>set,1</code>)</td>
+<td><code>/post1</code> → <code>set</code> (마지막 결과)</td>
 </tr>
 <tr>
 <td>변형 형상</td>
@@ -667,17 +622,11 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 <td>반력</td>
 <td><code>prrfor</code> (= <code class="alt">prrsol</code>) — <strong>평형 검증: 반력 합 = 전체 하중</strong></td>
 </tr>
-<tr>
-<td>하중 합</td>
-<td><code>fsum</code> (선택 노드의 절점력 합. 분포하중(표면하중) 성분은 빠짐 → 평형 검증은 <code>prrfor</code> 반력 합으로)</td>
-</tr>
-<tr>
-<td>응력(PLANE)</td>
-<td><code>plnsol,s,eqv</code> / <code>prnsol,s,prin</code></td>
-</tr>
+
+
 <tr>
 <td>요소 결과 표</td>
-<td><code>etable,이름,ITEM,COMP</code> → <code>pretab,이름1,이름2</code> / <code>pletab,이름</code> / <code>esort,etab,이름</code></td>
+<td><code>etable,이름,ITEM,COMP</code> → <code>pretab,이름1,이름2</code> / <code>pletab,이름</code></td>
 </tr>
 <tr>
 <td>값 하나 꺼내기</td>
@@ -739,24 +688,26 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 </tbody>
 </table></div>
 <ul>
-<li><strong>최대 굽힘응력</strong> (25-3): <code>etable,sbzt,smisc,34</code> … 4개 다 만들고 <code>esort,etab,sbzt,0,1</code> 또는 <code>pretab</code> 해서 절댓값 최대 찾기. (또는 <code>*get</code> + <code>esort</code> 후 <code>*get,smax,sort,,max</code>)</li>
-<li><b>굽힘모멘트도(BMD)·전단력도(SFD)</b>: <code>etable,mi,smisc,3</code> → <code>etable,mj,smisc,16</code> → <code>plls,mi,mj</code> (K 없이 XY 평면에 놓인 보: MZ). 방향점으로 element z를 위로 세운 보는 <b>MY</b> = <code>smisc,2</code> / <code>smisc,15</code>. 전단력 SFY = 6 / 19, SFZ = 5 / 18. I 끝 값과 J 끝 값을 짝으로 준다.</li>
+<li><strong>최대 굽힘응력</strong> (25-3): <code>etable</code>로 SMISC 32~35 네 개를 만들고 <code>pretab</code>으로 절댓값이 가장 큰 것을 찾는다.</li>
+
 <li><b>ASEC 단면의 굽힘응력은 믿으면 안 된다</b>: Help — ASEC은 y·z 최대·최소를 ±0.5로 가정해서 SMISC 32~35를 계산한다(실제 단면 크기와 무관). 출력도 단면력·모멘트(일반화 응력)만 의미가 있다. 굽힘응력이 필요하면 <code>i</code> / <code>chan</code> 같은 표준 단면을 쓸 것.</li>
 </ul>
 <hr />
 <h2 id="10-apdl-파라미터-함수">10. APDL 파라미터 / 함수</h2>
-<pre><code>L=10*12                             <span class="c">! 파라미터 L = 10*12 — 파라미터 (= *set,L,120)</span>
-A=k*L/E                             <span class="c">! 파라미터 A = k*L/E</span>
-*afun,deg                           <span class="c">! 삼각함수 각도 단위를 도(degree)로 — 삼각함수 각도 단위를 degree로</span>
-*get,uy5,node,5,u,y                 <span class="c">! uy5 = 노드 5의 UY 값</span>
-*do,i,1,10                          <span class="c">! 반복 시작: i = 1 ~ 10 · 반복 끝</span>
-...
-*enddo
-*if,a,gt,b,then                     <span class="c">! 조건문 시작 · 조건문 끝</span>
-...
+<pre><code>L=10*12                             <span class="c">! 파라미터 L = 120 (ft → in)</span>
+A=k*L/E                             <span class="c">! 스프링 → LINK180 단면적 A = kL/E</span>
+*afun,deg                           <span class="c">! sin·cos 를 degree 로 (기본은 radian)</span>
+*get,uy5,node,5,u,y                 <span class="c">! uy5 = 노드 5의 UY</span>
+*do,i,1,10                          <span class="c">! 반복 시작: i = 1 ~ 10</span>
+  e,i,i+1                           <span class="c">! 요소 i: 노드 i – i+1</span>
+*enddo                              <span class="c">! 반복 끝</span>
+*if,xi,le,a,then                    <span class="c">! 조건문 (삼각하중 꼭짓점이 가운데가 아닐 때)</span>
+  ...
+*else
+  ...
 *endif
 </code></pre>
-<p>함수: <code>sqrt() abs() sin() cos() atan() nx(n) ny(n) kx(k) node(x,y,z) kp(x,y,z) ux(n) uy(n) distnd(n1,n2)</code></p>
+<p>함수: <code>sqrt() abs() sin() cos() nx(n) ny(n) nelem(e,i) ux(n) uy(n)</code> — <code>nx(nelem(i,1))</code> = 요소 i의 I 노드 x좌표 (삼각하중 반복문에서 사용)</p>
 <hr />
 <h2 id="11-기출-유형별-스크립트">11. 기출 유형별 스크립트</h2>
 <blockquote>
@@ -1097,7 +1048,7 @@ mc=-th0/th1                         <span class="c">! 파라미터 mc = -th0/th1
 </tr>
 <tr>
 <td>결과가 0</td>
-<td><code>/solu</code> 전에 <code>finish</code> 안 함 / <code>set,last</code> 안 함</td>
+<td><code>/solu</code> 전에 <code>finish</code> 안 함 / <code>/post1</code> 다음 <code>set</code> 안 함</td>
 </tr>
 </tbody>
 </table></div>
