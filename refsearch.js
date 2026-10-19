@@ -9,6 +9,9 @@
 
   function store(k, v) { try { var s = keep.checked ? localStorage : sessionStorage; (v == null) ? (localStorage.removeItem(k), sessionStorage.removeItem(k)) : s.setItem(k, v); } catch (e) {} }
   function load(k) { try { return localStorage.getItem(k) || sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  var hd = box.querySelector('h3'), opt = $('cs-opt');
+  if (hd && opt) hd.addEventListener('dblclick', function () { opt.hidden = !opt.hidden; });
+  if (load('cs.key') && opt) opt.hidden = true;
   keyI.value = load('cs.key'); mdl.value = load('cs.model') || mdl.value;
   try { keep.checked = !!localStorage.getItem('cs.key'); } catch (e) {}
   keyI.addEventListener('change', function () { store('cs.key', keyI.value.trim() || null); });

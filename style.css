@@ -349,3 +349,4 @@ main.content hr{display:none}
 .cscard p{margin:4px 0}.cscard .css{font:12.5px var(--mono);color:#444;word-break:break-all}
 .cscard .csw{color:#000}.cscard pre{margin:6px 0}.cscard footer{font:12px var(--ui)}
 .cssum{font-weight:600;margin:10px 0}.cserr{color:#b00020}
+.cs-opt[hidden]{display:none}
