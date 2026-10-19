@@ -386,6 +386,37 @@ face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = 
 
 </tbody>
 </table></div>
+<h3 id="boolean-연산">Boolean operations (ANSYS Help)</h3>
+<p>Boolean 연산은 면(area)끼리 <b>더하고, 빼고, 겹치는 부분을 가르는</b> 명령이다. 구멍·슬롯·모서리 둥글림이 있는 형상(2018-2번)은 사각형과 원 같은 기본 도형을 만든 뒤 이 명령으로 합치고 뺀다. 문법은 ANSYS Help(v261) 그대로이다.</p>
+<div class="tbl"><table>
+<thead><tr><th>연산</th><th>명령 (Help 문법)</th><th>설명</th></tr></thead>
+<tbody>
+<tr><td>더하기</td><td><code>aadd,NA1,NA2,...,NA9</code></td><td>면 번호를 최대 9개까지 적어 하나의 면으로 합친다. <code>aadd,all</code>은 선택된 면 전부를 합친다. 합치는 면은 <b>같은 평면(coplanar)</b>에 있어야 한다.</td></tr>
+<tr><td>빼기 (면 − 면)</td><td><code>asba,NA1,NA2,SEPO,KEEP1,KEEP2</code></td><td>NA1에서 NA2를 뺀다. NA1은 남는 쪽, NA2는 도려낼 쪽이다. 두 면이 겹치는 영역(면 또는 선)이 NA1에서 빠진다. NA1에 쓴 면은 NA2로 다시 쓸 수 없으므로 <code>asba,all,all</code>은 아무 일도 하지 않는다.</td></tr>
+<tr><td>빼기 (면 − 선)</td><td><code>asbl,NA,NL,--,KEEPA,KEEPL</code></td><td>면 NA를 선 NL로 가른다. 겹치는 부분이 선일 때 쓰고, 면이 선을 경계로 둘로 나뉜다.</td></tr>
+<tr><td>겹침 나누기</td><td><code>aovlap,NA1,NA2,...,NA9</code></td><td>입력한 면 전체를 덮는 새 면을 만든다. <b>겹치는 부분</b>과 <b>안 겹치는 부분</b>이 각각 별도의 면이 된다. 겹치는 영역이 면일 때만 쓸 수 있다.</td></tr>
+<tr><td>교집합</td><td><code>aina,NA1,NA2,...,NA9</code></td><td>입력한 면들의 <b>공통 교집합</b>만 남긴다(쌍별 교집합이 아니다). 겹치는 부분이 선이면 새 선이 생긴다.</td></tr>
+<tr><td>붙이기</td><td><code>aglue,NA1,NA2,...,NA9</code></td><td>맞닿은 면들이 <b>경계 선을 공유</b>하도록 이어 붙인다. 면의 모양은 그대로이고, 공통 경계의 선과 키포인트가 하나로 합쳐진다. 번호가 낮은 면의 선과 키포인트가 남는다. 면이 선으로만 접해 있을 때 쓸 수 있다.</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>인자 쓰는 법:</b> <code>all</code>은 선택된 대상 전부이다. 번호 대신 구성요소 이름을 넣을 수도 있다. <code>p</code>는 화면에서 클릭해서 고르는 방식이라 GUI에서만 쓴다.</li>
+<li><b>원본 삭제 여부:</b> 기본은 연산에 쓴 원본 면이 <b>삭제</b>된다. <code>asba</code>, <code>asbl</code>의 KEEP 인자에 <code>keep</code>을 쓰면 그 면을 남기고, <code>delete</code>를 쓰면 삭제한다. 비워 두면 아래 <code>boptn</code> 설정을 따른다.</li>
+<li><b>SEPO 인자(<code>asba</code>):</b> 비워 두면 갈라진 면들이 닿는 선을 <b>공유</b>한다. <code>sepo</code>라고 쓰면 선이 따로 생겨서 서로 분리된 면이 된다.</li>
+<li><b>번호가 바뀐다:</b> 연산 결과는 새 면 번호로 만들어진다. Help에는 새 번호의 부여 규칙이 적혀 있지 않으므로, 연산 후에는 <code>/pnum,area,1</code>과 <code>aplot</code>, 또는 <code>alist</code>로 번호를 확인한 다음 다음 명령을 쓴다. 이전에 외운 번호를 그대로 쓰면 틀리기 쉽다.</li>
+<li><b>속성은 옮겨지지 않는다:</b> 원본 도형에 지정한 요소 속성(<code>aatt</code>)과 구속·하중은 새 면으로 넘어가지 않는다. Boolean은 <b>메쉬하기 전, 속성 지정 전에</b> 끝낸다.</li>
+<li><b>일반적인 순서:</b> 큰 덩어리(사각형, 원)를 만든다 → <code>aadd</code>로 합친다 → 구멍과 홈이 될 도형(원, 사각형)을 만든다 → <code>asba</code>로 뺀다. 매 단계마다 번호를 확인한다.</li>
+</ul>
+<h3 id="boptn-설정">Boolean options — BOPTN</h3>
+<p><code>boptn,Lab,Value</code>는 Boolean 연산 전체의 동작 옵션을 바꾼다. 어느 처리기에서든 쓸 수 있다.</p>
+<div class="tbl"><table>
+<thead><tr><th>Lab</th><th>값</th><th>의미</th></tr></thead>
+<tbody>
+<tr><td><code>keep</code></td><td><code>no</code> (기본) / <code>yes</code></td><td>no는 입력 도형을 삭제한다(메쉬했거나 상위 도형에 붙어 있으면 삭제하지 않는다). yes는 입력 도형을 남긴다. 연산마다 KEEP1, KEEP2로 따로 정하지 않았으면 이 설정이 적용된다.</td></tr>
+<tr><td><code>numb</code></td><td>0 (기본) / 1</td><td>1이면 형상 기반 번호 부여에 대한 경고를 낸다. 치수를 바꿔 입력 파일을 다시 쓰면 번호가 달라져 뒤의 연산이 틀릴 수 있다는 경고이다.</td></tr>
+<tr><td><code>nwarn</code></td><td>0 (기본) / 1 / −1</td><td>효과 없는 Boolean 연산에 대한 메시지이다. 0은 경고, 1은 아무 메시지도 안 냄, −1은 오류를 낸다.</td></tr>
+<tr><td><code>version</code></td><td><code>rv52</code> (기본) / <code>rv51</code></td><td>Boolean 호환 버전이다. 옛 버전 입력 파일을 읽을 때 그 버전에 맞춘다.</td></tr>
+<tr><td><code>defa</code> / <code>stat</code></td><td>—</td><td>defa는 모든 옵션을 기본값으로 되돌리고, stat는 현재 설정을 보여 준다.</td></tr>
+</tbody></table></div>
 <h3 id="좌표계-작업평면">Coordinate Systems / Working Plane</h3>
 <div class="tbl"><table>
 <thead>
