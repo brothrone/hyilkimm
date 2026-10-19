@@ -20,8 +20,8 @@
 
   function ensure() {
     if (idx) return Promise.resolve();
-    status('색인을 불러오는 중…');
-    return fetch('data/cmdidx.json').then(function (r) { if (!r.ok) throw new Error('색인 로드 실패 (' + r.status + ')'); return r.json(); })
+    status('Loading index…');
+    return fetch('data/cmdidx.json').then(function (r) { if (!r.ok) throw new Error('Index load failed (' + r.status + ')'); return r.json(); })
       .then(function (d) { idx = d; d.forEach(function (x) { byId[x.id.toUpperCase()] = x; x._h = (x.id + ' ' + x.syn + ' ' + x.p + ' ' + x.cat).toLowerCase(); x._b = x.b.toLowerCase(); }); });
   }
 
@@ -56,7 +56,7 @@
       })
     }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status)); return j; }); })
       .then(function (j) {
-        if (j.stop_reason === 'refusal') throw new Error('응답이 거절되었습니다.');
+        if (j.stop_reason === 'refusal') throw new Error('The response was declined.');
         var t = (j.content || []).filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('');
         return JSON.parse(t);
       });
@@ -71,7 +71,7 @@
 
   /* ANSYS Help 본 사이트: 브라우저에서 직접 못 읽으므로 API 의 웹 검색 도구를 ansyshelp.ansys.com 으로 제한해서 사용 */
   function webHelp(q) {
-    var msgs = [{ role: 'user', content: 'ANSYS Mechanical APDL 공식 문서(ansyshelp.ansys.com)에서 다음 질문에 해당하는 내용을 찾아 한국어로 짧게 정리해 줘. 명령 이름, 주요 인수, 주의점 위주로. 질문: ' + q }];
+    var msgs = [{ role: 'user', content: 'Find the answer in the official ANSYS Mechanical APDL documentation (ansyshelp.ansys.com) and summarize it briefly in Korean: command names, key arguments, cautions. Question: ' + q }];
     var sources = {}, text = '', n = 0;
     function step() {
       return fetch('https://api.anthropic.com/v1/messages', {
@@ -93,7 +93,7 @@
   }
   function webCard(w) {
     var l = Object.keys(w.sources);
-    if (!w.text && !l.length) return '<p class="cssum">ANSYS Help 에서 찾은 내용이 없습니다.</p>';
+    if (!w.text && !l.length) return '<p class="cssum">Nothing found in ANSYS Help.</p>';
     return '<article class="cscard csweb"><header><code class="csn">ANSYS Help</code><span class="csm">ansyshelp.ansys.com</span></header>' +
       '<p class="csw">' + esc(w.text).replace(/\n+/g, '<br>') + '</p>' +
       (l.length ? '<footer>' + l.slice(0, 5).map(function (u) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(w.sources[u]) + ' ›</a>'; }).join('<br>') + '</footer>' : '') + '</article>';
@@ -111,7 +111,7 @@
   }
   function show(summary, items) {
     out.innerHTML = (summary ? '<p class="cssum">' + esc(summary) + '</p>' : '') +
-      (items.length ? items.join('') : '<p class="cssum">일치하는 명령이 없습니다. 영어 명령 이름이나 키워드로 다시 검색해 보세요.</p>');
+      (items.length ? items.join('') : '<p class="cssum">No matching command. Try an English command name or keyword.</p>');
   }
 
   function run() {
@@ -120,22 +120,22 @@
     out.innerHTML = '';
     ensure().then(function () {
       if (!key) { status(''); var r = search(q, [], [], 12); show('', r.map(function (x) { return card(x); })); return; }
-      status('질문을 해석하는 중…');
+      status('Interpreting question…');
       return call('You map a user question about ANSYS Mechanical APDL to command names. Return up to 8 likely APDL command names (without arguments) and up to 8 English search keywords.',
         q, S1, 600).then(function (a) {
         var cands = search(q, a.commands, a.keywords, 14);
-        status('명령 설명을 정리하는 중…');
+        status('Preparing results…');
         var ctx = cands.map(function (x) { return '## ' + x.id + '\n' + x.syn + '\n' + x.p + '\n' + x.b.slice(0, 600); }).join('\n\n');
         return call('You are a reference assistant for a Korean university course on ANSYS Mechanical APDL (midterm covers LINK180, BEAM188, PLANE182, SECTYPE/SECDATA, SFBEAM, ETABLE, PRNSOL). ' +
           'Using ONLY the command reference excerpts given, pick the commands that answer the question (1-5, best first). Write in Korean. ' +
           '"summary": 1-2 sentence direct answer. For each result: "id" exactly as in the excerpts, "why": 1-2 sentences in Korean on what it does and the key arguments, "example": one or two APDL lines using ANSYS conventions of the course (e.g. mp,nuxy rather than prxy), or "" if not useful. Do not invent commands.',
-          '질문: ' + q + '\n\n' + ctx, S2, 3000).then(function (b) {
+          'Question: ' + q + '\n\n' + ctx, S2, 3000).then(function (b) {
           var items = [];
           (b.results || []).forEach(function (r) { var x = byId[String(r.id).toUpperCase()]; if (x) items.push(card(x, r.why, r.example)); });
           if (!web.checked) { status(''); show(b.summary, items); return; }
-          show(b.summary, items); status('ANSYS Help 검색 중…');
+          show(b.summary, items); status('Searching ANSYS Help…');
           return webHelp(q).then(function (w) { status(''); out.insertAdjacentHTML('beforeend', webCard(w)); })
-            .catch(function (e) { status(''); out.insertAdjacentHTML('beforeend', '<p class="cssum cserr">ANSYS Help 검색 실패: ' + esc(e.message || e) + '</p>'); });
+            .catch(function (e) { status(''); out.insertAdjacentHTML('beforeend', '<p class="cssum cserr">ANSYS Help search failed: ' + esc(e.message || e) + '</p>'); });
         });
       });
     }).catch(function (e) {

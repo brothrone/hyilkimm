@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>족보 분석 · 공부법</title>
-<meta name="description" content="기출 2016~2025 경향 분석, 올해 예상 문제, 공부 계획">
+<title>Midterm Analysis · ANSYS APDL</title>
+<meta name="description" content="Past-exam trend analysis 2016-2025 and study plan">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
@@ -13,41 +13,35 @@
 </head>
 <body>
 <header class="hd">
-  <a class="logo" href="index.html"><svg class="mk" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 27 L13 5 h6 L29 27 h-6 l-7-15.5 L9 27z" fill="#ffb71b"/><path d="M11 21 h10 l2 4 H9z" fill="#fff"/></svg><span class="tx"><b>전산구조해석</b><small>MIDTERM REFERENCE</small></span></a>
-  <nav class="topnav" aria-label="페이지"><a href="index.html">홈</a><a href="trend.html" aria-current="page">족보 분석</a><a href="exams.html">기출 풀이</a><a href="textbook.html">교재 예제</a><a href="ref.html">참고자료</a><a href="apdl.html">연습기</a></nav>
-  <span class="who">PNU AEROSPACE</span>
+  <a class="logo" href="index.html"><svg class="mk" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 27 L13 5 h6 L29 27 h-6 l-7-15.5 L9 27z" fill="#ffb71b"/><path d="M11 21 h10 l2 4 H9z" fill="#fff"/></svg><span class="tx"><b>ANSYS APDL</b></span></a>
+  <nav class="topnav" aria-label="Pages"><a href="index.html">Home</a><a href="trend.html" aria-current="page">Analysis</a><a href="exams.html">Past Exams</a><a href="textbook.html">Textbook</a><a href="ref.html">Reference</a><a href="apdl.html">Practice</a></nav>
 </header>
 <div class="sb">
-  <button class="burger" type="button" id="burger" aria-label="목차 열고 닫기"><span></span><span></span><span></span></button>
+  <button class="burger" type="button" id="burger" aria-label="Toggle contents"><span></span><span></span><span></span></button>
   <div class="crumbs"><a href="index.html">Mechanical APDL Midterm 2026</a><span class="sep">|</span><a href="trend.html">Midterm Analysis</a><span class="sep">|</span><a href="#" id="printlink">PDF</a></div>
   <form class="search" id="search" role="search">
-    <input type="search" id="q" placeholder="이 페이지에서 검색 (예: sfbeam)" aria-label="이 페이지에서 검색">
-    <button class="ic" type="submit" aria-label="검색"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15 15 L21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg></button>
-    <span class="pn"><a href="index.html" title="이전 페이지" aria-label="이전 페이지">◀</a><a href="exams.html" title="다음 페이지" aria-label="다음 페이지">▶</a></span>
+    <input type="search" id="q" placeholder="Search this page (e.g. sfbeam)" aria-label="Search this page">
+    <button class="ic" type="submit" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15 15 L21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg></button>
+    <span class="pn"><a href="index.html" title="Previous page" aria-label="Previous page">◀</a><a href="exams.html" title="Next page" aria-label="Next page">▶</a></span>
   </form>
 </div>
 <div class="layout">
-<aside class="side" id="side" aria-label="목차">
-  <div class="shd">Contents <span><button class="x" type="button" id="sbclose" aria-label="목차 닫기">✕</button></span></div>
+<aside class="side" id="side" aria-label="Contents">
+  <div class="shd">Contents <span><button class="x" type="button" id="sbclose" aria-label="Close contents">✕</button></span></div>
   <button class="ec" type="button" id="ecall">expand/collapse all</button>
-  <ul class="tree"><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="index.html">홈 — Home</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#contents">Contents</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#matrix">연도별 출제 주제</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#files">원본 자료</a></div></li></ul></li><li class="cur"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="trend.html">족보 분석 — Midterm Analysis</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#1-시험-형식">1. 시험 형식</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#2-연도별-출제-내용">2. 연도별 출제 내용</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#3-경향-분석">3. 경향 분석</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#4-공부법">4. 공부법</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="exams.html">기출 풀이 — Past Exams</a></div><ul><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2016">2016년 중간고사 (Oct. 27, 2016)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2016-1">Problem 1 — 2단 원형 축의 비틀림 (BEAM188, CSOLID)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2016-2">Problem 2 — 양단 고정보 + 가운데 스프링, 최소 k (BEAM188 + LINK180)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2018">2018년 중간고사 (Oct. 23, 2018)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2018-1">Problem 1 — W310×52 보, 롤러 → 스프링 (BEAM188 + LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2018-2">Problem 2 — 2D 면 만들기 (Boolean)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2019">2019년 중간고사 (풀이 스크립트로 복원)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2019-1">Problem 1 — Example 4.5 오버행 프레임, I형 단면 (BEAM188)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2019-2">Problem 2 — 계단식 봉 (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2019-3">Problem 3 — local 좌표계와 LSYMM으로 대칭 선 만들기</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2021">2021년 중간고사 (Oct. 27, 2021)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2021-1">Problem 1 — 테이퍼 판, 변위 δ 부여 (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2021-2">Problem 2 — 두 재료 오버행 프레임, C형강, 삼각 분포하중 (BEAM188)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2023">2023년 중간고사 (Oct. 24, 2023)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2023-1">Problem 1 — 양단 고정 복합 축봉 (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2023-2">Problem 2 — C310×45 보, 삼각 분포하중, 롤러 → 스프링 (BEAM188 + LINK180)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="exams.html#y2025">2025년 중간고사 (Oct. 21, 2025)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-1">Problem 1 — local 원통좌표계 + NGEN + EGEN (PLANE182)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-2">Problem 2 — 발코니 트러스, 삼각함수 없이 경사 하중 (NROTAT / NMODIF)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-3">Problem 3 — W8×67 + C9×20 L자 보, SECOFFSET, 비틀림 (BEAM188)</a></div></li></ul></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="textbook.html">교재 예제 — Textbook Examples</a></div><ul><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="textbook.html#ch1">1장 직접 정식화 (봉·축·판을 스프링으로)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex1-1">Example 1.1 — 폭이 줄어드는 봉</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex1-3">Example 1.3 — 두 재료 원형 축의 비틀림 (= 기출 2016-1)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex1-4">Example 1.4 — 구멍 뚫린 판 (병렬 스프링)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="textbook.html#ch3">3장 트러스 (LINK180)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex3-1">Example 3.1 — 발코니 트러스</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex3-2">Example 3.2 — 3D 트러스</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-3">Problem 3.3 — 60° 두 부재</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-4">Problem 3.4 — 1.25 m 트러스, 15° 경사 하중</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-5">Problem 3.5 — 1.5 m × 1 m 트러스</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-6">Problem 3.6 — 8 ft 정삼각형 트러스</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-8">Problem 3.8 — 3D 삼각대</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▼</button><a href="textbook.html#ch4">4장 축부재 · 보 · 프레임 (LINK180 / BEAM188)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex4-2">Example 4.2 — 4층 건물 기둥 (Example 4.1 포함)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex4-3">Example 4.3 — W18×35 외팔 발코니 보</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex4-4">Example 4.4 — W310×52 보 + 롤러 (= 기출 2018-1)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex4-5">Example 4.5 — 오버행 프레임</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p4-1">Problem 4.1 — 양 끝 고정 계단 봉</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p4-3">Problem 4.3 — 세 구간 봉, 두 하중</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p4-9">Problem 4.9 — 램프 프레임 (사각 관)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p4-21">Problem 4.21 — W18×35 단순보</a></div></li></ul></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="ref.html">참고자료 — Command Reference</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#0-기본-틀-모든-문제-공통">0. 기본 틀 (모든 문제 공통)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#1-요소-요약">1. 요소 요약</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#2-단면-sectype-secdata">2. 단면 (SECTYPE / SECDATA)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#3-beam188-방향-가장-많이-헷갈림">3. BEAM188 방향 — K 노드 (가장 많이 헷갈림)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#4-sfbeam-보-분포하중">4. SFBEAM (보 분포하중)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#5-형상-만들기-solid-modeling">5. 형상 만들기 (Solid modeling)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#6-메쉬">6. 메쉬</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#7-노드-요소-직접-생성-direct-generation">7. 노드 / 요소 직접 생성 (Direct generation)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#8-경계조건-하중">8. 경계조건 · 하중</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#9-후처리">9. 후처리</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#10-apdl-파라미터-함수">10. APDL 파라미터 / 함수</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#11-기출-유형별-스크립트">11. 기출 유형별 스크립트</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#12-에러경고-대처">12. 에러·경고 대처</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="펼치기">▶</button><a href="apdl.html">연습기 — APDL Practice</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="apdl.html#howto">사용법</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="apdl.html#support">지원하는 명령 (중간고사 범위)</a></div></li></ul></li></ul>
+  <ul class="tree"><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▶</button><a href="index.html">Home</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#contents">Contents</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#matrix">Topics by Year</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="index.html#files">Source Files</a></div></li></ul></li><li class="cur"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="trend.html">Midterm Analysis</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#1-시험-형식">1. Exam Format</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#2-연도별-출제-내용">2. Contents by Year</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#3-경향-분석">3. Trend Analysis</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="trend.html#4-공부법">4. How to Study</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▶</button><a href="exams.html">Past Exams</a></div><ul><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="exams.html#y2016">2016 Midterm (Oct. 27, 2016)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2016-1">Problem 1 — Torsion of a two-step circular shaft (BEAM188, CSOLID)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2016-2">Problem 2 — Fixed-fixed beam + center spring, minimum k (BEAM188 + LINK180)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="exams.html#y2018">2018 Midterm (Oct. 23, 2018)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2018-1">Problem 1 — W310×52 beam, roller → spring (BEAM188 + LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2018-2">Problem 2 — Building a 2D area (Boolean)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="exams.html#y2019">2019 Midterm (reconstructed from solution script)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2019-1">Problem 1 — Example 4.5 overhang frame, I-section (BEAM188)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2019-2">Problem 2 — Stepped bar (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2019-3">Problem 3 — Symmetric lines with a local CS and LSYMM</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="exams.html#y2021">2021 Midterm (Oct. 27, 2021)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2021-1">Problem 1 — Tapered plate, prescribed displacement δ (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2021-2">Problem 2 — Two-material overhang frame, C-channel, triangular load (BEAM188)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="exams.html#y2023">2023 Midterm (Oct. 24, 2023)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2023-1">Problem 1 — Fixed-fixed composite axial bar (LINK180)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2023-2">Problem 2 — C310×45 beam, triangular load, roller → spring (BEAM188 + LINK180)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="exams.html#y2025">2025 Midterm (Oct. 21, 2025)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-1">Problem 1 — Local cylindrical CS + NGEN + EGEN (PLANE182)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-2">Problem 2 — Balcony truss, inclined load without trig (NROTAT / NMODIF)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="exams.html#p2025-3">Problem 3 — W8×67 + C9×20 L-shaped beam, SECOFFSET, torsion (BEAM188)</a></div></li></ul></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▶</button><a href="textbook.html">Textbook Examples</a></div><ul><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="textbook.html#ch1">Chapter 1 — Direct Formulation</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex1-1">Example 1.1 — Tapered bar</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex1-3">Example 1.3 — Torsion of a two-material circular shaft (= 2016-1)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex1-4">Example 1.4 — Plate with a hole (parallel springs)</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="textbook.html#ch3">Chapter 3 — Trusses (LINK180)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex3-1">Example 3.1 — Balcony truss</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex3-2">Example 3.2 — 3D truss</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-3">Problem 3.3 — Two members at 60°</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-4">Problem 3.4 — 1.25 m truss, 15° inclined load</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-5">Problem 3.5 — 1.5 m × 1 m truss</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-6">Problem 3.6 — 8 ft equilateral truss</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p3-8">Problem 3.8 — 3D tripod</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▼</button><a href="textbook.html#ch4">Chapter 4 — Axial Members, Beams, Frames (LINK180 / BEAM188)</a></div><ul><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex4-2">Example 4.2 — Four-story building column (incl. Example 4.1)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex4-3">Example 4.3 — W18×35 cantilever balcony beam</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex4-4">Example 4.4 — W310×52 beam + roller (= 2018-1)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#ex4-5">Example 4.5 — Overhang frame</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p4-1">Problem 4.1 — Fixed-fixed stepped bar</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p4-3">Problem 4.3 — Three-segment bar, two loads</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p4-9">Problem 4.9 — Ramp frame (square tube)</a></div></li><li><div class="row"><span class="tw leaf">▶</span><a href="textbook.html#p4-21">Problem 4.21 — W18×35 simply supported beam</a></div></li></ul></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▶</button><a href="ref.html">Command Reference</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#0-기본-틀-모든-문제-공통">0. Basic Template</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#1-요소-요약">1. Elements</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#2-단면-sectype-secdata">2. Sections (SECTYPE / SECDATA)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#3-beam188-방향-가장-많이-헷갈림">3. BEAM188 Orientation — K Node</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#4-sfbeam-보-분포하중">4. SFBEAM (Beam Surface Loads)</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#5-형상-만들기-solid-modeling">5. Solid Modeling</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#6-메쉬">6. Meshing</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#7-노드-요소-직접-생성-direct-generation">7. Direct Generation</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#8-경계조건-하중">8. Boundary Conditions · Loads</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#9-후처리">9. Postprocessing</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#10-apdl-파라미터-함수">10. APDL Parameters / Functions</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#11-기출-유형별-스크립트">11. Scripts by Problem Type</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="ref.html#12-에러경고-대처">12. Errors and Warnings</a></div></li></ul></li><li class="closed"><div class="row"><button class="tw" type="button" aria-label="Expand">▶</button><a href="apdl.html">APDL Practice</a></div><ul><li class=""><div class="row"><span class="tw leaf">▶</span><a href="apdl.html#howto">How to Use</a></div></li><li class=""><div class="row"><span class="tw leaf">▶</span><a href="apdl.html#support">Supported Commands (midterm scope)</a></div></li></ul></li></ul>
 </aside>
 <main class="content">
   <div class="ctop"><a href="trend.html">Midterm Analysis |</a><button class="pr" type="button" id="printbtn">Print page</button></div>
-<h1 id="전산구조해석-중간고사-족보-경향-분석-공부법">전산구조해석 중간고사 — 족보 경향 분석 &amp; 공부법</h1>
-<blockquote>
-<p>자료: <code>전산구조해석 16·18·21·23·25년 중간.pdf</code>, <code>중간고사 16·18·19년.txt</code>, <code>중간고사 대비.TXT</code>, <code>중간고사 풀이.TXT</code>, 수업 스크립트(9/30~10/21), <code>강의자료(2026).pdf</code>, <code>BEAM188.pdf</code>
-교재: Moaveni, <em>Finite Element Analysis: Theory and Application with ANSYS</em> (수업예제 사진의 Example 4.5 출처)</p>
-</blockquote>
-<hr />
-<h2 id="1-시험-형식">1. 시험 형식</h2>
+<h1 id="전산구조해석-중간고사-족보-경향-분석-공부법">Midterm Analysis &amp; Study Guide</h1>
+<h2 id="1-시험-형식">1. Exam Format</h2>
 <ul>
 <li>모든 해 공통 문구: <strong>"Write down the ANSYS commands on your answer sheet."</strong>
   → 결과값만이 아니라 <strong>명령어 전체를 답안지에 써야 함</strong>. 명령어 철자·인자 순서를 손으로 쓸 수 있을 만큼 외워야 한다.</li>
 <li>문제 수: 2문제(16·18·21·23년) → <strong>3문제(25년)</strong>. 문제당 (a)(b)(c)(d) 소문항.</li>
 <li>단위는 문제마다 섞여 나온다(in·lb·ft / m·N·GPa / mm·cm). <strong>ft→in(×12), cm²→m²(×1e-4), mm⁴→m⁴(×1e-12)</strong> 환산 실수가 가장 흔한 감점 포인트.</li>
 </ul>
-<h2 id="2-연도별-출제-내용">2. 연도별 출제 내용</h2>
+<h2 id="2-연도별-출제-내용">2. Contents by Year</h2>
 <p>2016~2025년 6개년 문제는 <a href="exams.html">기출 풀이</a>에 시험지 그림, 풀이 스크립트, 검증값을 정리했다.</p>
 <table>
 <thead>
@@ -161,8 +155,8 @@
 </tbody>
 </table>
 <p>* 2019년은 시험지 PDF가 없고 <code>중간고사 19년.TXT</code>·<code>중간고사 풀이.TXT</code> 스크립트로 추정한 내용.</p>
-<h2 id="3-경향-분석">3. 경향 분석</h2>
-<h3 id="1-매년-나오는-것-반드시-손으로-쓸-수-있어야-함">(1) 매년 나오는 것 — 반드시 손으로 쓸 수 있어야 함</h3>
+<h2 id="3-경향-분석">3. Trend Analysis</h2>
+<h3 id="1-매년-나오는-것-반드시-손으로-쓸-수-있어야-함">(1) Every year — must be writable by hand</h3>
 <ol>
 <li><strong>트러스 / 축부재 (LINK180)</strong> — 19·21·23·25년. 거의 매년 1문제.
    - Example 3.1(발코니 트러스), 3.2(3D 트러스), 계단식/테이퍼 봉이 뼈대.
@@ -173,7 +167,7 @@
 <li><strong>스프링으로 바꿔서 "최소 k" 구하기</strong> — 16·18·23년 (3번). LINK로 스프링을 모델링(k = EA/L).</li>
 <li><strong>평형 조건으로 FEA 검증</strong> — 18·23년. 반력 합 = 전체 하중인지 <code>prrfor</code>로 확인.</li>
 </ol>
-<h3 id="2-변화-방향">(2) 변화 방향</h3>
+<h3 id="2-변화-방향">(2) Direction of change</h3>
 <ul>
 <li><strong>옛날 요소 → 최신 요소</strong>: 16~19년 원본 풀이는 BEAM188과 함께 옛 요소 LINK1·BEAM3·COMBIN14(실상수 <code>r</code>)를 섞어 썼고, <strong>21년부터 LINK180·BEAM188·PLANE182만 사용</strong>. 올해 시험도 최신 요소 기준으로 공부.
   <code>R</code>(real constant) 대신 <strong><code>SECTYPE</code>/<code>SECDATA</code></strong> 로 단면 입력.</li>
@@ -181,7 +175,7 @@
 <li><strong>비틀림(torsion)</strong> 이 16년 이후 25년에 다시 나옴 (C형강의 전단중심 ≠ 도심 → 하중이 비틀림을 만듦 → SECOFFS가 그래서 나옴).</li>
 <li>문제 수가 3문제로 늘고, 형상 만들기(2D 면/메쉬) 문제가 1문제씩 섞임 (18년 Boolean, 19년 lsymm, 25년 NGEN/EGEN).</li>
 </ul>
-<h3 id="3-올해2026-예상">(3) 올해(2026) 예상</h3>
+<h3 id="3-올해2026-예상">(3) Expected in 2026</h3>
 <p>수업 진도(9/30 PLANE42 판 → 10/01·06·07 트러스 → 10/13 BEAM188 → 10/21 프레임+SFBEAM)와 도움말 캡처(BEAM188, LINK180, <strong>SECOFFS</strong>, <strong>SFBEAM</strong>)를 보면:</p>
 <table>
 <thead>
@@ -217,14 +211,14 @@
 </tr>
 </tbody>
 </table>
-<h2 id="4-공부법">4. 공부법</h2>
-<h3 id="원칙">원칙</h3>
+<h2 id="4-공부법">4. How to Study</h2>
+<h3 id="원칙">Principles</h3>
 <ol>
 <li><strong>눈으로 보지 말고 손으로 쓴다.</strong> 시험은 답안지에 명령어를 쓰는 방식이다. 족보 문제를 빈 종이에 명령어로 처음부터 끝까지 써 본 뒤 ANSYS에 붙여 넣어 돌려서 확인한다.</li>
 <li><strong>한 문제 = 하나의 고정된 틀</strong>로 쓴다: <code>/prep7</code> → 요소·단면·재료 → 형상(k/l 또는 n/e) → 메쉬 → 경계조건·하중 → <code>/solu</code> <code>solve</code> → <code>/post1</code> 출력. (<a href="ref.html">시험 참고자료</a>의 "기본 틀" 참고)</li>
 <li><strong>결과를 손계산으로 검증</strong>하는 습관: 반력 합 = 하중, 트러스는 절점 평형, 외팔보는 공식(δ = PL³/3EI, wL⁴/8EI)과 비교.</li>
 </ol>
-<h3 id="일정-시험-전-약-1주-기준">일정 (시험 전 약 1주 기준)</h3>
+<h3 id="일정-시험-전-약-1주-기준">Schedule (about 1 week before the exam)</h3>
 <table>
 <thead>
 <tr>
@@ -263,7 +257,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="자주-틀리는-것-체크리스트">자주 틀리는 것 체크리스트</h3>
+<h3 id="자주-틀리는-것-체크리스트">Common Mistakes Checklist</h3>
 <ul>
 <li>[ ] 단위 통일 (ft·in, cm²·m², mm⁴·m⁴, lb/ft → lb/in = /12)</li>
 <li>[ ] 결과를 볼 지점(D, F, y=7.5 in, 하중 꺾이는 점)에 <strong>노드가 있는가</strong> → 없으면 키포인트/노드를 그 위치에 추가</li>
@@ -275,7 +269,7 @@
 <li>[ ] <code>/post1</code> 전에 <code>finish</code>, 결과 읽기 <code>set,last</code></li>
 <li>[ ] 스프링 문제에서 k → LINK180 단면적 A = kL/E (E·L은 아무 값이나 정해도 됨)</li>
 </ul>
-<h3 id="스프링-최소-k-빠르게-푸는-법-중첩법-선형이므로-정확">스프링 "최소 k" 빠르게 푸는 법 (중첩법, 선형이므로 정확)</h3>
+<h3 id="스프링-최소-k-빠르게-푸는-법-중첩법-선형이므로-정확">Spring "minimum k" — fast method (superposition)</h3>
 <ol>
 <li>스프링 없이 하중만 → 관심점 변위 <strong>δ₀</strong></li>
 <li>하중 없이 관심점(스프링 붙는 점)에 단위하중 1 → 관심점 변위 <strong>f</strong> (유연도)
@@ -284,12 +278,12 @@
 <li>δ_p = 허용값으로 놓고 k를 풀고, LINK180 단면적 <strong>A = k·L/E</strong> 를 넣어 다시 돌려 확인.
    (시행착오로 k를 바꿔 가며 돌려도 되지만 시간이 오래 걸림)</li>
 </ol>
-<h3 id="비틀림-0으로-만드는-반대-모멘트-25-3b">비틀림 0으로 만드는 반대 모멘트 (25-3(b))</h3>
+<h3 id="비틀림-0으로-만드는-반대-모멘트-25-3b">Opposing moment that zeroes the twist (25-3(b))</h3>
 <p>선형 해석이므로: 하중만 → 비틀림각 θ₀, 단위 모멘트 1만 → θ₁ ⇒ <strong>M = −θ₀/θ₁</strong>. 다시 돌려서 θ ≈ 0 확인.</p>
 
 </main>
 </div>
-<footer class="ft"><span>2026 · 전산구조해석 중간고사 대비 (개인 학습용)</span><a href="https://ansyshelp.ansys.com/" rel="noopener">공식 ANSYS Help</a><a href="index.html">원본 자료</a></footer>
+<footer class="ft"><a href="https://ansyshelp.ansys.com/" rel="noopener">ANSYS Help</a><a href="index.html">Source files</a></footer>
 <script src="site.js"></script>
 
 </body>

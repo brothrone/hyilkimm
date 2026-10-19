@@ -1,24 +1,20 @@
-<h1 id="ansys-apdl-중간고사-참고자료-시험장용">ANSYS APDL 중간고사 참고자료 (시험장용)</h1>
-<blockquote>
-<p>수업 스크립트 + 강의자료 + ANSYS Help(Mechanical APDL Command/Element Reference) 정리.
-모든 스크립트는 <strong>최신 요소(LINK180 / BEAM188 / PLANE182)</strong> 기준. <code>!</code> 뒤는 주석.</p>
-</blockquote>
+<h1 id="ansys-apdl-중간고사-참고자료-시험장용">Command Reference</h1>
 <section class="cs" id="cs">
-<h3 id="명령어-검색">명령어 검색 (Command Reference 18.2)</h3>
+<h3 id="명령어-검색">Command Search (Command Reference 18.2)</h3>
 <form id="cs-form" class="cs-form" autocomplete="off">
-<div class="cs-row"><input type="search" id="cs-q" placeholder="명령 이름 또는 질문 (예: secoffset, 반력 출력, 분포하중 걸기)" aria-label="명령어 검색"><button type="submit">검색</button></div>
+<div class="cs-row"><input type="search" id="cs-q" placeholder="Command name or question (e.g. secoffset, reaction forces)" aria-label="Command search"><button type="submit">Search</button></div>
 <div class="cs-row cs-opt">
-<label>API 키 <input type="password" id="cs-key" placeholder="sk-ant-… (선택)" autocomplete="off"></label>
-<label>모델 <select id="cs-model"><option value="claude-opus-5-5">claude-opus-5-5</option><option value="claude-sonnet-5-5">claude-sonnet-5-5</option><option value="claude-haiku-5-5">claude-haiku-5-5</option></select></label>
-<label class="cs-k"><input type="checkbox" id="cs-web"> ANSYS Help 본 사이트도 검색</label>
-<label class="cs-k"><input type="checkbox" id="cs-keep"> 이 브라우저에 저장</label>
+<label>API key <input type="password" id="cs-key" placeholder="sk-ant-… (optional)" autocomplete="off"></label>
+<label>Model <select id="cs-model"><option value="claude-opus-5-5">claude-opus-5-5</option><option value="claude-sonnet-5-5">claude-sonnet-5-5</option><option value="claude-haiku-5-5">claude-haiku-5-5</option></select></label>
+<label class="cs-k"><input type="checkbox" id="cs-web"> Also search ANSYS Help</label>
+<label class="cs-k"><input type="checkbox" id="cs-keep"> Remember in this browser</label>
 </div>
-<p class="cs-note">키가 없으면 영어 키워드/명령 이름으로 색인을 검색합니다. 키를 넣으면 한글 질문도 해석해서 해당 명령을 골라 설명합니다. 키는 이 브라우저에서 Anthropic 으로만 전송되며 사이트에는 저장되지 않습니다. "본 사이트" 검색은 API 의 웹 검색 도구(콘솔에서 허용 필요, 별도 요금)를 쓰며 키가 있을 때만 동작합니다.</p>
+<p class="cs-note">Without a key: keyword search of the command index. With a key, questions in any language are interpreted by Claude. The key is sent only from this browser to Anthropic.</p>
 </form>
 <p id="cs-st" class="cs-st" role="status"></p>
 <div id="cs-out"></div>
 </section>
-<h3 id="수업-표기">수업 txt 표기 (이 사이트의 모든 스크립트에 적용)</h3>
+<h3 id="수업-표기">Class Notation</h3>
 <p>레포의 수업 txt 파일(9/30~10/21, 1001·1006·1013, 중간고사 대비·풀이)에 쓰인 표기를 우선한다. 오른쪽은 같은 뜻의 정식 이름.</p>
 <table>
 <tr><th>수업 표기</th><th>같은 뜻</th><th>메모</th></tr>
@@ -33,7 +29,7 @@
 </table>
 <blockquote><p>⚠ <code>1013.txt</code>의 <code>latt,,,,3</code>은 쉼표가 4개라 3이 비어 있는 4번째 칸(--)에 들어가 <b>무시된다</b>. 방향 키포인트 KB는 5번째 칸이므로 최신 수업 스크립트처럼 <code>latt,,,,,4</code>(쉼표 5개)로 쓴다. 연습기는 4개로 쓰면 NOTE로 알려 준다.</p></blockquote>
 <hr />
-<h2 id="0-기본-틀-모든-문제-공통">0. 기본 틀 (모든 문제 공통)</h2>
+<h2 id="0-기본-틀-모든-문제-공통">0. Basic Template</h2>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 /title,문제이름                         <span class="c">! 제목 지정</span>
 <span class="c">! 1) 요소 · 단면 · 재료</span>
@@ -60,7 +56,7 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 <li>확인용: <code>/pnum,node,1</code> · <code>/pnum,elem,1</code> 로 <b>노드·요소 번호</b> 켜고 <code>nplot</code> / <code>eplot</code> 으로 그린다. <b>기호</b>는 <code>/psymb</code>(좌표계 <code>cs</code>, 노드 좌표계 <code>ndir</code>, 요소 좌표계 <code>esys</code>)와 <code>/pbc,all,,1</code>(구속·하중). <code>/eshape,1</code> + <code>eplot</code> 은 보를 단면 모양으로 보기. 수업 파일 <code>1013.txt</code> 처럼 <code>/pnum node 1</code> 로 쉼표 없이 쓰면 연습기는 오류로 보니 <b>쉼표로 쓸 것</b> (<code>/pnum,node,1</code>)</li>
 </ul>
 <hr />
-<h2 id="1-요소-요약">1. 요소 요약</h2>
+<h2 id="1-요소-요약">1. Elements</h2>
 <div class="tbl"><table>
 <thead>
 <tr>
@@ -120,7 +116,7 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 <p>시험 지시가 "LINK180으로 스프링 모델링"이면 <strong>k = EA/L</strong> → <code>secdata,A</code> 에 <strong>A = k·L/E</strong>.</p>
 </blockquote>
 <hr />
-<h2 id="2-단면-sectype-secdata">2. 단면 (SECTYPE / SECDATA)</h2>
+<h2 id="2-단면-sectype-secdata">2. Sections (SECTYPE / SECDATA)</h2>
 <pre><code>sectype,SECID,Type,Subtype          <span class="c">! 단면 SECID 정의: Type — Type = beam / link</span>
 secdata,VAL1,VAL2,...               <span class="c">! 단면 치수 (sectype 종류마다 순서가 다름)</span>
 secoff,Location,OFFSETY,OFFSETZ     <span class="c">! 보 노드를 단면의 어디에 둘지 지정</span>
@@ -185,7 +181,7 @@ secn,SECID                          <span class="c">! 이후 만드는 요소의
 <li><strong>ASEC는 Iyy·Izz를 직접 넣기 때문에</strong> 하중 방향과 맞춰야 함: 하중이 element −y 방향이면 강축 I를 <strong>Izz</strong>에, −z 방향이면 <strong>Iyy</strong>에.</li>
 <li>단위 환산: 강재표 mm → m. A [mm²]×1e-6, I [10⁶ mm⁴]×1e-6 → m⁴ (예: W310×52 Ix=119×10⁶ mm⁴ = 119e-6 m⁴).</li>
 </ul>
-<h3 id="secoffset-보-단면에서-노드-위치">SECOFFSET (보 단면에서 노드 위치)</h3>
+<h3 id="secoffset-보-단면에서-노드-위치">SECOFFSET (node position in the beam section)</h3>
 <p><code>secoff,Location,OFFSETY,OFFSETZ,CG-Y,CG-Z,SH-Y,SH-Z</code> — <strong>가장 최근 <code>sectype</code></strong> 단면에 적용 → <code>sectype</code> / <code>secdata</code> 바로 다음에 쓴다. 메쉬한 뒤에 바꿔도 그 단면을 쓰는 <b>모든 요소</b>에 적용된다(수업 예제).</p>
 <table>
 <tr><th>Location</th><th>보 노드(선)가 놓이는 곳</th></tr>
@@ -200,29 +196,29 @@ secn,SECID                          <span class="c">! 이후 만드는 요소의
 <p><strong>C형강은 전단중심 ≠ 도심</strong> → 도심을 지나는 하중은 비틀림을 일으킨다. 두 단면(W와 C)을 이어 붙일 때 같은 기준점(예: 위 플랜지 면, 웹 중심)에 노드가 오도록 <code>secoff,user,..</code> 로 맞춤 (25년 3번).</p>
 </blockquote>
 <hr />
-<h2 id="3-beam188-방향-가장-많이-헷갈림">3. BEAM188 방향 — K 노드 (가장 많이 헷갈림)</h2>
+<h2 id="3-beam188-방향-가장-많이-헷갈림">3. BEAM188 Orientation — K Node</h2>
 <p><b>한 줄 요약: K 노드는 "단면의 높이 방향"을 정하는 점이다.</b> 보가 어느 쪽으로 서 있는지(I형강이 세워져 있는지 눕혀져 있는지)를 ANSYS에 알려 준다. 원형 단면(<code>csolid</code>, <code>ctube</code>)은 어느 쪽으로 돌려도 같으므로 K가 필요 없다.</p>
-<h3 id="k-3단계">축 정하기 — 3단계로 외우기</h3>
+<h3 id="k-3단계">Setting the axes — 3 steps</h3>
 <ol>
 <li><b>x축 = I → J.</b> <code>e,I,J,K</code>에서 첫 번째 노드에서 두 번째 노드로.</li>
 <li><b>z축 = 보에서 K를 향하는 쪽.</b> K에서 보 선에 수선을 내리고, 그 발에서 K로 가는 방향이 z. <b>거리는 상관없고 방향만</b> 쓴다(K가 보에서 1이든 100이든 같다). Help 원문: “I, J와 K가 element x축과 z축을 담는 평면을 만든다.”</li>
 <li><b>y축 = z × x</b> (오른손 법칙). 외우기 쉬운 형태: <b>화면에서 x가 오른쪽, z가 위면 y는 화면 안쪽(⊗)</b>.</li>
 </ol>
-<h3 id="k-왜-중요">K가 바꾸는 것 세 가지</h3>
+<h3 id="k-왜-중요">Three things K changes</h3>
 <table>
 <tr><th>무엇</th><th>규칙</th><th>K를 보 위(+Y)에 둔 수평 보</th></tr>
 <tr><td>단면 방향</td><td>2장 단면 그림의 y, z = element y, z. <b>I·CHAN·RECT의 높이(W3, H)는 z 방향</b></td><td>높이가 세로 → 연직 하중을 <b>강축</b>으로 받음</td></tr>
 <tr><td><code>sfbeam</code> 하중 방향</td><td>양(+)의 PRES: face 1 = element <b>−z</b>, face 2 = element <b>−y</b> 방향으로 누름</td><td><code>sfbeam,all,1,pres,w</code> = <b>아래</b>로 w</td></tr>
 <tr><td>결과 이름</td><td>모멘트·전단력도 element 축 기준</td><td>굽힘모멘트 <b>MY</b> = <code>smisc,2</code> / <code>15</code>, 전단력 SFZ = 5 / 18</td></tr>
 </table>
-<h3 id="k-없음">K를 안 주면 (기본값)</h3>
+<h3 id="k-없음">Without K (default)</h3>
 <ul>
 <li>element y가 global X-Y 평면과 평행하게 자동으로 정해진다. 보가 +X 방향이면 <b>y = +Y, z = +Z(화면 밖)</b>. 보가 global Z와 평행하면 y = global Y.</li>
 <li>그래서 X-Y 평면 프레임에서 K를 빼면 z가 화면 밖 → <b>I·CHAN·RECT의 높이가 옆으로 누워 약축으로 휜다</b>. W12×26이면 변위가 약 <b>11배</b>(= Iyy/Izz ≈ 204/17.3) 크게 나온다. 그림 ②.</li>
 <li>이때 연직 하중은 −y 방향 = <b>face 2</b>, 모멘트는 <b>MZ</b> = <code>smisc,3</code> / <code>16</code>.</li>
 <li>ASEC 단면은 높이 대신 Iyy, Izz를 직접 넣으므로 K 없이 쓰고, <b>강축 I를 Izz</b> 자리에 넣는다(<code>secdata,A,Iyy,Iyz,Izz,Iw,J</code>).</li>
 </ul>
-<h3 id="k-상황별">상황별 정리</h3>
+<h3 id="k-상황별">Cases</h3>
 <table>
 <tr><th>상황</th><th>K 위치</th><th>연직 하중 face</th><th>모멘트 ETABLE</th></tr>
 <tr><td>수평 보 + I / CHAN / RECT</td><td>보 위쪽(+Y) 아무 점</td><td><b>1</b> (양수 = 아래)</td><td>MY: <code>smisc,2</code> / <code>15</code></td></tr>
@@ -230,14 +226,14 @@ secn,SECID                          <span class="c">! 이후 만드는 요소의
 <tr><td>기둥 + I / CHAN (프레임 평면 안에서 휨)</td><td>기둥 옆(±X), 프레임 평면 안</td><td>—</td><td>MY</td></tr>
 <tr><td>K를 반대쪽(보 아래)에 두면</td><td>z가 아래로</td><td>face 1 양수 = <b>위</b>로 → 값에 −</td><td>MY 부호 반대</td></tr>
 </table>
-<h3 id="k-명령">명령으로 쓰기</h3>
+<h3 id="k-명령">Writing the commands</h3>
 <ul>
 <li><b>노드로 직접</b>: K용 노드를 따로 만들고 요소의 세 번째 노드로 준다. 예) <code>n,100,0,10</code> → <code>e,1,2,100</code>. K용 노드는 해석에 안 들어가므로 구속할 필요 없음(연습기는 그림에서도 숨김).</li>
 <li><b>키포인트 + LMESH</b>: 방향용 키포인트를 만들고 <code>latt,,,,,KB</code> — <b>쉼표 5개</b>(LATT, MAT, REAL, TYPE, --, KB). 그 뒤 <code>lmesh</code>가 K 노드를 자동으로 만든다. (<code>1013.txt</code>의 <code>latt,,,,3</code>은 쉼표가 4개라 무시됨)</li>
 <li><b>KB 하나로 보와 기둥 둘 다</b>: 수업 예제 <code>k,4,0,109</code>는 보(선 1)에서 보면 위쪽, 기둥(선 2)에서 보면 왼쪽(−X)이다 → 두 부재 모두 높이가 프레임 평면 안에 선다.</li>
 <li>K가 보 선 위(연장선 포함)에 있으면 방향을 정할 수 없어 오류.</li>
 </ul>
-<h3 id="k-확인">맞게 됐는지 확인</h3>
+<h3 id="k-확인">Checking the result</h3>
 <ul>
 <li><code>/eshape,1</code> → <code>eplot</code>: 보를 실제 단면 모양으로 그린다. I형강이 서 있으면 성공.</li>
 
@@ -261,7 +257,7 @@ d,3,all                             <span class="c">! 노드 3 완전 고정 (�
 sfbeam,1,1,pres,800/12              <span class="c">! 요소 1, face 1 = element −z 방향에 분포하중 800/12 (등분포) — lb/ft → lb/in</span>
 </code></pre>
 <hr />
-<h2 id="4-sfbeam-보-분포하중">4. SFBEAM (보 분포하중)</h2>
+<h2 id="4-sfbeam-보-분포하중">4. SFBEAM (Beam Surface Loads)</h2>
 <p><code>sfbeam,Elem,LKEY,PRES,VALI,VALJ,VAL2I,VAL2J,IOFFST,JOFFST,LENRAT</code></p>
 <ul>
 <li><code>Elem</code>: 요소 번호 또는 <code>all</code>(선택된 전체)</li>
@@ -271,7 +267,7 @@ sfbeam,1,1,pres,800/12              <span class="c">! 요소 1, face 1 = element
 <li>음수 값 = 반대 방향</li>
 <li>⚠ 옛 요소 <strong>BEAM3는 face 1이 −Y</strong> 방향 → 옛 스크립트의 <code>sfbeam,…,1,…</code>(BEAM3)은 BEAM188에서는 보통 <strong>face 2</strong>(K 노드 없을 때)</li>
 </ul>
-<h3 id="삼각-분포하중-처리-212325년-매번-나옴">삼각 분포하중 처리 (21·23·25년 매번 나옴)</h3>
+<h3 id="삼각-분포하중-처리-212325년-매번-나옴">Triangular distributed load</h3>
 <ol>
 <li>하중이 <strong>꺾이는 점(최댓값), 지점, 결과를 볼 점에 노드</strong>가 오도록 선을 나눈다.</li>
 <li>구간마다 선형이므로, 요소 하나하나에 <code>VALI, VALJ</code>를 <strong>그 위치의 하중값</strong>으로 준다. 요소가 많으면 <code>*do</code> 반복문 사용:</li>
@@ -297,7 +293,7 @@ face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = 
 
 <li>분포하중 단위: lb/ft → <strong>lb/in = /12</strong></li>
 </ul>
-<h3 id="수업-예제-i형강-프레임-분포하중">수업 예제: I형강 프레임 + 분포하중 (LATT 방향 키포인트 · SECOFFSET · /ESHAPE)</h3>
+<h3 id="수업-예제-i형강-프레임-분포하중">Class example: I-beam frame + distributed load (LATT orientation keypoint · SECOFFSET · /ESHAPE)</h3>
 <p>수업 시간 메모장 스크립트(<a href="sfbeam%20%EB%B6%84%ED%8F%AC%ED%95%98%EC%A4%91%20%28%EC%88%98%EC%97%85%29.txt">원본 txt</a>)를 그대로 옮기고 주석을 달았다. 원본 첫 줄 <code>sfbeam !분포하중</code>은 메모라서 빼고, 마지막 <code>pldisp</code> 앞에 <code>/post1</code>을 넣었다.</p>
 <pre><code>/clear                              <span class="c">! 데이터베이스 지우고 새로 시작</span>
 /prep7                              <span class="c">! 전처리기 들어가기</span>
@@ -335,7 +331,7 @@ pldisp,1                            <span class="c">! 변형 형상 + 변형 전
 
 </ul>
 <hr />
-<h2 id="5-형상-만들기-solid-modeling">5. 형상 만들기 (Solid modeling)</h2>
+<h2 id="5-형상-만들기-solid-modeling">5. Solid Modeling</h2>
 <div class="tbl"><table>
 <thead>
 <tr>
@@ -391,7 +387,7 @@ pldisp,1                            <span class="c">! 변형 형상 + 변형 전
 
 </tbody>
 </table></div>
-<h3 id="좌표계-작업평면">좌표계 / 작업평면</h3>
+<h3 id="좌표계-작업평면">Coordinate Systems / Working Plane</h3>
 <div class="tbl"><table>
 <thead>
 <tr>
@@ -434,7 +430,7 @@ pldisp,1                            <span class="c">! 변형 형상 + 변형 전
 <li>25년 2번처럼 "삼각함수 금지"면 → NROTAT / NMODIF (§7).</li>
 </ul>
 <hr />
-<h2 id="6-메쉬">6. 메쉬</h2>
+<h2 id="6-메쉬">6. Meshing</h2>
 <pre><code>esize,SIZE,NDIV                     <span class="c">! esize,0.2 (크기)  /  esize,,1 (선 하나당 1분할: 트러스·보)</span>
 lesize,NL1,SIZE,ANGSIZ,NDIV         <span class="c">! 선 NL1의 분할 지정 — 특정 선만: lesize,1,,,50</span>
 type,1                              <span class="c">! 이후 만드는 요소의 요소 타입 번호 = 1</span>
@@ -447,7 +443,7 @@ amesh,all                           <span class="c">! 면 메쉬 (PLANE 요소 �
 <p><strong>트러스(LINK)는 선 하나 = 요소 하나</strong> (<code>esize,,1</code>). 중간에 노드가 생기면 핀 절점이 생겨 불안정해진다.</p>
 </blockquote>
 <hr />
-<h2 id="7-노드-요소-직접-생성-direct-generation">7. 노드 / 요소 직접 생성 (Direct generation)</h2>
+<h2 id="7-노드-요소-직접-생성-direct-generation">7. Direct Generation</h2>
 <div class="tbl"><table>
 <thead>
 <tr>
@@ -508,7 +504,7 @@ amesh,all                           <span class="c">! 면 메쉬 (PLANE 요소 �
 <blockquote>
 <p><strong><code>f</code>, <code>d</code>는 노드 좌표계 기준</strong>으로 걸린다 → 노드 좌표계를 돌리면 <code>f,5,fx,..</code>가 기울어진 방향. 결과 출력(<code>prnsol</code>, <code>prrfor</code>)은 기본 global(RSYS,0). 단 <code>*get,..,rf,..</code>는 노드 좌표계 기준.</p>
 </blockquote>
-<h3 id="2025-1-형태-local-원통좌표계-ngen-egen-plane182">2025-1 형태: local 원통좌표계 + NGEN + EGEN (PLANE182)</h3>
+<h3 id="2025-1-형태-local-원통좌표계-ngen-egen-plane182">2025-1 type: local cylindrical CS + NGEN + EGEN (PLANE182)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,plane182                       <span class="c">! 요소 타입 1 = PLANE182 (2D 4절점 고체)</span>
 mp,ex,1,30e6                        <span class="c">! 재료 1: 탄성계수 E = 30e6</span>
@@ -528,7 +524,7 @@ csys,0                              <span class="c">! 활성 좌표계 = 전역 
 <blockquote>
 <p>반지름 분할 수, 원주 분할 수(각도 증분)는 그림을 세서 맞춘다. 반지름 n분할이면 <code>fill</code>로 n−1개, <code>egen,n,1,1</code>.</p>
 </blockquote>
-<h3 id="2025-2-형태-경사-하중을-삼각함수-없이-example-31-발코니-트러스">2025-2 형태: 경사 하중을 삼각함수 없이 (Example 3.1 발코니 트러스)</h3>
+<h3 id="2025-2-형태-경사-하중을-삼각함수-없이-example-31-발코니-트러스">2025-2 type: inclined load without trig (Example 3.1 balcony truss)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,link180                        <span class="c">! 요소 타입 1 = LINK180 (3D 봉·트러스, 축력만)</span>
 sectype,1,link                      <span class="c">! 단면 1 정의: LINK (단면적만)</span>
@@ -570,7 +566,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 <p><strong>검증값 (파이썬 강성행렬 계산):</strong> 최대 변위 = 노드 5, |u| ≈ <strong>0.0271 in</strong> (UX 0.00647, UY −0.0263)
 축응력 [psi] (요소 = 1-2, 2-3, 3-4, 2-4, 2-5, 4-5): <strong>−216.5, 153.1, 170.8, 0, −153.1, 170.8</strong></p>
 <hr />
-<h2 id="8-경계조건-하중">8. 경계조건 · 하중</h2>
+<h2 id="8-경계조건-하중">8. Boundary Conditions · Loads</h2>
 <div class="tbl"><table>
 <thead>
 <tr>
@@ -620,7 +616,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 <li>비틀림 모멘트: <code>f,node,mx,T</code> (보가 x축 방향일 때). ft·lb → in·lb ×12.</li>
 </ul>
 <hr />
-<h2 id="9-후처리">9. 후처리</h2>
+<h2 id="9-후처리">9. Postprocessing</h2>
 <div class="tbl"><table>
 <thead>
 <tr>
@@ -661,7 +657,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 </tr>
 </tbody>
 </table></div>
-<h3 id="etable-항목">ETABLE 항목</h3>
+<h3 id="etable-항목">ETABLE items</h3>
 <div class="figrow"><figure class="fig help"><img src="img/help/link180-out.svg" alt="LINK180 결과: 축방향 응력 S(AXL)" loading="lazy"><figcaption>LINK180 Stress Output — 결과는 축방향(AXL) 하나뿐: 축응력 S(AXL) = <code>ls,1</code>, 축력 = <code>smisc,1</code>. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/plane182-out.svg" alt="PLANE182 결과: SX, SY 응력 방향" loading="lazy"><figcaption>PLANE182 Stress Output — SX, SY는 global X, Y 방향 응력. <code>plnsol,s,x</code> / <code>prnsol,s,comp</code>. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure></div>
 <div class="tbl"><table>
 <thead>
@@ -720,7 +716,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 <li><b>ASEC 단면의 굽힘응력은 믿으면 안 된다</b>: Help — ASEC은 y·z 최대·최소를 ±0.5로 가정해서 SMISC 32~35를 계산한다(실제 단면 크기와 무관). 출력도 단면력·모멘트(일반화 응력)만 의미가 있다. 굽힘응력이 필요하면 <code>i</code> / <code>chan</code> 같은 표준 단면을 쓸 것.</li>
 </ul>
 <hr />
-<h2 id="10-apdl-파라미터-함수">10. APDL 파라미터 / 함수</h2>
+<h2 id="10-apdl-파라미터-함수">10. APDL Parameters / Functions</h2>
 <pre><code>L=10*12                             <span class="c">! 파라미터 L = 120 (ft → in)</span>
 A=k*L/E                             <span class="c">! 스프링 → LINK180 단면적 A = kL/E</span>
 *afun,deg                           <span class="c">! sin·cos 를 degree 로 (기본은 radian)</span>
@@ -736,11 +732,11 @@ A=k*L/E                             <span class="c">! 스프링 → LINK180 단�
 </code></pre>
 <p>함수: <code>sqrt() abs() sin() cos() nx(n) ny(n) nelem(e,i) ux(n) uy(n)</code> — <code>nx(nelem(i,1))</code> = 요소 i의 I 노드 x좌표 (삼각하중 반복문에서 사용)</p>
 <hr />
-<h2 id="11-기출-유형별-스크립트">11. 기출 유형별 스크립트</h2>
+<h2 id="11-기출-유형별-스크립트">11. Scripts by Problem Type</h2>
 <blockquote>
 <p>⚠️ 아래 스크립트는 기출 그림을 보고 작성한 풀이 틀이다. 그림에서 애매한 치수/위치는 <code>!확인</code> 표시. <strong>시험 전 반드시 ANSYS에서 돌려서 확인할 것.</strong><br>2016~2025년 기출 전체 풀이(그림·검증값 포함)는 <a href="exams.html">기출 풀이</a> 페이지에 있다.</p>
 </blockquote>
-<h3 id="11-1-2d-트러스-example-31-기본형">11-1. 2D 트러스 (Example 3.1) — 기본형</h3>
+<h3 id="11-1-2d-트러스-example-31-기본형">11-1. 2D truss (Example 3.1) — basic</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,link180                        <span class="c">! 요소 타입 1 = LINK180 (3D 봉·트러스, 축력만)</span>
 sectype,1,link                      <span class="c">! 단면 1 정의: LINK (단면적만)</span>
@@ -783,7 +779,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 <p><code>dk</code> 문법: <code>dk,KPOI,Lab,VALUE,VALUE2,KEXPND,Lab2,...</code> — 한 줄로 쓰면 <code>dk,1,ux,0,,,uy</code> (Lab2가 KEXPND 다음 칸). 헷갈리면 수업 스크립트처럼 따로 쓰는 게 안전.
 평면 트러스를 LINK180으로 풀 때 UZ 구속이 없으면 강체운동 경고가 날 수 있다(수업 스크립트는 없이도 돌아갔는지 확인).</p>
 </blockquote>
-<h3 id="11-2-테이퍼계단-봉-변위-부여-2021-1-2019-2">11-2. 테이퍼/계단 봉, 변위 부여 (2021-1, 2019-2)</h3>
+<h3 id="11-2-테이퍼계단-봉-변위-부여-2021-1-2019-2">11-2. Tapered/stepped bar, prescribed displacement (2021-1, 2019-2)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,link180                        <span class="c">! 요소 타입 1 = LINK180 (3D 봉·트러스, 축력만)</span>
 mp,ex,1,10.4e6                      <span class="c">! 재료 1: 탄성계수 E = 10.4e6</span>
@@ -812,7 +808,7 @@ prnsol,u,y                          <span class="c">! 절점 변위 출력 (Y �
 </code></pre>
 <p><strong>검증값:</strong> u(7.5) ≈ <strong>0.678 δ</strong> (4요소 0.6785, 해석해 ln(2/1.25)/ln 2 = 0.6781).
 요소 수를 늘릴수록 해석해에 가까워짐(8요소 0.6782).</p>
-<h3 id="11-3-양단-고정-복합-축봉-2023-1">11-3. 양단 고정 복합 축봉 (2023-1)</h3>
+<h3 id="11-3-양단-고정-복합-축봉-2023-1">11-3. Fixed-fixed composite bar (2023-1)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,link180                        <span class="c">! 요소 타입 1 = LINK180 (3D 봉·트러스, 축력만)</span>
 sectype,1,link                      <span class="c">! 단면 1 정의: LINK (단면적만)</span>
@@ -859,7 +855,7 @@ etable,axstress,ls,1                <span class="c">! 요소 표 "axstress" = LS
 pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요소별)</span>
 </code></pre>
 <p><strong>검증값 (20 kN이 x=50 cm에서 −x 방향일 때):</strong> u_D = −0.1078 mm, u_F = −0.1513 mm, 왼쪽 축력 −12.39 kN(−24.8 MPa), 가운데 각 부재 +3.80 kN(19.0 MPa), 오른쪽 +7.61 kN(15.2 MPa).</p>
-<h3 id="11-4-보-형강-단면-롤러-등분포-2018-1-asec-방식">11-4. 보 + 형강 단면 + 롤러 + 등분포 (2018-1, ASEC 방식)</h3>
+<h3 id="11-4-보-형강-단면-롤러-등분포-2018-1-asec-방식">11-4. Beam + rolled section + roller + uniform load (2018-1, ASEC)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 (3D 보), KEYOPT(3)=3 3차 형상함수</span>
 sectype,1,beam,asec                 <span class="c">! 단면 1 정의: 보, 임의 단면(성질 직접 입력)</span>
@@ -889,7 +885,7 @@ prrfor                              <span class="c">! (b) 반력 합 FY = 25000 
 <blockquote>
 <p>I 단면(<code>sectype,1,beam,i</code>, W310×52: <code>secdata,0.167,0.167,0.317,0.0132,0.0132,0.0076</code>)으로 하면 K 노드를 위(+Y)에 두고 face 1. (강재표: bf=167, d=317, tf=13.2, tw=7.6 mm)</p>
 </blockquote>
-<h3 id="11-5-스프링-최소-k-2016-2-2018-1c-2023-2d">11-5. 스프링 최소 k (2016-2, 2018-1c, 2023-2d)</h3>
+<h3 id="11-5-스프링-최소-k-2016-2-2018-1c-2023-2d">11-5. Spring minimum k (2016-2, 2018-1c, 2023-2d)</h3>
 <pre><code><span class="c">! 위 모델에 스프링 추가 (LINK180)</span>
 et,2,link180                        <span class="c">! 요소 타입 2 = LINK180 (3D 봉·트러스, 축력만)</span>
 k_s=37e6                            <span class="c">! 파라미터 k_s = 37e6 — 시험값 → 바꿔 가며 / 또는 중첩법으로 계산</span>
@@ -906,7 +902,7 @@ e,2,4                               <span class="c">! 요소 생성: 노드 2 �
 d,4,all                             <span class="c">! 노드 4 완전 고정 (모든 자유도 = 0)</span>
 </code></pre>
 <p><strong>중첩법:</strong> δ₀(스프링 없이 하중) · f(스프링점에 단위하중) 두 번 돌려서 k 계산 → <a href="trend.html">족보 분석·공부법</a> §4 참고.</p>
-<h3 id="11-6-삼각-분포하중-c형강-2023-2-2021-2">11-6. 삼각 분포하중 + C형강 (2023-2 / 2021-2)</h3>
+<h3 id="11-6-삼각-분포하중-c형강-2023-2-2021-2">11-6. Triangular load + C-channel (2023-2 / 2021-2)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 (3D 보), KEYOPT(3)=3 3차 형상함수</span>
 sectype,1,beam,chan                 <span class="c">! 단면 1 정의: 보, C형(채널)</span>
@@ -939,7 +935,7 @@ prnsol,rot,z                        <span class="c">! 절점 회전각 출력 [r
 <blockquote>
 <p>요소를 더 잘게 하려면 <code>esize</code> + §4의 <code>*do</code> 반복문. C형강은 전단중심이 도심과 달라 <strong>비틀림(ROTX)이 생길 수 있음</strong> → 문제에서 묻지 않으면 <code>secoff,shrc</code> 로 전단중심에 하중이 걸리게 할지 판단(교수님 의도 확인).</p>
 </blockquote>
-<h3 id="11-7-비틀림-축-2016-1">11-7. 비틀림 축 (2016-1)</h3>
+<h3 id="11-7-비틀림-축-2016-1">11-7. Torsion shaft (2016-1)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 (3D 보), KEYOPT(3)=3 3차 형상함수</span>
 sectype,1,beam,csolid               <span class="c">! 단면 1 정의: 보, 꽉 찬 원형</span>
@@ -975,7 +971,7 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 <blockquote>
 <p><code>중간고사 16년.txt</code>는 <code>gyz</code>를 넣었는데, BEAM188이 쓰는 전단탄성계수는 <strong>GXY·GXZ</strong>다(Help: 전단강성 TXY=A·GXY, TXZ=A·GXZ). G가 주어지면 <code>mp,gxy</code>·<code>mp,gxz</code> 둘 다 넣는 것이 안전. G를 안 넣으면 EX와 PRXY(기본 0.3)로 G=E/2(1+ν) 자동 계산 → 이 문제처럼 E와 G가 따로 주어지면 반드시 G 입력.</p>
 </blockquote>
-<h3 id="11-8-w-c-단면-l자-외팔보-secoffs-비틀림-2025-3">11-8. W + C 단면 L자 외팔보, SECOFFS, 비틀림 (2025-3)</h3>
+<h3 id="11-8-w-c-단면-l자-외팔보-secoffs-비틀림-2025-3">11-8. W + C section L-shaped cantilever, SECOFFSET, torsion (2025-3)</h3>
 <p>기출 풀이 페이지와 같은 스크립트. <b>부재마다 K 노드를 따로</b> 둔다 — W(X 방향)는 위 <code>n,100</code>, C(Z 방향)는 C 위쪽 <code>n,101</code>. K 하나를 공유하면 Z 방향 부재에서는 K가 비스듬해져 단면이 기운다.</p>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 /title,2025-3 W8x67 + C9x20         <span class="c">! 제목 지정</span>
@@ -1036,7 +1032,7 @@ finish                              <span class="c">! 현재 처리기 종료</s
 mc=-th0/th1                         <span class="c">! 파라미터 mc = -th0/th1 — 필요한 모멘트</span>
 *stat,mc                            <span class="c">! 파라미터 mc 값 출력</span>
 <span class="c">! 확인: 하중 다시 걸고 f,31,mz,mc 추가해서 ROTZ(31) ≈ 0</span></code></pre>
-<h3 id="11-9-2d-면-형상-2018-2-exercise-abc">11-9. 2D 면 형상 (2018-2, Exercise A/B/C)</h3>
+<h3 id="11-9-2d-면-형상-2018-2-exercise-abc">11-9. 2D area geometry (2018-2, Exercise A/B/C)</h3>
 <ul>
 <li>순서: <strong>큰 덩어리(rectng/pcirc) → aadd → 구멍·홈(pcirc/rectng) → asba</strong>. 매 단계 <code>/pnum,area,1</code> <code>aplot</code>으로 면 번호 확인 후 다음 명령.</li>
 <li>원통좌표로 WP 이동: <code>csys,1</code> → <code>wpave,R,θ</code> → <code>pcir,r</code> → <code>csys,0</code> <code>wpave,0,0</code></li>
@@ -1044,7 +1040,7 @@ mc=-th0/th1                         <span class="c">! 파라미터 mc = -th0/th1
 <li>코너 R(필렛) = 사각형에서 1/4 원 바깥 부분 빼기: <code>pcir,R,R*sqrt(2),θ1,θ2</code> 처럼 링 조각을 만들어 <code>asba</code> (18년 풀이 방식).</li>
 </ul>
 <hr />
-<h2 id="12-에러경고-대처">12. 에러·경고 대처</h2>
+<h2 id="12-에러경고-대처">12. Errors and Warnings</h2>
 <div class="tbl"><table>
 <thead>
 <tr>

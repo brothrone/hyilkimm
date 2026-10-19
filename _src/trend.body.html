@@ -1,17 +1,12 @@
-<h1 id="전산구조해석-중간고사-족보-경향-분석-공부법">전산구조해석 중간고사 — 족보 경향 분석 &amp; 공부법</h1>
-<blockquote>
-<p>자료: <code>전산구조해석 16·18·21·23·25년 중간.pdf</code>, <code>중간고사 16·18·19년.txt</code>, <code>중간고사 대비.TXT</code>, <code>중간고사 풀이.TXT</code>, 수업 스크립트(9/30~10/21), <code>강의자료(2026).pdf</code>, <code>BEAM188.pdf</code>
-교재: Moaveni, <em>Finite Element Analysis: Theory and Application with ANSYS</em> (수업예제 사진의 Example 4.5 출처)</p>
-</blockquote>
-<hr />
-<h2 id="1-시험-형식">1. 시험 형식</h2>
+<h1 id="전산구조해석-중간고사-족보-경향-분석-공부법">Midterm Analysis &amp; Study Guide</h1>
+<h2 id="1-시험-형식">1. Exam Format</h2>
 <ul>
 <li>모든 해 공통 문구: <strong>"Write down the ANSYS commands on your answer sheet."</strong>
   → 결과값만이 아니라 <strong>명령어 전체를 답안지에 써야 함</strong>. 명령어 철자·인자 순서를 손으로 쓸 수 있을 만큼 외워야 한다.</li>
 <li>문제 수: 2문제(16·18·21·23년) → <strong>3문제(25년)</strong>. 문제당 (a)(b)(c)(d) 소문항.</li>
 <li>단위는 문제마다 섞여 나온다(in·lb·ft / m·N·GPa / mm·cm). <strong>ft→in(×12), cm²→m²(×1e-4), mm⁴→m⁴(×1e-12)</strong> 환산 실수가 가장 흔한 감점 포인트.</li>
 </ul>
-<h2 id="2-연도별-출제-내용">2. 연도별 출제 내용</h2>
+<h2 id="2-연도별-출제-내용">2. Contents by Year</h2>
 <p>2016~2025년 6개년 문제는 <a href="exams.html">기출 풀이</a>에 시험지 그림, 풀이 스크립트, 검증값을 정리했다.</p>
 <div class="tbl"><table>
 <thead>
@@ -125,8 +120,8 @@
 </tbody>
 </table></div>
 <p>* 2019년은 시험지 PDF가 없고 <code>중간고사 19년.TXT</code>·<code>중간고사 풀이.TXT</code> 스크립트로 추정한 내용.</p>
-<h2 id="3-경향-분석">3. 경향 분석</h2>
-<h3 id="1-매년-나오는-것-반드시-손으로-쓸-수-있어야-함">(1) 매년 나오는 것 — 반드시 손으로 쓸 수 있어야 함</h3>
+<h2 id="3-경향-분석">3. Trend Analysis</h2>
+<h3 id="1-매년-나오는-것-반드시-손으로-쓸-수-있어야-함">(1) Every year — must be writable by hand</h3>
 <ol>
 <li><strong>트러스 / 축부재 (LINK180)</strong> — 19·21·23·25년. 거의 매년 1문제.
    - Example 3.1(발코니 트러스), 3.2(3D 트러스), 계단식/테이퍼 봉이 뼈대.
@@ -137,7 +132,7 @@
 <li><strong>스프링으로 바꿔서 "최소 k" 구하기</strong> — 16·18·23년 (3번). LINK로 스프링을 모델링(k = EA/L).</li>
 <li><strong>평형 조건으로 FEA 검증</strong> — 18·23년. 반력 합 = 전체 하중인지 <code>prrfor</code>로 확인.</li>
 </ol>
-<h3 id="2-변화-방향">(2) 변화 방향</h3>
+<h3 id="2-변화-방향">(2) Direction of change</h3>
 <ul>
 <li><strong>옛날 요소 → 최신 요소</strong>: 16~19년 원본 풀이는 BEAM188과 함께 옛 요소 LINK1·BEAM3·COMBIN14(실상수 <code>r</code>)를 섞어 썼고, <strong>21년부터 LINK180·BEAM188·PLANE182만 사용</strong>. 올해 시험도 최신 요소 기준으로 공부.
   <code>R</code>(real constant) 대신 <strong><code>SECTYPE</code>/<code>SECDATA</code></strong> 로 단면 입력.</li>
@@ -145,7 +140,7 @@
 <li><strong>비틀림(torsion)</strong> 이 16년 이후 25년에 다시 나옴 (C형강의 전단중심 ≠ 도심 → 하중이 비틀림을 만듦 → SECOFFS가 그래서 나옴).</li>
 <li>문제 수가 3문제로 늘고, 형상 만들기(2D 면/메쉬) 문제가 1문제씩 섞임 (18년 Boolean, 19년 lsymm, 25년 NGEN/EGEN).</li>
 </ul>
-<h3 id="3-올해2026-예상">(3) 올해(2026) 예상</h3>
+<h3 id="3-올해2026-예상">(3) Expected in 2026</h3>
 <p>수업 진도(9/30 PLANE42 판 → 10/01·06·07 트러스 → 10/13 BEAM188 → 10/21 프레임+SFBEAM)와 도움말 캡처(BEAM188, LINK180, <strong>SECOFFS</strong>, <strong>SFBEAM</strong>)를 보면:</p>
 <div class="tbl"><table>
 <thead>
@@ -181,14 +176,14 @@
 </tr>
 </tbody>
 </table></div>
-<h2 id="4-공부법">4. 공부법</h2>
-<h3 id="원칙">원칙</h3>
+<h2 id="4-공부법">4. How to Study</h2>
+<h3 id="원칙">Principles</h3>
 <ol>
 <li><strong>눈으로 보지 말고 손으로 쓴다.</strong> 시험은 답안지에 명령어를 쓰는 방식이다. 족보 문제를 빈 종이에 명령어로 처음부터 끝까지 써 본 뒤 ANSYS에 붙여 넣어 돌려서 확인한다.</li>
 <li><strong>한 문제 = 하나의 고정된 틀</strong>로 쓴다: <code>/prep7</code> → 요소·단면·재료 → 형상(k/l 또는 n/e) → 메쉬 → 경계조건·하중 → <code>/solu</code> <code>solve</code> → <code>/post1</code> 출력. (<a href="ref.html">시험 참고자료</a>의 "기본 틀" 참고)</li>
 <li><strong>결과를 손계산으로 검증</strong>하는 습관: 반력 합 = 하중, 트러스는 절점 평형, 외팔보는 공식(δ = PL³/3EI, wL⁴/8EI)과 비교.</li>
 </ol>
-<h3 id="일정-시험-전-약-1주-기준">일정 (시험 전 약 1주 기준)</h3>
+<h3 id="일정-시험-전-약-1주-기준">Schedule (about 1 week before the exam)</h3>
 <div class="tbl"><table>
 <thead>
 <tr>
@@ -227,7 +222,7 @@
 </tr>
 </tbody>
 </table></div>
-<h3 id="자주-틀리는-것-체크리스트">자주 틀리는 것 체크리스트</h3>
+<h3 id="자주-틀리는-것-체크리스트">Common Mistakes Checklist</h3>
 <ul>
 <li>[ ] 단위 통일 (ft·in, cm²·m², mm⁴·m⁴, lb/ft → lb/in = /12)</li>
 <li>[ ] 결과를 볼 지점(D, F, y=7.5 in, 하중 꺾이는 점)에 <strong>노드가 있는가</strong> → 없으면 키포인트/노드를 그 위치에 추가</li>
@@ -239,7 +234,7 @@
 <li>[ ] <code>/post1</code> 전에 <code>finish</code>, 결과 읽기 <code>set,last</code></li>
 <li>[ ] 스프링 문제에서 k → LINK180 단면적 A = kL/E (E·L은 아무 값이나 정해도 됨)</li>
 </ul>
-<h3 id="스프링-최소-k-빠르게-푸는-법-중첩법-선형이므로-정확">스프링 "최소 k" 빠르게 푸는 법 (중첩법, 선형이므로 정확)</h3>
+<h3 id="스프링-최소-k-빠르게-푸는-법-중첩법-선형이므로-정확">Spring "minimum k" — fast method (superposition)</h3>
 <ol>
 <li>스프링 없이 하중만 → 관심점 변위 <strong>δ₀</strong></li>
 <li>하중 없이 관심점(스프링 붙는 점)에 단위하중 1 → 관심점 변위 <strong>f</strong> (유연도)
@@ -248,5 +243,5 @@
 <li>δ_p = 허용값으로 놓고 k를 풀고, LINK180 단면적 <strong>A = k·L/E</strong> 를 넣어 다시 돌려 확인.
    (시행착오로 k를 바꿔 가며 돌려도 되지만 시간이 오래 걸림)</li>
 </ol>
-<h3 id="비틀림-0으로-만드는-반대-모멘트-25-3b">비틀림 0으로 만드는 반대 모멘트 (25-3(b))</h3>
+<h3 id="비틀림-0으로-만드는-반대-모멘트-25-3b">Opposing moment that zeroes the twist (25-3(b))</h3>
 <p>선형 해석이므로: 하중만 → 비틀림각 θ₀, 단위 모멘트 1만 → θ₁ ⇒ <strong>M = −θ₀/θ₁</strong>. 다시 돌려서 θ ≈ 0 확인.</p>

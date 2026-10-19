@@ -6,15 +6,15 @@ sys.path.insert(0, SRC)
 import svgs
 
 PAGES = [  # file, nav label, crumb, desc, deep (h3 in sidebar)
-    ('index.html', '홈', 'Home', '전산구조해석(ANSYS APDL) 중간고사 대비 자료', False),
-    ('trend.html', '족보 분석', 'Midterm Analysis', '기출 2016~2025 경향 분석, 올해 예상 문제, 공부 계획', False),
-    ('exams.html', '기출 풀이', 'Past Exams', '2016~2025 (6개년) 중간고사 APDL 풀이 스크립트와 검증값', True),
-    ('textbook.html', '교재 예제', 'Textbook Examples', 'Moaveni 교재(3판) 예제·연습문제 그림과 수업 표기 풀이', True),
-    ('ref.html', '참고자료', 'Command Reference', 'ANSYS APDL 명령어 정리와 기출 유형별 스크립트', False),
-    ('apdl.html', '연습기', 'APDL Practice', '브라우저에서 APDL 스크립트를 실행해 보는 중간고사 범위 연습기', False),
+    ('index.html', 'Home', 'Home', 'ANSYS APDL midterm reference', False),
+    ('trend.html', 'Analysis', 'Midterm Analysis', 'Past-exam trend analysis 2016-2025 and study plan', False),
+    ('exams.html', 'Past Exams', 'Past Exams', 'Midterm APDL solution scripts 2016-2025', True),
+    ('textbook.html', 'Textbook', 'Textbook Examples', 'Moaveni textbook examples and problems', True),
+    ('ref.html', 'Reference', 'Command Reference', 'ANSYS APDL command reference', False),
+    ('apdl.html', 'Practice', 'APDL Practice', 'In-browser APDL practice', False),
 ]
-TITLES = {'index.html': '전산구조해석 중간고사', 'trend.html': '족보 분석 · 공부법',
-          'exams.html': '기출 풀이 2016~2025', 'textbook.html': '교재 예제 · 연습문제', 'ref.html': 'APDL 시험 참고자료', 'apdl.html': 'APDL 연습기'}
+TITLES = {'index.html': 'ANSYS APDL', 'trend.html': 'Midterm Analysis · ANSYS APDL',
+          'exams.html': 'Past Exams · ANSYS APDL', 'textbook.html': 'Textbook Examples · ANSYS APDL', 'ref.html': 'Command Reference · ANSYS APDL', 'apdl.html': 'APDL Practice · ANSYS APDL'}
 
 def strip(s): return re.sub(r'<[^>]+>', '', s).strip()
 
@@ -48,7 +48,7 @@ for f, *_ in PAGES:
             txt = html.unescape(re.sub(r'<[^>]+>', '', m.group(1)))
             if '/title' not in txt: return m.group(0)
             code = base64.b64encode(txt.rstrip().encode('utf-8') + b'\n').decode()
-            return m.group(0) + '\n<p class="runlink"><a href="apdl.html#code=' + code + '">▶ 연습기에서 실행해 보기</a></p>'
+            return m.group(0) + '\n<p class="runlink"><a href="apdl.html#code=' + code + '">▶ Run in Practice</a></p>'
         b = re.sub(r'<pre><code>(.*?)</code></pre>', runlink, b, flags=re.S)
     if f == 'trend.html':
         b = b.replace('<div class="tbl">', '').replace('</table></div>', '</table>')
@@ -67,21 +67,21 @@ def sidebar(cur):
                 kid = ''
                 if kids:
                     kid = '<ul>' + ''.join(f'<li><div class="row"><span class="tw leaf">▶</span><a href="{f}#{k}">{html.escape(t)}</a></div></li>' for k, t in kids) + '</ul>'
-                tw = '<button class="tw" type="button" aria-label="펼치기">▼</button>' if kids else '<span class="tw leaf">▶</span>'
+                tw = '<button class="tw" type="button" aria-label="Expand">▼</button>' if kids else '<span class="tw leaf">▶</span>'
                 lis.append(f'<li class="{"" if (is_cur and kids) else ("closed" if kids else "")}"><div class="row">{tw}<a href="{f}#{hid}">{html.escape(txt)}</a></div>{kid}</li>')
             sub = '<ul>' + ''.join(lis) + '</ul>'
-        tw = f'<button class="tw" type="button" aria-label="펼치기">{"▼" if is_cur else "▶"}</button>' if hs else '<span class="tw leaf">▶</span>'
-        items.append(f'<li class="{cls.strip()}"><div class="row">{tw}<a href="{f}">{label} — {crumb}</a></div>{sub}</li>')
+        tw = f'<button class="tw" type="button" aria-label="Expand">{"▼" if is_cur else "▶"}</button>' if hs else '<span class="tw leaf">▶</span>'
+        items.append(f'<li class="{cls.strip()}"><div class="row">{tw}<a href="{f}">{crumb}</a></div>{sub}</li>')
     return '<ul class="tree">' + ''.join(items) + '</ul>'
 
 for k, (f, label, crumb, desc, deep) in enumerate(PAGES):
     prev = PAGES[k - 1][0] if k > 0 else None
     nxt = PAGES[k + 1][0] if k + 1 < len(PAGES) else None
     nav = ''.join(f'<a href="{p}"' + (' aria-current="page"' if p == f else '') + f'>{l}</a>' for p, l, *_ in PAGES)
-    pn = (f'<a href="{prev}" title="이전 페이지" aria-label="이전 페이지">◀</a>' if prev else '<span>◀</span>') + \
-         (f'<a href="{nxt}" title="다음 페이지" aria-label="다음 페이지">▶</a>' if nxt else '<span>▶</span>')
+    pn = (f'<a href="{prev}" title="Previous page" aria-label="Previous page">◀</a>' if prev else '<span>◀</span>') + \
+         (f'<a href="{nxt}" title="Next page" aria-label="Next page">▶</a>' if nxt else '<span>▶</span>')
     page = f'''<!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -95,22 +95,21 @@ for k, (f, label, crumb, desc, deep) in enumerate(PAGES):
 </head>
 <body>
 <header class="hd">
-  <a class="logo" href="index.html">{LOGO}<span class="tx"><b>전산구조해석</b><small>MIDTERM REFERENCE</small></span></a>
-  <nav class="topnav" aria-label="페이지">{nav}</nav>
-  <span class="who">PNU AEROSPACE</span>
+  <a class="logo" href="index.html">{LOGO}<span class="tx"><b>ANSYS APDL</b></span></a>
+  <nav class="topnav" aria-label="Pages">{nav}</nav>
 </header>
 <div class="sb">
-  <button class="burger" type="button" id="burger" aria-label="목차 열고 닫기"><span></span><span></span><span></span></button>
+  <button class="burger" type="button" id="burger" aria-label="Toggle contents"><span></span><span></span><span></span></button>
   <div class="crumbs"><a href="index.html">Mechanical APDL Midterm 2026</a><span class="sep">|</span><a href="{f}">{crumb}</a><span class="sep">|</span><a href="#" id="printlink">PDF</a></div>
   <form class="search" id="search" role="search">
-    <input type="search" id="q" placeholder="이 페이지에서 검색 (예: sfbeam)" aria-label="이 페이지에서 검색">
-    <button class="ic" type="submit" aria-label="검색">{SEARCH_IC}</button>
+    <input type="search" id="q" placeholder="Search this page (e.g. sfbeam)" aria-label="Search this page">
+    <button class="ic" type="submit" aria-label="Search">{SEARCH_IC}</button>
     <span class="pn">{pn}</span>
   </form>
 </div>
 <div class="layout">
-<aside class="side" id="side" aria-label="목차">
-  <div class="shd">Contents <span><button class="x" type="button" id="sbclose" aria-label="목차 닫기">✕</button></span></div>
+<aside class="side" id="side" aria-label="Contents">
+  <div class="shd">Contents <span><button class="x" type="button" id="sbclose" aria-label="Close contents">✕</button></span></div>
   <button class="ec" type="button" id="ecall">expand/collapse all</button>
   {sidebar(f)}
 </aside>
@@ -119,7 +118,7 @@ for k, (f, label, crumb, desc, deep) in enumerate(PAGES):
 {bodies[f]}
 </main>
 </div>
-<footer class="ft"><span>2026 · 전산구조해석 중간고사 대비 (개인 학습용)</span><a href="https://ansyshelp.ansys.com/" rel="noopener">공식 ANSYS Help</a><a href="index.html">원본 자료</a></footer>
+<footer class="ft"><a href="https://ansyshelp.ansys.com/" rel="noopener">ANSYS Help</a><a href="index.html">Source files</a></footer>
 <script src="site.js"></script>
 {'<script src="refsearch.js"></script>' if f == 'ref.html' else ''}
 </body>
@@ -131,7 +130,7 @@ for k, (f, label, crumb, desc, deep) in enumerate(PAGES):
 
 # 연습기 예제: 기출 풀이 페이지의 /title 이 있는 스크립트
 import json
-ex = [{'name': '빈 틀 (기본 순서)', 'code': '/prep7\n/title,my model\n! 요소·단면·재료\net,1,link180\nsectype,1,link\nsecdata,1\nmp,ex,1,30e6\n! 형상\nn,1,0,0\nn,2,10,0\ne,1,2\n! 구속·하중\nd,1,all\nd,2,uy,0\nd,2,uz,0\nf,2,fx,1000\nfinish\n/solu\nsolve\nfinish\n/post1\nprnsol,u,sum\nprrfor\n'}]
+ex = [{'name': 'Blank template', 'code': '/prep7\n/title,my model\n! 요소·단면·재료\net,1,link180\nsectype,1,link\nsecdata,1\nmp,ex,1,30e6\n! 형상\nn,1,0,0\nn,2,10,0\ne,1,2\n! 구속·하중\nd,1,all\nd,2,uy,0\nd,2,uz,0\nf,2,fx,1000\nfinish\n/solu\nsolve\nfinish\n/post1\nprnsol,u,sum\nprrfor\n'}]
 body = bodies['exams.html']
 for m in re.finditer(r'<h3 id="p(\d{4}-\d)">(.*?)</h3>(.*?)(?=<h3 id=|<h2 id=|$)', body, re.S):
     code = re.search(r'<pre><code>(.*?)</code></pre>', m.group(3), re.S)
@@ -141,6 +140,6 @@ for m in re.finditer(r'<h3 id="p(\d{4}-\d)">(.*?)</h3>(.*?)(?=<h3 id=|<h2 id=|$)
     ex.append({'name': m.group(1) + ' ' + html.unescape(strip(m.group(2))).split(' — ')[-1][:40], 'code': txt.rstrip() + '\n'})
 for m in re.finditer(r'<h3 id="((?:ex|p)\d-\d+)">(.*?)</h3>(.*?)(?=<h3 id=|<h2 id=|$)', bodies['textbook.html'], re.S):
     code = re.search(r'<pre><code>(.*?)</code></pre>', m.group(3), re.S)
-    if code: ex.append({'name': '교재 ' + html.unescape(strip(m.group(2)))[:46], 'code': html.unescape(re.sub(r'<[^>]+>', '', code.group(1))).rstrip() + '\n'})
+    if code: ex.append({'name': 'Textbook ' + html.unescape(strip(m.group(2)))[:46], 'code': html.unescape(re.sub(r'<[^>]+>', '', code.group(1))).rstrip() + '\n'})
 open(os.path.join(OUT, 'apdl-examples.js'), 'w').write('window.APDL_EXAMPLES = ' + json.dumps(ex, ensure_ascii=False, indent=0) + ';\n')
 print('apdl-examples.js', len(ex))

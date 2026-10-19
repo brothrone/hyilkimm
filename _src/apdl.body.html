@@ -1,50 +1,50 @@
-<h1 id="top">MAPDL 연습기</h1>
+<h1 id="top">APDL Practice</h1>
 <p class="cmd-desc">Mechanical APDL 화면을 그대로 본뜬 <b>중간고사 범위 해석기</b>입니다. 실제 ANSYS처럼 <b>Input 줄</b>에 명령을 한 줄씩 입력하면 데이터베이스에 쌓이고, 만든 것이 그래픽 창에 바로 그려지며(immediate mode), 처리기(/PREP7·/SOLU·/POST1)에 맞지 않는 명령은 <code>not a recognized … command</code> 오류를 내고 무시됩니다. 왼쪽 <b>Main Menu</b>의 항목을 누르면 ANSYS와 같은 대화상자가 열리고, OK를 누르면 해당 명령이 입력됩니다.</p>
 
 <div class="mw" id="mapdl">
 <div class="mw-split">
 <div class="mw-left">
  <div class="mw-win">
-  <div class="mw-titlebar"><span class="mw-appico" aria-hidden="true"></span><span class="mw-ttl">MAPDL 연습기 — Mechanical APDL Utility Menu (file)</span><span class="mw-wbtns"><button type="button" data-w="min" title="Minimize" aria-label="Minimize">─</button><button type="button" data-w="max" title="Maximize" aria-label="Maximize">☐</button><button type="button" data-w="close" class="cl" title="Close" aria-label="Close">✕</button></span></div>
+  <div class="mw-titlebar"><span class="mw-appico" aria-hidden="true"></span><span class="mw-ttl">APDL Practice — Mechanical APDL Utility Menu (file)</span><span class="mw-wbtns"><button type="button" data-w="min" title="Minimize" aria-label="Minimize">─</button><button type="button" data-w="max" title="Maximize" aria-label="Maximize">☐</button><button type="button" data-w="close" class="cl" title="Close" aria-label="Close">✕</button></span></div>
   <div class="mw-menubar" id="mwMenubar" role="menubar"></div>
   <div class="mw-iconbar">
    <button type="button" id="icNew"></button><button type="button" id="icOpen"></button><button type="button" id="icSave"></button><button type="button" id="icPzr"></button><button type="button" id="icPrint"></button><button type="button" id="icHelp"></button>
    <span class="mw-sep"></span>
-   <div class="mw-combo"><div class="mw-syn" id="mwSyn" hidden></div><span class="mw-cmdico" id="mwCmdIco" aria-hidden="true"></span><input id="mwInput" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="명령 입력 (Command Input)"><button type="button" id="mwHistBtn" aria-label="이전 명령 목록">▾</button><div class="mw-histlist" id="mwHistList" hidden></div></div>
+   <div class="mw-combo"><div class="mw-syn" id="mwSyn" hidden></div><span class="mw-cmdico" id="mwCmdIco" aria-hidden="true"></span><input id="mwInput" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Command Input"><button type="button" id="mwHistBtn" aria-label="Previous commands">▾</button><div class="mw-histlist" id="mwHistList" hidden></div></div>
    <button type="button" id="icRaise"></button><button type="button" id="icReset"></button><button type="button" id="icContact"></button>
   </div>
-  <div class="mw-sechead">Toolbar<button type="button" class="mw-coll" data-coll="tb" aria-label="Toolbar 접기">⌃</button></div>
+  <div class="mw-sechead">Toolbar<button type="button" class="mw-coll" data-coll="tb" aria-label="Collapse Toolbar">⌃</button></div>
   <div class="mw-toolbar" id="mwTb"><button type="button" id="tbSave">SAVE_DB</button><button type="button" id="tbResume">RESUM_DB</button><button type="button" id="tbQuit">QUIT</button><button type="button" id="tbPower">POWRGRPH</button></div>
   <div class="mw-body">
-   <div class="mw-mm"><div class="mw-sechead">Main Menu<button type="button" class="mw-coll" data-coll="mm" aria-label="Main Menu 접기">⌃</button></div><nav class="mw-tree" id="mwTree" aria-label="Main Menu"></nav></div>
-   <div class="mw-gfx"><svg id="mwSvg" role="img" aria-label="그래픽 창 (Graphics Window)"></svg><div class="mw-flash" id="mwFlash" hidden></div></div>
-   <div class="mw-vtool" id="mwVtool" aria-label="보기 도구"></div>
+   <div class="mw-mm"><div class="mw-sechead">Main Menu<button type="button" class="mw-coll" data-coll="mm" aria-label="Collapse Main Menu">⌃</button></div><nav class="mw-tree" id="mwTree" aria-label="Main Menu"></nav></div>
+   <div class="mw-gfx"><svg id="mwSvg" role="img" aria-label="Graphics Window"></svg><div class="mw-flash" id="mwFlash" hidden></div></div>
+   <div class="mw-vtool" id="mwVtool" aria-label="View tools"></div>
   </div>
   <div class="mw-statusbar"><span id="mwStatus">Pick a menu item or enter a command (BEGIN)</span><span class="mw-attr" id="mwAttr"></span></div>
   <div class="mw-modal" id="mwDlg" hidden></div>
-  <div class="mw-modal" id="mwSess" hidden><div class="mw-dlgwin wide" role="dialog" aria-modal="true" aria-label="Session Editor"><div class="mw-dlgtitle"><span>Session Editor</span><button type="button" class="x" data-act="cancel" aria-label="닫기">✕</button></div><div class="mw-dlgbody"><p class="mw-dnote">지금까지 입력된 명령 기록(log)입니다. 고친 뒤 <b>OK</b>를 누르면 /CLEAR 후 처음부터 다시 실행합니다.</p><textarea id="mwSessTa" spellcheck="false" aria-label="세션 명령 기록"></textarea></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="save">Save</button><button type="button" data-act="cancel">Cancel</button></div></div></div>
-  <div class="mw-modal" id="mwRead" hidden><div class="mw-dlgwin" role="dialog" aria-modal="true" aria-label="Read File"><div class="mw-dlgtitle"><span>Read File</span><button type="button" class="x" data-act="cancel" aria-label="닫기">✕</button></div><div class="mw-dlgbody"><p><b>[/INPUT]</b> Read Input from file</p><select id="mwReadList" size="11" aria-label="입력 파일 목록"></select><div class="mw-row" id="mwReadBlockRow" hidden><label for="mwReadBlock">예제 블록 (이 파일은 여러 예제가 <code>/clear</code> 없이 붙어 있음 → 하나씩 실행)</label><select id="mwReadBlock"></select></div><div class="mw-row"><label for="mwReadFile">내 컴퓨터에서 (.txt / .mac / .inp)</label><input type="file" id="mwReadFile" accept=".txt,.mac,.inp,.log,.TXT"></div><div class="mw-row"><label for="mwReadClear">먼저 /CLEAR (새로 시작)</label><input type="checkbox" id="mwReadClear" checked></div></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="cancel">Cancel</button></div></div></div>
+  <div class="mw-modal" id="mwSess" hidden><div class="mw-dlgwin wide" role="dialog" aria-modal="true" aria-label="Session Editor"><div class="mw-dlgtitle"><span>Session Editor</span><button type="button" class="x" data-act="cancel" aria-label="Close">✕</button></div><div class="mw-dlgbody"><p class="mw-dnote">Command log so far. Edit it and press <b>OK</b> to /CLEAR and re-run from the start.</p><textarea id="mwSessTa" spellcheck="false" aria-label="Session command log"></textarea></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="save">Save</button><button type="button" data-act="cancel">Cancel</button></div></div></div>
+  <div class="mw-modal" id="mwRead" hidden><div class="mw-dlgwin" role="dialog" aria-modal="true" aria-label="Read File"><div class="mw-dlgtitle"><span>Read File</span><button type="button" class="x" data-act="cancel" aria-label="Close">✕</button></div><div class="mw-dlgbody"><p><b>[/INPUT]</b> Read Input from file</p><select id="mwReadList" size="11" aria-label="Input files"></select><div class="mw-row" id="mwReadBlockRow" hidden><label for="mwReadBlock">Example block (this file holds several examples without <code>/clear</code>; run one at a time)</label><select id="mwReadBlock"></select></div><div class="mw-row"><label for="mwReadFile">From my computer (.txt / .mac / .inp)</label><input type="file" id="mwReadFile" accept=".txt,.mac,.inp,.log,.TXT"></div><div class="mw-row"><label for="mwReadClear">/CLEAR first (start fresh)</label><input type="checkbox" id="mwReadClear" checked></div></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="cancel">Cancel</button></div></div></div>
   <div class="mw-modal" id="mwMsg" hidden></div>
  </div>
- <div class="mw-outwin" id="mwOutWin"><div class="mw-titlebar small"><span class="mw-appico" aria-hidden="true"></span><span class="mw-ttl">Mechanical APDL Output Window</span><span class="mw-wbtns"><button type="button" data-w="omin" title="Minimize" aria-label="Output Window 접기">─</button></span></div><pre class="mw-out" id="mwOut" aria-live="polite"></pre></div>
+ <div class="mw-outwin" id="mwOutWin"><div class="mw-titlebar small"><span class="mw-appico" aria-hidden="true"></span><span class="mw-ttl">Mechanical APDL Output Window</span><span class="mw-wbtns"><button type="button" data-w="omin" title="Minimize" aria-label="Collapse Output Window">─</button></span></div><pre class="mw-out" id="mwOut" aria-live="polite"></pre></div>
 </div>
-<aside class="mw-memo" id="mwMemo" aria-label="메모">
- <div class="mw-titlebar"><span class="mw-memoico" aria-hidden="true"></span><span class="mw-ttl" id="mwMemoTtl">메모 - Notepad</span><span class="mw-wbtns"><button type="button" id="mmHide" title="메모 접기" aria-label="메모 접기">─</button></span></div>
+<aside class="mw-memo" id="mwMemo" aria-label="Notes">
+ <div class="mw-titlebar"><span class="mw-memoico" aria-hidden="true"></span><span class="mw-ttl" id="mwMemoTtl">Notes - Notepad</span><span class="mw-wbtns"><button type="button" id="mmHide" title="Collapse notes" aria-label="Collapse notes">─</button></span></div>
  <div class="mw-memobar">
-  <select id="mmPage" aria-label="메모 페이지"></select>
-  <button type="button" id="mmNew" title="새 메모 페이지">새 메모</button><button type="button" id="mmDel" title="이 메모 페이지 삭제">삭제</button>
+  <select id="mmPage" aria-label="Notes page"></select>
+  <button type="button" id="mmNew" title="New notes page">New</button><button type="button" id="mmDel" title="Delete this page">Delete</button>
  </div>
  <div class="mw-memobar">
-  <button type="button" id="mmRun" title="선택한 줄(없으면 커서가 있는 줄)을 MAPDL 에 실행">▶ 선택 줄 실행</button><button type="button" id="mmAll" title="메모 전체를 실행">전체 실행</button><button type="button" id="mmHist" title="지금까지 입력한 명령 기록을 커서 위치에 붙여넣기">명령 기록 넣기</button><button type="button" id="mmSave" title=".txt 로 저장">저장</button>
+  <button type="button" id="mmRun" title="Run the selected lines (or the cursor line) in MAPDL">▶ Run selection</button><button type="button" id="mmAll" title="Run the whole note">Run all</button><button type="button" id="mmHist" title="Paste the command log at the cursor">Insert log</button><button type="button" id="mmSave" title="Save as .txt">Save</button>
  </div>
- <textarea id="mmText" spellcheck="false" aria-label="메모 내용" placeholder="여기에 메모하세요.&#10;&#10;· 외울 명령, 실수한 점, 공식&#10;· APDL 줄을 적고 ▶ 선택 줄 실행 으로 바로 실행&#10;&#10;내용은 이 브라우저에 자동 저장됩니다."></textarea>
- <div class="mw-memostat"><span id="mmStat">자동 저장</span><span id="mmPos">줄 1, 열 1</span></div>
+ <textarea id="mmText" spellcheck="false" aria-label="Notes text" placeholder="Write notes here.&#10;&#10;· Commands to memorize, mistakes, formulas&#10;· Type APDL lines and press Run selection&#10;&#10;Saved automatically in this browser."></textarea>
+ <div class="mw-memostat"><span id="mmStat">Autosaved</span><span id="mmPos">Ln 1, Col 1</span></div>
 </aside>
 </div>
 
 </div>
 
-<h2 id="howto">사용법</h2>
+<h2 id="howto">How to Use</h2>
 <table>
 <tr><th>화면 부분</th><th>ANSYS에서의 이름</th><th>하는 일</th></tr>
 <tr><td>맨 위 메뉴</td><td>Utility Menu</td><td>File(Clear &amp; Start New, Resume/Save, Read Input from, Exit) · Select · List(KLIST~SFELIST) · Plot(KPLOT~EPLOT) · PlotCtrls(Numbering = <code>/pnum</code>, Viewing Direction = <code>/view</code>, Capture Image) · WorkPlane · Parameters · Macro · MenuCtrls · Help. Alt+밑줄 글자로도 열립니다.</td></tr>
@@ -55,12 +55,12 @@
 <tr><td>왼쪽 트리</td><td>Main Menu</td><td>Preprocessor / Solution / General Postproc를 열면 그 처리기로 들어갑니다(<code>/prep7</code> 등 자동 입력). 대화상자 아래에 실제로 입력될 명령이 미리 보입니다. Solve › Current LS는 ANSYS처럼 /STATUS 창과 확인 창이 뜹니다.</td></tr>
 <tr><td>검은 창 + 오른쪽 세로 아이콘</td><td>Graphics Window, Pan-Zoom-Rotate 도구</td><td>Iso · Oblique · Front · Back · Top · Bottom · Left · Right 보기(<code>/view</code>), Fit(<code>/auto</code>), Box Zoom, Back Up, Zoom In/Out, Pan 4방향, Rotate ±X ±Y ±Z, Rate(1~9, 한 번에 돌리는 각도), Dynamic Mode. 마우스: 휠 = 확대, 드래그 = 이동, Ctrl+오른쪽 드래그(또는 Dynamic Mode에서 드래그) = 회전.</td></tr>
 <tr><td>Output Window</td><td>Output Window</td><td>명령마다 ANSYS 형식 응답. 빨강 = *** ERROR ***, 노랑 = *** WARNING ***. 제목줄의 ☐ 버튼으로 전체 화면(최대화)할 수 있습니다.</td></tr>
-<tr><td>오른쪽 메모</td><td>(연습기 추가 기능)</td><td>메모 페이지 여러 개, 브라우저에 자동 저장. 메모에 적은 APDL 줄을 <b>▶ 선택 줄 실행</b>(Ctrl+Enter)으로 바로 실행하고, <b>명령 기록 넣기</b>로 지금까지 친 명령을 옮겨 적을 수 있습니다. 제목줄 ─ 로 접기, MenuCtrls에서 다시 열기.</td></tr>
+<tr><td>오른쪽 메모</td><td>(연습기 추가 기능)</td><td>메모 페이지 여러 개, 브라우저에 자동 저장. 메모에 적은 APDL 줄을 <b>▶ Run selection</b>(Ctrl+Enter)으로 바로 실행하고, <b>Insert log</b>로 지금까지 친 명령을 옮겨 적을 수 있습니다. 제목줄 ─ 로 접기, MenuCtrls에서 다시 열기.</td></tr>
 <tr><td>맨 아래 줄</td><td>Status bar</td><td>현재 처리기와 mat · type · real · csys · secn</td></tr>
 </table>
 <p>기출 풀이 페이지의 <b>▶ 연습기에서 실행해 보기</b> 링크를 누르면 그 스크립트가 /INPUT 한 것처럼 바로 실행됩니다. 수업 시간 txt 파일들은 <b>File › Read Input from…</b> 에 들어 있습니다(파일 안의 메모 줄은 ANSYS처럼 오류로 표시되고 건너뜁니다).</p>
 
-<h2 id="support">지원하는 명령 (중간고사 범위)</h2>
+<h2 id="support">Supported Commands (midterm scope)</h2>
 <table>
 <tr><th>분류</th><th>명령</th></tr>
 <tr><td>처리기</td><td><code>/prep7</code> <code>/solu</code> <code>solve</code> <code>finish</code> <code>/post1</code> <code>set</code> <code>/title</code> <code>/clear</code></td></tr>
