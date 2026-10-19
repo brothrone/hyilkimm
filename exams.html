@@ -34,15 +34,15 @@
 <main class="content">
   <div class="ctop"><a href="exams.html">Past Exams |</a><button class="pr" type="button" id="printbtn">Print page</button></div>
 <h1 id="top">Past Exams (2016 · 2018 · 2019 · 2021 · 2023 · 2025)</h1>
-<p class="cmd-desc">6개년 중간고사 전 문제를(2019년은 풀이 스크립트로 복원) 최신 요소(LINK180 / BEAM188 / PLANE182)로 푼 APDL 스크립트입니다. 수업 방식대로 <b>실상수(<code>r</code>)는 쓰지 않고 <code>sectype</code> / <code>secdata</code>로만</b> 단면을 넣었습니다.
-문제마다 <b>모델링 방법 → 스크립트 → 검증값 → 주의할 점</b> 순서로 정리했습니다.</p>
+<p class="cmd-desc">6개년 중간고사 전 문제를(2019년은 풀이 스크립트로 복원) 최신 요소(LINK180 / BEAM188 / PLANE182)로 푼 APDL 스크립트이다. 수업 방식대로 <b>실상수(<code>r</code>)는 쓰지 않고 <code>sectype</code> / <code>secdata</code>로만</b> 단면을 넣었다.
+문제마다 <b>모델링 방법 → 스크립트 → 검증값 → 주의할 점</b> 순서로 정리함.</p>
 
 <div class="note">
-<p><b>검증값</b>은 ANSYS가 아니라 별도로 직접 계산한 값입니다.
-트러스·봉은 같은 강성행렬 계산이라 ANSYS와 거의 같아야 합니다.
-보·프레임은 오일러 보 이론으로 계산해서, 전단변형까지 넣는 BEAM188(Timoshenko 보)과 소수점 아래 몇 %쯤 차이가 날 수 있습니다.
-<code>!확인</code> 표시는 시험지 그림이 흐려서 추정한 값입니다. 시험 전에 반드시 직접 돌려 보세요.</p>
-<p>각 스크립트 아래 <b>▶ 연습기에서 실행해 보기</b>를 누르면 <a href="apdl.html">APDL 연습기</a>에서 바로 돌려 볼 수 있습니다. 연습기는 BEAM188처럼 <b>전단변형을 포함</b>해서 계산하므로, 짧고 깊은 보(예: 2019-1 보 가운데)에서는 오일러 검증값보다 처짐이 더 크게 나옵니다. 실제 ANSYS 값은 연습기 쪽에 더 가깝습니다.</p>
+<p><b>검증값</b>은 ANSYS가 아니라 별도로 직접 계산한 값이다.
+트러스·봉은 같은 강성행렬 계산이라 ANSYS와 거의 같아야 한다.
+보·프레임은 오일러 보 이론으로 계산해서, 전단변형까지 넣는 BEAM188(Timoshenko 보)과 소수점 아래 몇 %쯤 차이가 날 수 있다.
+<code>!확인</code> 표시는 시험지 그림이 흐려서 추정한 값이다. 시험 전에 반드시 직접 돌려 볼 것.</p>
+<p>각 스크립트 아래 <b>▶ 연습기에서 실행해 보기</b>를 누르면 <a href="apdl.html">APDL 연습기</a>에서 바로 돌려 볼 수 있다. 연습기는 BEAM188처럼 <b>전단변형을 포함</b>해서 계산하므로, 짧고 깊은 보(예: 2019-1 보 가운데)에서는 오일러 검증값보다 처짐이 더 크게 나온다. 실제 ANSYS 값은 연습기 쪽에 더 가깝다.</p>
 </div>
 
 <!-- ======================= 2016 ======================= -->
@@ -267,7 +267,7 @@ aplot                               <span class="c">! 면 그리기</span>
 
 <!-- ======================= 2019 ======================= -->
 <h2 id="y2019">2019 Midterm (reconstructed from solution script)</h2>
-<div class="note"><p>2019년은 시험지 PDF가 없습니다. <code>중간고사 19년.TXT</code>와 <code>중간고사 풀이.TXT</code>(“정석” 표시가 있는 수업 풀이)로 문제를 거꾸로 복원했습니다. 그래서 그림은 시험지가 아니라 스크립트 값으로 직접 그린 개략도입니다.</p></div>
+<div class="note"><p>2019년은 시험지 PDF가 없다. <code>중간고사 19년.TXT</code>와 <code>중간고사 풀이.TXT</code>(“정석” 표시가 있는 수업 풀이)로 문제를 거꾸로 복원했다. 그래서 그림은 시험지가 아니라 스크립트 값으로 직접 그린 개략도이다.</p></div>
 
 <h3 id="p2019-1">Problem 1 — Example 4.5 overhang frame, I-section (BEAM188)</h3>
 <div class="prob"><div class="pt">문제 (시험지 원문)</div><p class="ko"><b>시험지 PDF가 저장소에 없다.</b> 아래는 <code>중간고사 19년.TXT</code>·<code>중간고사 풀이.TXT</code>의 스크립트(<code>/title,19_1</code>)와 수업 Example 4.5에서 복원한 문제다. Example 4.5 오버행 프레임을 <b>W12×45</b>(d = 12.06, b<sub>f</sub> = 8.045, t<sub>f</sub> = 0.575, t<sub>w</sub> = 0.335 in)로 푼다. E = 30×10⁶ psi, 양 끝 고정, 보에 800 lb/ft 등분포하중(그림: 보 10 ft, 기둥 9 ft).</p><ol class="parts"><li>원본 스크립트가 마지막에 출력하는 값(<code>prnsol,u,sum</code>) = <b>각 절점의 변위·회전</b>. (프레임 모서리(노드 2)의 처짐을 구하는 문제로 추정)</li></ol><p class="pn">원문의 (a)(b) 구성은 알 수 없다 — 시험지를 가진 사람에게 확인할 것.</p></div>

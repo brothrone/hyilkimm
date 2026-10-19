@@ -34,7 +34,7 @@
 <main class="content wide">
   <div class="ctop"><a href="apdl.html">APDL Practice |</a><button class="pr" type="button" id="printbtn">Print page</button></div>
 <h1 id="top">APDL Practice</h1>
-<p class="cmd-desc">Mechanical APDL 화면을 그대로 본뜬 <b>중간고사 범위 해석기</b>입니다. 실제 ANSYS처럼 <b>Input 줄</b>에 명령을 한 줄씩 입력하면 데이터베이스에 쌓이고, 만든 것이 그래픽 창에 바로 그려지며(immediate mode), 처리기(/PREP7·/SOLU·/POST1)에 맞지 않는 명령은 <code>not a recognized … command</code> 오류를 내고 무시됩니다. 왼쪽 <b>Main Menu</b>의 항목을 누르면 ANSYS와 같은 대화상자가 열리고, OK를 누르면 해당 명령이 입력됩니다.</p>
+<p class="cmd-desc">Mechanical APDL 화면을 그대로 본뜬 <b>중간고사 범위 해석기</b>이다. 실제 ANSYS처럼 <b>Input 줄</b>에 명령을 한 줄씩 입력하면 데이터베이스에 쌓이고, 만든 것이 그래픽 창에 바로 그려지며(immediate mode), 처리기(/PREP7·/SOLU·/POST1)에 맞지 않는 명령은 <code>not a recognized … command</code> 오류를 내고 무시된다. 왼쪽 <b>Main Menu</b>의 항목을 누르면 ANSYS와 같은 대화상자가 열리고, OK를 누르면 해당 명령이 입력된다.</p>
 
 <div class="mw" id="mapdl">
 <div class="mw-split">
@@ -82,18 +82,18 @@
 <h2 id="howto">How to Use</h2>
 <table>
 <tr><th>화면 부분</th><th>ANSYS에서의 이름</th><th>하는 일</th></tr>
-<tr><td>맨 위 메뉴</td><td>Utility Menu</td><td>File(Clear &amp; Start New, Resume/Save, Read Input from, Exit) · Select · List(KLIST~SFELIST) · Plot(KPLOT~EPLOT) · PlotCtrls(Numbering = <code>/pnum</code>, Viewing Direction = <code>/view</code>, Capture Image) · WorkPlane · Parameters · Macro · MenuCtrls · Help. Alt+밑줄 글자로도 열립니다.</td></tr>
-<tr><td>아이콘 줄의 입력 칸</td><td>Command Input (콤보 상자)</td><td>명령 한 줄 + Enter. ↑↓ 또는 ▾ 로 이전 명령. 여러 줄을 붙여넣으면 한꺼번에 실행. 오류는 <b>Error</b> 창, 경고는 <b>Warning</b> 창으로 뜨고, 그 명령만 무시됩니다.</td></tr>
-<tr><td>명령 도우미</td><td>Command prompt 도움말</td><td>입력 칸에 <code>n</code>처럼 치면 위에 맞는 명령과 문법(<code>N, NODE, X, Y, Z, THXY…</code>)이 뜨고, 쉼표를 칠 때마다 지금 넣을 칸이 노란색으로 표시됩니다. Tab = 첫 명령 채우기.</td></tr>
-<tr><td>Pick 버튼 · Query</td><td>Picking</td><td>대화상자의 노드·키포인트·요소 칸 옆 <b>Pick</b>을 누르면 그래픽 창에서 클릭해 고를 수 있습니다(여러 개 고르면 명령을 하나씩 실행). General Postproc › Query Results 로 노드를 클릭하면 변위·반력이 그림 위에 표시됩니다.</td></tr>
+<tr><td>맨 위 메뉴</td><td>Utility Menu</td><td>File(Clear &amp; Start New, Resume/Save, Read Input from, Exit) · Select · List(KLIST~SFELIST) · Plot(KPLOT~EPLOT) · PlotCtrls(Numbering = <code>/pnum</code>, Viewing Direction = <code>/view</code>, Capture Image) · WorkPlane · Parameters · Macro · MenuCtrls · Help. Alt+밑줄 글자로도 열린다.</td></tr>
+<tr><td>아이콘 줄의 입력 칸</td><td>Command Input (콤보 상자)</td><td>명령 한 줄 + Enter. ↑↓ 또는 ▾ 로 이전 명령. 여러 줄을 붙여넣으면 한꺼번에 실행. 오류는 <b>Error</b> 창, 경고는 <b>Warning</b> 창으로 뜨고, 그 명령만 무시된다.</td></tr>
+<tr><td>명령 도우미</td><td>Command prompt 도움말</td><td>입력 칸에 <code>n</code>처럼 치면 위에 맞는 명령과 문법(<code>N, NODE, X, Y, Z, THXY…</code>)이 뜨고, 쉼표를 칠 때마다 지금 넣을 칸이 노란색으로 표시된다. Tab = 첫 명령 채우기.</td></tr>
+<tr><td>Pick 버튼 · Query</td><td>Picking</td><td>대화상자의 노드·키포인트·요소 칸 옆 <b>Pick</b>을 누르면 그래픽 창에서 클릭해 고를 수 있다(여러 개 고르면 명령을 하나씩 실행). General Postproc › Query Results 로 노드를 클릭하면 변위·반력이 그림 위에 표시된다.</td></tr>
 <tr><td>Toolbar</td><td>Toolbar</td><td>SAVE_DB · RESUM_DB · QUIT(Exit 창) · POWRGRPH</td></tr>
-<tr><td>왼쪽 트리</td><td>Main Menu</td><td>Preprocessor / Solution / General Postproc를 열면 그 처리기로 들어갑니다(<code>/prep7</code> 등 자동 입력). 대화상자 아래에 실제로 입력될 명령이 미리 보입니다. Solve › Current LS는 ANSYS처럼 /STATUS 창과 확인 창이 뜹니다.</td></tr>
+<tr><td>왼쪽 트리</td><td>Main Menu</td><td>Preprocessor / Solution / General Postproc를 열면 그 처리기로 들어간다(<code>/prep7</code> 등 자동 입력). 대화상자 아래에 실제로 입력될 명령이 미리 보인다. Solve › Current LS는 ANSYS처럼 /STATUS 창과 확인 창이 뜬다.</td></tr>
 <tr><td>검은 창 + 오른쪽 세로 아이콘</td><td>Graphics Window, Pan-Zoom-Rotate 도구</td><td>Iso · Oblique · Front · Back · Top · Bottom · Left · Right 보기(<code>/view</code>), Fit(<code>/auto</code>), Box Zoom, Back Up, Zoom In/Out, Pan 4방향, Rotate ±X ±Y ±Z, Rate(1~9, 한 번에 돌리는 각도), Dynamic Mode. 마우스: 휠 = 확대, 드래그 = 이동, Ctrl+오른쪽 드래그(또는 Dynamic Mode에서 드래그) = 회전.</td></tr>
-<tr><td>Output Window</td><td>Output Window</td><td>명령마다 ANSYS 형식 응답. 빨강 = *** ERROR ***, 노랑 = *** WARNING ***. 제목줄의 ☐ 버튼으로 전체 화면(최대화)할 수 있습니다.</td></tr>
-<tr><td>오른쪽 메모</td><td>(연습기 추가 기능)</td><td>메모 페이지 여러 개, 브라우저에 자동 저장. 메모에 적은 APDL 줄을 <b>▶ Run selection</b>(Ctrl+Enter)으로 바로 실행하고, <b>Insert log</b>로 지금까지 친 명령을 옮겨 적을 수 있습니다. 제목줄 ─ 로 접기, MenuCtrls에서 다시 열기.</td></tr>
+<tr><td>Output Window</td><td>Output Window</td><td>명령마다 ANSYS 형식 응답. 빨강 = *** ERROR ***, 노랑 = *** WARNING ***. 제목줄의 ☐ 버튼으로 전체 화면(최대화)할 수 있다.</td></tr>
+<tr><td>오른쪽 메모</td><td>(연습기 추가 기능)</td><td>메모 페이지 여러 개, 브라우저에 자동 저장. 메모에 적은 APDL 줄을 <b>▶ Run selection</b>(Ctrl+Enter)으로 바로 실행하고, <b>Insert log</b>로 지금까지 친 명령을 옮겨 적을 수 있다. 제목줄 ─ 로 접기, MenuCtrls에서 다시 열기.</td></tr>
 <tr><td>맨 아래 줄</td><td>Status bar</td><td>현재 처리기와 mat · type · real · csys · secn</td></tr>
 </table>
-<p>기출 풀이 페이지의 <b>▶ 연습기에서 실행해 보기</b> 링크를 누르면 그 스크립트가 /INPUT 한 것처럼 바로 실행됩니다. 수업 시간 txt 파일들은 <b>File › Read Input from…</b> 에 들어 있습니다(파일 안의 메모 줄은 ANSYS처럼 오류로 표시되고 건너뜁니다).</p>
+<p>기출 풀이 페이지의 <b>▶ 연습기에서 실행해 보기</b> 링크를 누르면 그 스크립트가 /INPUT 한 것처럼 바로 실행된다. 수업 시간 txt 파일들은 <b>File › Read Input from…</b> 에 들어 있다(파일 안의 메모 줄은 ANSYS처럼 오류로 표시되고 건너뛴다).</p>
 
 <h2 id="support">Supported Commands (midterm scope)</h2>
 <table>
@@ -109,13 +109,13 @@
 </table>
 
 <div class="note">
-<p><b>실제 ANSYS와 다른 점</b> — 연습용이라 다음은 단순화했습니다. 시험 전에는 꼭 학교 ANSYS로 확인하세요.</p>
+<p><b>실제 ANSYS와 다른 점</b> — 연습용이라 다음은 단순화했다. 시험 전에는 꼭 학교 ANSYS로 확인할 것.</p>
 <ul>
-<li>BEAM188은 <b>Timoshenko 보</b>로 계산합니다. SECOFFSET(USER·ORIGIN)은 노드와 단면 도심을 강체로 잇는 방식으로 계산에 반영합니다. 전단중심 효과(C형강 비틀림 연성)와 뒴(warping)은 반영하지 않으므로, C형강 비틀림 결과는 ANSYS와 다를 수 있습니다(SHRC는 도심으로 취급).</li>
-<li>단면 성질은 직사각형 조각으로 계산합니다(필렛 없음). 비틀림 상수 J는 얇은 벽 근사입니다. etable 단면력의 부호는 ANSYS와 다를 수 있습니다.</li>
-<li>PLANE182/PLANE42는 평면응력(KEYOPT(3)=2면 평면변형), 단위 두께(KEYOPT(3)=3이면 두께 = 실상수 <code>r,n,THK</code>)입니다. <code>amesh</code>는 자유 삼각형 메쉬(퇴화 4절점)로, 노드·요소 번호와 개수는 ANSYS와 다릅니다.</li>
-<li>옛 요소(LINK1, LINK8, BEAM3, PLANE42)와 실상수 <code>r</code>, COMBIN14는 수업 파일을 돌릴 수 있게 지원하지만, 시험 답안은 수업 방식대로 LINK180/BEAM188 + SECTYPE/SECDATA로 쓰세요. BEAM3은 Euler 보입니다.</li><li>그래픽 창의 기호(구속 삼각형, 힘 화살표)와 색 띠는 ANSYS와 비슷하게 그렸지만 똑같지는 않습니다.</li>
-<li>2016~2025 기출 14문제의 풀이 스크립트를 모두 이 연습기로 돌려 직접 계산한 검증값과 맞춰 보았습니다. 트러스와 봉은 일치하고, 보는 전단변형 차이로 몇 % 다릅니다.</li>
+<li>BEAM188은 <b>Timoshenko 보</b>로 계산한다. SECOFFSET(USER·ORIGIN)은 노드와 단면 도심을 강체로 잇는 방식으로 계산에 반영한다. 전단중심 효과(C형강 비틀림 연성)와 뒴(warping)은 반영하지 않으므로, C형강 비틀림 결과는 ANSYS와 다를 수 있다(SHRC는 도심으로 취급).</li>
+<li>단면 성질은 직사각형 조각으로 계산한다(필렛 없음). 비틀림 상수 J는 얇은 벽 근사이다. etable 단면력의 부호는 ANSYS와 다를 수 있다.</li>
+<li>PLANE182/PLANE42는 평면응력(KEYOPT(3)=2면 평면변형), 단위 두께(KEYOPT(3)=3이면 두께 = 실상수 <code>r,n,THK</code>)이다. <code>amesh</code>는 자유 삼각형 메쉬(퇴화 4절점)로, 노드·요소 번호와 개수는 ANSYS와 다르다.</li>
+<li>옛 요소(LINK1, LINK8, BEAM3, PLANE42)와 실상수 <code>r</code>, COMBIN14는 수업 파일을 돌릴 수 있게 지원하지만, 시험 답안은 수업 방식대로 LINK180/BEAM188 + SECTYPE/SECDATA로 쓸 것. BEAM3은 Euler 보.</li><li>그래픽 창의 기호(구속 삼각형, 힘 화살표)와 색 띠는 ANSYS와 비슷하게 그렸지만 똑같지는 않는다.</li>
+<li>2016~2025 기출 14문제의 풀이 스크립트를 모두 이 연습기로 돌려 직접 계산한 검증값과 맞춰 봤다. 트러스와 봉은 일치하고, 보는 전단변형 차이로 몇 % 다르다.</li>
 </ul>
 </div>
 
