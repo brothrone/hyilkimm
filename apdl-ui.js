@@ -762,7 +762,7 @@
   // ================= 명령 도우미 (입력 칸 위 문법 표시) =================
   var SYN = {
     '/CLEAR': 'Read|데이터베이스 지우기', '/PREP7': '|전처리기', '/SOLU': '|해석 처리기', '/POST1': '|후처리기', 'FINISH': '|처리기 나가기', '/TITLE': 'Title|그림 아래 제목',
-    '/PNUM': 'Label, KEY|번호 표시 (KP LINE AREA NODE ELEM, 1=켜기)', '/ESHAPE': 'SCALE, KEY|보를 단면 모양으로 그리기', '*GET': 'Par, Entity, ENTNUM, Item1, IT1NUM, Item2, IT2NUM|결과·모델 값을 파라미터로', '*DO': 'Par, IVAL, FVAL, INC|반복 시작', '*ENDDO': '|반복 끝',
+    'NLIST': 'NODE1, NODE2, NINC, Lcoord, SORT1, SORT2, SORT3|노드 목록 (nlist = 전부, nlist,2,5 = 2~5번)', 'ELIST': 'IEL1, IEL2, INC, NNKEY, RKEY, PTKEY|요소 목록 (elist = 전부, 요소별 노드·재료·단면)', 'KLIST': 'NP1, NP2, NINC, Lab|키포인트 목록', 'LLIST': 'NL1, NL2, NINC, Lab|선 목록', 'ALIST': 'NA1, NA2, NINC, Lab|면 목록', 'DLIST': 'NODE1, NODE2, NINC|구속 조건 목록', 'FLIST': 'NODE1, NODE2, NINC|노드 하중 목록', '/PNUM': 'Label, KEY|번호 표시 (KP LINE AREA NODE ELEM, 1=켜기)', '/ESHAPE': 'SCALE, KEY|보를 단면 모양으로 그리기', '*GET': 'Par, Entity, ENTNUM, Item1, IT1NUM, Item2, IT2NUM|결과·모델 값을 파라미터로', '*DO': 'Par, IVAL, FVAL, INC|반복 시작', '*ENDDO': '|반복 끝',
     '*IF': 'VAL1, Oper1, VAL2, Base1, VAL3, Oper2, VAL4, Base2|조건문 (Oper: EQ NE LT GT LE GE, Base: THEN)', '*ELSE': '|조건문', '*ENDIF': '|조건문 끝', '*AFUN': 'Lab|각도 단위 (DEG / RAD)',
     'SAVE': 'Fname, Ext, --, Slab|DB 저장', 'RESUME': 'Fname, Ext, --, NOPAR, KNOPLOT|DB 불러오기',
     'ET': 'ITYPE, Ename, KOP1, KOP2, KOP3, KOP4, KOP5, KOP6, INOPR|요소 종류 (LINK180 BEAM188 PLANE182 …)', 'KEYOPT': 'ITYPE, KNUM, VALUE|요소 옵션', 'R': 'NSET, R1, R2, R3, R4, R5, R6|실상수 (옛 요소)',
