@@ -42,6 +42,7 @@
   }
   // 목록 출력(PRNSOL, PRETAB, PRRSOL, NLIST …)은 Output Window 안의 별도 탭에 표시: 실제 ANSYS의 목록 창에 해당
   var otabs = $('#mwOTabs'), wpan = {};
+  if (!otabs) { otabs = document.createElement('div'); otabs.className = 'mw-otabs'; otabs.id = 'mwOTabs'; otabs.hidden = true; out.parentNode.insertBefore(otabs, out); } // 캐시된 옛 HTML에도 동작
   function selAll(el) { var r = document.createRange(); r.selectNodeContents(el); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); }
   function showTab(id) {
     out.hidden = id !== 'out';
