@@ -145,5 +145,8 @@
       status(''); out.innerHTML = '<p class="cssum cserr">' + esc(e.message || e) + '</p>';
     });
   }
+  $('cs-form').querySelector('button').addEventListener('dblclick', function () {
+    keyI.value = ''; web.checked = false; store('cs.key', null); if (opt) opt.hidden = true; out.innerHTML = '';
+  });
   $('cs-form').addEventListener('submit', function (e) { e.preventDefault(); run(); });
 })();
