@@ -3,6 +3,20 @@
 <p>수업 스크립트 + 강의자료 + ANSYS Help(Mechanical APDL Command/Element Reference) 정리.
 모든 스크립트는 <strong>최신 요소(LINK180 / BEAM188 / PLANE182)</strong> 기준. <code>!</code> 뒤는 주석.</p>
 </blockquote>
+<section class="cs" id="cs">
+<h3 id="명령어-검색">명령어 검색 (Command Reference 18.2)</h3>
+<form id="cs-form" class="cs-form" autocomplete="off">
+<div class="cs-row"><input type="search" id="cs-q" placeholder="명령 이름 또는 질문 (예: secoffset, 반력 출력, 분포하중 걸기)" aria-label="명령어 검색"><button type="submit">검색</button></div>
+<div class="cs-row cs-opt">
+<label>API 키 <input type="password" id="cs-key" placeholder="sk-ant-… (선택)" autocomplete="off"></label>
+<label>모델 <select id="cs-model"><option value="claude-opus-5-5">claude-opus-5-5</option><option value="claude-sonnet-5-5">claude-sonnet-5-5</option><option value="claude-haiku-5-5">claude-haiku-5-5</option></select></label>
+<label class="cs-k"><input type="checkbox" id="cs-keep"> 이 브라우저에 저장</label>
+</div>
+<p class="cs-note">키가 없으면 영어 키워드/명령 이름으로 색인을 검색합니다. 키를 넣으면 한글 질문도 해석해서 해당 명령을 골라 설명합니다. 키는 이 브라우저에서 Anthropic 으로만 전송되며 사이트에는 저장되지 않습니다.</p>
+</form>
+<p id="cs-st" class="cs-st" role="status"></p>
+<div id="cs-out"></div>
+</section>
 <h3 id="수업-표기">수업 txt 표기 (이 사이트의 모든 스크립트에 적용)</h3>
 <p>레포의 수업 txt 파일(9/30~10/21, 1001·1006·1013, 중간고사 대비·풀이)에 쓰인 표기를 우선한다. 오른쪽은 같은 뜻의 정식 이름.</p>
 <table>

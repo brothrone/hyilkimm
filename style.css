@@ -331,3 +331,21 @@ main.content hr{display:none}
 .prob ol.parts{margin:6px 0 4px 20px;padding:0}
 .prob ol.parts li{margin:3px 0}
 .prob p.pn{margin:6px 0 0;font-size:13px;color:#555}
+
+/* 명령어 검색 (ref) */
+.cs{border:1px solid var(--line);background:var(--bg-2);padding:6px 16px 14px;margin:18px 0}
+.cs h3{margin-top:8px}
+.cs-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.cs-row input[type=search]{flex:1;min-width:240px;padding:7px 10px;border:1px solid var(--line);font:14px var(--ui)}
+.cs-row button{background:var(--accent);border:0;padding:7px 18px;font:700 13px var(--ui);cursor:pointer;color:#000}
+.cs-opt{font:12px var(--ui);color:var(--fg-2)}
+.cs-opt input[type=password],.cs-opt select{padding:4px 6px;border:1px solid var(--line);font:12px var(--mono)}
+.cs-opt input[type=password]{width:210px}
+.cs-note,.cs-st{font:12px/1.5 var(--ui);color:var(--fg-2);margin:4px 0}
+.cscard{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);padding:8px 14px;margin:10px 0}
+.cscard header{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.cscard .csn{font-weight:700;font-size:1.05em}
+.cscard .csm{font:11px var(--ui);color:var(--fg-2);text-transform:uppercase;letter-spacing:.05em}
+.cscard p{margin:4px 0}.cscard .css{font:12.5px var(--mono);color:#444;word-break:break-all}
+.cscard .csw{color:#000}.cscard pre{margin:6px 0}.cscard footer{font:12px var(--ui)}
+.cssum{font-weight:600;margin:10px 0}.cserr{color:#b00020}
