@@ -785,7 +785,7 @@
     'PLDISP': 'KUND|변형 형상 (1 = 변형 전 같이)', 'PLNSOL': 'Item, Comp, KUND, Fact, FileID|노드 결과 등고선', 'PLESOL': 'Item, Comp, KUND, Fact|요소 결과 등고선', 'PLETAB': 'Itlab, Avglab|요소 테이블 그림', 'PLLS': 'LabI, LabJ, Fact, KUND, ViewUP|선 요소 결과도 (BMD·SFD)', 'ANDSCL': 'NFRAM, DELAY, NCYCL|변형 애니메이션',
     'NPLOT': 'KNUM|노드 그림', 'EPLOT': '|요소 그림', 'KPLOT': 'NP1, NP2, NINC, Lab|키포인트 그림', 'LPLOT': 'NL1, NL2, NINC|선 그림', 'APLOT': 'NA1, NA2, NINC, Degen, Scale|면 그림', 'GPLOT': '|전체 그림',
     'NLIST': 'NODE1, NODE2, NINC, Lcoord, SORT1, SORT2, SORT3|노드 목록', 'ELIST': 'IEL1, IEL2, INC, NNKEY, RKEY, PTKEY|요소 목록', 'KLIST': 'NP1, NP2, NINC, Lab|키포인트 목록', 'LLIST': 'NL1, NL2, NINC, Lab|선 목록', 'ALIST': 'NA1, NA2, NINC, Lab|면 목록',
-    'ETLIST': 'ITYP1, ITYP2, INC|요소 종류 목록', 'MPLIST': 'MAT1, MAT2, INC, Lab, TEVL|재료 목록', 'RLIST': 'NSET1, NSET2, NINC|실상수 목록', 'SLIST': 'SFIRST, SLAST, SINC, Details, Type|단면 목록', 'DLIST': 'NODE1, NODE2, NINC|구속 목록', 'FLIST': 'NODE1, NODE2, NINC|하중 목록', 'SFELIST': 'ELEM1, ELEM2, INC, Lab|면하중 목록'
+    'ETLIST': 'ITYP1, ITYP2, INC|요소 종류 목록', 'MPLIST': 'MAT1, MAT2, INC, Lab, TEVL|재료 목록', 'RLIST': 'NSET1, NSET2, NINC|실상수 목록', 'SLIST': 'SFIRST, SLAST, SINC, Details, Type|단면 목록', 'DLIST': 'NODE1, NODE2, NINC|구속 목록', 'FLIST': 'NODE1, NODE2, NINC|하중 목록', 'SFELIST': 'ELEM, Lab|면하중 목록'
   };
   var synEl = $('#mwSyn'), CMDS = Object.keys(SYN);
   function synUpd() {

@@ -65,7 +65,7 @@
 <td>1</td>
 <td>지름 다른 2단 축, 양단 고정, 중간 토크 200 lb·ft → D·B 비틀림각, 반력 토크</td>
 <td>BEAM188 (CSOLID)</td>
-<td><code>sectype,,beam,csolid</code>, <code>mp,gxy</code>, <code>f,,mx</code>, <code>prrfor</code></td>
+<td><code>sectype,,beam,csolid</code>, <code>mp,gxy</code>, <code>f,2,mx,200*12</code>, <code>prrfor</code></td>
 </tr>
 <tr>
 <td></td>
@@ -93,7 +93,7 @@
 <td>1</td>
 <td>Example 4.5 오버행 프레임, I형 단면</td>
 <td>BEAM188 (I)</td>
-<td>방향 노드(K), <code>sfbeam,,,pres,800/12</code></td>
+<td>방향 노드(K), <code>sfbeam,all,1,pres,800/12</code></td>
 </tr>
 <tr>
 <td></td>
@@ -164,18 +164,18 @@
 <h2 id="3-경향-분석">3. 경향 분석</h2>
 <h3 id="1-매년-나오는-것-반드시-손으로-쓸-수-있어야-함">(1) 매년 나오는 것 — 반드시 손으로 쓸 수 있어야 함</h3>
 <ol>
-<li><strong>트러스 / 축부재 (LINK180)</strong> — 16·19·21·23·25년. 거의 매년 1문제.
+<li><strong>트러스 / 축부재 (LINK180)</strong> — 19·21·23·25년. 거의 매년 1문제.
    - Example 3.1(발코니 트러스), 3.2(3D 트러스), 계단식/테이퍼 봉이 뼈대.
    - 출력: 절점 변위(<code>prnsol,u,sum</code>), 요소 축력·축응력(<code>etable,,smisc,1</code> / <code>etable,,ls,1</code> → <code>pretab</code>).</li>
-<li><strong>보·프레임 (BEAM188 + 단면)</strong> — 18·19·21·23·25년. 매년.
+<li><strong>보·프레임 (BEAM188 + 단면)</strong> — 16·18·19·21·23·25년. 매년.
    - <strong>실제 형강 단면</strong>(W310×52, C310×45, W8×67, C9×20)을 표에서 찾아 <code>secdata</code>에 넣게 함.
-   - 분포하중은 <code>sfbeam</code>. <strong>최근 3번(21·23·25)은 모두 삼각(선형 변화) 분포하중</strong> → <code>sfbeam,elem,2,pres,VALI,VALJ</code> 필수.</li>
+   - 분포하중은 <code>sfbeam</code>. <strong>최근 3번(21·23·25)은 모두 삼각(선형 변화) 분포하중</strong> → <code>sfbeam,elem,LKEY,pres,VALI,VALJ</code> (VALI≠VALJ). LKEY는 K 노드를 위에 두면 1, K가 없으면 2 — 기출 풀이 세 문제는 모두 face 1.</li>
 <li><strong>스프링으로 바꿔서 "최소 k" 구하기</strong> — 16·18·23년 (3번). LINK로 스프링을 모델링(k = EA/L).</li>
 <li><strong>평형 조건으로 FEA 검증</strong> — 18·23년. 반력 합 = 전체 하중인지 <code>prrfor</code>로 확인.</li>
 </ol>
 <h3 id="2-변화-방향">(2) 변화 방향</h3>
 <ul>
-<li><strong>옛날 요소 → 최신 요소</strong>: 16~19년은 LINK1·LINK8·BEAM3(현재 ANSYS에서 없어진 요소), <strong>21년부터 LINK180·BEAM188·PLANE182만 사용</strong>. 올해 시험도 최신 요소 기준으로 공부.
+<li><strong>옛날 요소 → 최신 요소</strong>: 16~19년 원본 풀이는 BEAM188과 함께 옛 요소 LINK1·BEAM3·COMBIN14(실상수 <code>r</code>)를 섞어 썼고, <strong>21년부터 LINK180·BEAM188·PLANE182만 사용</strong>. 올해 시험도 최신 요소 기준으로 공부.
   <code>R</code>(real constant) 대신 <strong><code>SECTYPE</code>/<code>SECDATA</code></strong> 로 단면 입력.</li>
 <li><strong>명령어 자체를 지정하는 문제가 늘어남</strong>: 25년에 "NGEN·EGEN 사용", "NROTAT·NMODIF 사용", "SECOFFS 사용", "삼각함수 사용 금지"처럼 특정 명령을 쓰라고 함. → <strong>도움말에서 수업 때 짚어준 명령(SECOFFS, SFBEAM, NROTAT/NMODIF, NGEN/EGEN, LOCAL)</strong> 이 출제 1순위.</li>
 <li><strong>비틀림(torsion)</strong> 이 16년 이후 25년에 다시 나옴 (C형강의 전단중심 ≠ 도심 → 하중이 비틀림을 만듦 → SECOFFS가 그래서 나옴).</li>
