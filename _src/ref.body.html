@@ -280,6 +280,21 @@ a=3.75                              <span class="c">! 파라미터 a = 3.75 — 
   sfbeam,i,1,pres,wmax*(1-abs(xi-a)/a),wmax*(1-abs(xj-a)/a)  <span class="c">! 요소 i, face 1 = element −z 방향에 분포하중 wmax*(1-abs(xi-a)/a) → wmax*(1-abs(xj-a)/a) (선형 분포)</span>
 *enddo                              <span class="c">! 반복 끝</span>
 </code></pre>
+<p>요소를 <strong>12개</strong>(앞 6개 + 뒤 6개)로 균등하게 나눈 경우, 좌표 없이 요소 번호만으로 쓰는 간단한 형태. 최댓값 25000이 보 가운데에 오고 양 끝은 0:</p>
+<pre><code><span class="c">! 요소 1~12 균등 분할, 가운데(요소 6·7 경계)에서 최대 25000인 삼각하중</span>
+*do,i,1,6                           <span class="c">! 왼쪽 절반: 반복 i = 1 ~ 6</span>
+sfbeam,i,,pres,25000/6*(i-1),25000/6*i  <span class="c">! 요소 i, LKEY 생략 = face 1(−z 방향). 하중 0 → 25000 으로 증가 (요소마다 25000/6씩)</span>
+*enddo                              <span class="c">! 반복 끝</span>
+
+*do,i,7,12                          <span class="c">! 오른쪽 절반: 반복 i = 7 ~ 12</span>
+sfbeam,i,,pres,25000-25000/6*(i-7),25000-25000/6*(i-6)  <span class="c">! 요소 i, face 1. 하중 25000 → 0 으로 감소</span>
+*enddo                              <span class="c">! 반복 끝</span>
+</code></pre>
+<ul>
+<li>요소 번호가 1~12로 <strong>왼쪽에서 오른쪽 순서</strong>일 때만 맞다(선을 12등분해 <code>lmesh</code>/<code>esize</code>로 메쉬하면 보통 그렇다). 확인은 <code>elist</code>.</li>
+<li>LKEY를 비워 두면 face 1이다. K 노드 없이 element y = global Y인 보는 face 2이므로 <code>sfbeam,i,2,pres,…</code>로 쓴다.</li>
+<li>왼쪽 절반은 <code>i=1</code>일 때 0 → 25000/6, 마지막 <code>i=6</code>에서 25000. 오른쪽 절반은 <code>i=7</code>에서 25000부터 시작해 <code>i=12</code>에서 0으로 끝난다(연속).</li>
+</ul>
 <blockquote>
 <p>⚠ APDL에는 <code>&lt;=</code> 같은 참/거짓 비교식이 없다. <code>(A&lt;B)</code>는 <strong>둘 중 작은 값</strong>, <code>(A&gt;B)</code>는 큰 값을 돌려준다. 꼭짓점이 가운데가 아니면 <code>*if,xi,le,a,then … *else … *endif</code>로 나눈다.<br>
 face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = global Y이면 2.</p>
