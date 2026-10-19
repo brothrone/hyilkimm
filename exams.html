@@ -538,7 +538,38 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 
 <h3 id="p2023-1">Problem 1 — Fixed-fixed composite axial bar (LINK180)</h3>
 <div class="prob"><div class="pt">문제 (시험지 원문)</div><blockquote class="en" lang="en">NOTICE: Write down the ANSYS commands on your answer sheet.<br>(a) Determine the deflections of point D and point F in the below system.<br>(b) Compute the axial force and stress in each member.</blockquote><p class="ko"><b>그림(손글씨 메모 포함):</b> 양 끝이 벽에 고정된 복합 축부재. 왼쪽 부재 50 cm(E = 69 GPa, A<sub>c</sub> = 5 cm²), 가운데 40 cm 구간은 <b>위·아래 두 부재</b>(E = 101 GPa, A<sub>c</sub> = 2 cm²씩), 오른쪽 부재 50 cm(E = 73 GPa, A<sub>c</sub> = 5 cm²). 왼쪽 부재와 가운데 구간의 접합부에 <b>20 kN</b>이 작용한다. D는 왼쪽 부재 안의 점, F는 가운데 구간 시작에서 15 cm 떨어진 점.</p><ol class="parts"><li><b>D점과 F점의 변위</b>를 구하라.</li><li><b>각 부재의 축력과 응력</b>을 구하라.</li></ol><p class="pn">D·F·20 kN의 정확한 위치는 시험지 그림이 흐릿해서 <b>!확인</b> 표시. 풀이 스크립트의 가정은 아래에 적었다.</p></div>
-<figure class="fig"><img src="img/exam/2023-1.png" alt="2023년 1번 그림: 세 구간으로 된 양단 고정 봉, 가운데 구간은 두 부재" loading="lazy" width="826" height="347"><figcaption>왼쪽 50 cm (E = 69 GPa, A = 5 cm²), 가운데 40 cm 두 부재 (E = 101 GPa, A = 2 cm²), 오른쪽 50 cm (E = 73 GPa, A = 5 cm²). 20 kN. (a) D점, F점 변위 (b) 각 부재 축력·응력</figcaption></figure>
+<figure class="fig svgfig"><svg viewBox="0 0 800 346" role="img" aria-label="2023년 1번: 양 끝이 벽에 고정된 복합 축부재. 왼쪽 50 cm(E 69 GPa, A 5 cm²), 가운데 40 cm는 위·아래 두 부재(E 101 GPa, A 2 cm²씩), 오른쪽 50 cm(E 73 GPa, A 5 cm²). 왼쪽 부재와 가운데 구간의 접합부에 20 kN">
+<defs>
+<marker id="a23" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c4161c"/></marker>
+<marker id="d23" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#444"/></marker>
+<pattern id="h23" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#e6e6e6"/><line x1="0" y1="0" x2="0" y2="8" stroke="#999" stroke-width="2"/></pattern>
+</defs>
+<g font-family="Arial, sans-serif" font-size="13" fill="#222">
+<rect x="30" y="110" width="30" height="100" fill="url(#h23)" stroke="#555"/>
+<rect x="732" y="110" width="30" height="100" fill="url(#h23)" stroke="#555"/>
+<rect x="60" y="130" width="240" height="60" fill="#9fc3e6" stroke="#245"/>
+<rect x="300" y="130" width="192" height="24" fill="#f2c98a" stroke="#7a4a00"/>
+<rect x="300" y="166" width="192" height="24" fill="#f2c98a" stroke="#7a4a00"/>
+<rect x="492" y="130" width="240" height="60" fill="#a9d6a0" stroke="#264"/>
+<line x1="300" y1="126" x2="300" y2="194" stroke="#333" stroke-width="3"/><line x1="492" y1="126" x2="492" y2="194" stroke="#333" stroke-width="3"/>
+<text x="180" y="124" text-anchor="middle">E = 69 GPa, A = 5 cm²</text>
+<text x="396" y="110" text-anchor="middle" font-size="12" fill="#7a4a00">(위·아래 부재 각각)</text><text x="396" y="124" text-anchor="middle">E = 101 GPa, A = 2 cm²</text>
+<text x="612" y="124" text-anchor="middle">E = 73 GPa, A = 5 cm²</text>
+<text x="396" y="214" text-anchor="middle" font-size="12" fill="#7a4a00">가운데 구간 = 병렬 부재 2개</text>
+<line x1="236" y1="82" x2="298" y2="82" stroke="#c4161c" stroke-width="3" marker-end="url(#a23)"/>
+<line x1="300" y1="82" x2="300" y2="126" stroke="#c4161c" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="236" y="72" fill="#c4161c" font-weight="bold" font-size="15">20 kN</text>
+<circle cx="204" cy="160" r="5" fill="#111"/><text x="204" y="152" text-anchor="middle" font-weight="bold">D</text>
+<circle cx="372" cy="142" r="5" fill="#111"/><text x="382" y="147" font-weight="bold">F</text>
+<line x1="300" y1="236" x2="372" y2="236" stroke="#444" marker-start="url(#d23)" marker-end="url(#d23)"/><text x="336" y="252" text-anchor="middle" font-size="12">15 cm</text>
+<line x1="372" y1="146" x2="372" y2="236" stroke="#999" stroke-dasharray="3 3"/>
+<line x1="60" y1="276" x2="300" y2="276" stroke="#444" marker-start="url(#d23)" marker-end="url(#d23)"/><text x="180" y="294" text-anchor="middle">50 cm</text>
+<line x1="300" y1="276" x2="492" y2="276" stroke="#444" marker-start="url(#d23)" marker-end="url(#d23)"/><text x="396" y="294" text-anchor="middle">40 cm</text>
+<line x1="492" y1="276" x2="732" y2="276" stroke="#444" marker-start="url(#d23)" marker-end="url(#d23)"/><text x="612" y="294" text-anchor="middle">50 cm</text>
+<line x1="60" y1="194" x2="60" y2="282" stroke="#bbb"/><line x1="300" y1="194" x2="300" y2="282" stroke="#bbb"/><line x1="492" y1="194" x2="492" y2="282" stroke="#bbb"/><line x1="732" y1="194" x2="732" y2="282" stroke="#bbb"/>
+<text x="40" y="318" font-size="12" fill="#666">D는 왼쪽 부재 안의 점(그림이 흐려 x = 30 cm로 추정), F는 가운데 구간 시작에서 15 cm 떨어진 점.</text><text x="40" y="336" font-size="12" fill="#666">20 kN은 접합부(x = 50 cm)에 +x 방향으로 추정.</text>
+</g></svg>
+<figcaption>왼쪽 50 cm (E = 69 GPa, A = 5 cm²), 가운데 40 cm 두 부재 (E = 101 GPa, A = 2 cm²), 오른쪽 50 cm (E = 73 GPa, A = 5 cm²). 20 kN. (a) D점, F점 변위 (b) 각 부재 축력·응력</figcaption></figure>
 <p class="sub">모델링</p>
 <ul>
 <li>D점(왼쪽 구간 안)과 F점(가운데 구간 시작에서 15 cm)에 <b>노드를 둔다</b>.</li>
