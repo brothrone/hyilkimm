@@ -19,7 +19,7 @@
   mdl.addEventListener('change', function () { try { localStorage.setItem('cs.model', mdl.value); } catch (e) {} });
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function status(s) { st.textContent = s || ''; }
+  function status() {}
 
   function ensure() {
     if (idx) return Promise.resolve();
