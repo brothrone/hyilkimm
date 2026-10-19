@@ -78,7 +78,7 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 <ul>
 <li><strong>단위는 ANSYS가 정하지 않는다</strong> → 입력을 한 단위계로 통일 (in-lb-psi / m-N-Pa).</li>
 <li>기본 attribute = <code>type,1</code> <code>mat,1</code> <code>real,1</code> <code>secn,1</code>. 여러 개면 메쉬·요소 생성 <strong>전에</strong> 바꿔 준다.</li>
-<li>확인용: <code>/eshape,1</code> + <code>eplot</code> (보를 단면 모양으로 보기)</li>
+<li>확인용: <code>/pnum,node,1</code> · <code>/pnum,elem,1</code> 로 <b>노드·요소 번호</b> 켜고 <code>nplot</code> / <code>eplot</code> 으로 그린다. <b>기호</b>는 <code>/psymb</code>(좌표계 <code>cs</code>, 노드 좌표계 <code>ndir</code>, 요소 좌표계 <code>esys</code>)와 <code>/pbc,all,,1</code>(구속·하중). <code>/eshape,1</code> + <code>eplot</code> 은 보를 단면 모양으로 보기. 수업 파일 <code>1013.txt</code> 처럼 <code>/pnum node 1</code> 로 쉼표 없이 쓰면 연습기는 오류로 보니 <b>쉼표로 쓸 것</b> (<code>/pnum,node,1</code>)</li>
 </ul>
 <hr />
 <h2 id="1-요소-요약">1. 요소 요약</h2>
@@ -579,6 +579,11 @@ amesh,all                           <span class="c">! 면 메쉬 (PLANE 요소 �
 <td>노드 좌표계 회전</td>
 <td><code>nrotat,NODE1,NODE2,NINC</code></td>
 <td>노드 좌표계를 <strong>활성 좌표계</strong> 방향으로 회전 (이전 회전 덮어씀)</td>
+</tr>
+<tr>
+<td>번호·기호 보기</td>
+<td><code>/pnum,node,1</code> <code>/pnum,elem,1</code> <code>/psymb,cs,1</code> <code>/pbc,all,,1</code></td>
+<td><code>/pnum</code> = 번호 (<code>node</code> <code>elem</code> <code>kp</code> <code>line</code> <code>area</code>, 뒤 1 = 켜기, 0 = 끄기) / <code>/psymb</code> = 좌표계·방향 기호 / <code>/pbc</code> = 구속·하중 기호. 켠 뒤 <code>nplot</code> <code>eplot</code> <code>aplot</code> 으로 다시 그려야 보인다</td>
 </tr>
 <tr>
 <td>목록 확인</td>
