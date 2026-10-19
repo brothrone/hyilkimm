@@ -331,7 +331,7 @@
     }
     this.p(' MERGE COINCIDENT ' + what + ' ITEMS.   ' + merged + ' ITEMS MERGED');
   });
-  reg('LATT', 'P', function (f, N) { var att = { mat: N(1, 1), real: N(2, 1), type: N(3, 1), kb: f[5] ? N(5) : 0, sec: N(7, 1) }; for (var l in this.lines) if (!this.lines[l].meshed) this.lines[l].att = att; this.p(' ASSOCIATE ATTRIBUTES WITH SELECTED LINES:  MAT=' + att.mat + '  REAL=' + att.real + '  TYPE=' + att.type + '  KB=' + att.kb + '  SECNUM=' + att.sec); });
+  reg('LATT', 'P', function (f, N) { if (f[4] && !f[5]) this.note('LATT 의 4번째 칸은 쓰이지 않는 자리(--)라서 ' + f[4] + ' 은(는) 무시됩니다. 방향 키포인트 KB 는 5번째 칸: latt,,,,,' + f[4] + ' (쉼표 5개)'); var att = { mat: N(1, 1), real: N(2, 1), type: N(3, 1), kb: f[5] ? N(5) : 0, sec: N(7, 1) }; for (var l in this.lines) if (!this.lines[l].meshed) this.lines[l].att = att; this.p(' ASSOCIATE ATTRIBUTES WITH SELECTED LINES:  MAT=' + att.mat + '  REAL=' + att.real + '  TYPE=' + att.type + '  KB=' + att.kb + '  SECNUM=' + att.sec); });
   reg('ESIZE', 'P', function (f, N) { this.esz = { size: N(1), ndiv: N(2) }; if (N(1)) this.p(' DEFAULT ELEMENT SIZE ON LINES= ' + g(N(1))); else this.p(' DEFAULT ELEMENT DIVISIONS PER LINE= ' + pad(N(2), 6)); });
   reg('LESIZE', 'P', function (f, N, S) { var ids = S(1) === 'ALL' ? keysN(this.lines) : [N(1)], self = this; ids.forEach(function (l) { var Ln = self.lines[l]; if (!Ln) throw new ApdlError('Line ' + l + ' is not defined.'); Ln.size = N(2); Ln.ndiv = N(4); }); this.p(' SPECIFIED DIVISIONS FOR LINES ' + ids.join(' ') + ':  SIZE=' + g(N(2)) + '  NDIV=' + N(4)); });
   reg('MSHAPE MSHKEY MOPT SMRTSIZE AESIZE', 'P', function (f, N, S, name) { this.p(' ' + name + ' ' + f.slice(1).join(',') + '   (연습기: 면 메쉬는 삼각형 자유 메쉬로 처리)'); });
@@ -745,7 +745,8 @@
 
   function head(self, what, rsys) { self.p(''); self.p(' PRINT ' + what); self.p(''); self.p('  ***** POST1 ' + (what.indexOf('REACTION') > -1 ? 'TOTAL REACTION SOLUTION' : what.indexOf('ELEMENT TABLE') > -1 ? 'ELEMENT TABLE' : 'NODAL DEGREE OF FREEDOM') + ' LISTING *****'); self.p(''); self.p('  LOAD STEP=     1  SUBSTEP=     1'); self.p('   TIME=    1.0000      LOAD CASE=   0'); if (rsys) { self.p(''); self.p('  THE FOLLOWING ' + rsys + ' ARE IN THE GLOBAL COORDINATE SYSTEM'); } self.p(''); }
   reg('PRNSOL', 'O', function (f, N, S) {
-    this.needRes(); var it = S(1) || 'U', cp = S(2) || 'COMP', self = this, nodes = keysN(this.result.map).filter(function (n) { return !self.nsel || self.nsel[n]; });
+    this.needRes(); var it = S(1) || 'U', cp = S(2) || 'COMP'; if ((it === 'U' || it === 'ROT') && cp === 'SUM') cp = 'COMP'; // 실제 MAPDL: PRNSOL,U,SUM 도 UX UY UZ USUM 을 모두 출력
+    var self = this, nodes = keysN(this.result.map).filter(function (n) { return !self.nsel || self.nsel[n]; });
     var mx, mn, mxn, mnn;
     if (it === 'S') {
       var st = this.nodalStress(), labs = cp === 'PRIN' ? ['S1', 'S2', 'S3', 'SINT', 'SEQV'] : cp === 'COMP' ? ['SX', 'SY', 'SZ', 'SXY', 'SYZ', 'SXZ'] : [cp === 'EQV' ? 'SEQV' : cp === 'INT' ? 'SINT' : 'S' + cp];

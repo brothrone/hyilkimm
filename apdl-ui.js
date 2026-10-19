@@ -154,13 +154,13 @@
   var D = {
     ET: { title: 'Element Types — Add', cmd: 'ET', fields: [{ label: 'Element type reference number', def: '1' }, { label: 'Element type', opts: ELS, def: 'LINK180' }, { label: 'KEYOPT(3)  (BEAM188: 3=cubic, PLANE: 0 응력/2 변형/3 두께)', def: '' }], build: 'ET,{0},{1},,,{2}' },
     R: { title: 'Real Constant Set', cmd: 'R', fields: [{ label: 'Real constant set no.', def: '1' }, { label: 'R1 (AREA / K / THK)', def: '' }, { label: 'R2 (IZZ)', def: '' }, { label: 'R3 (HEIGHT)', def: '' }], build: 'R,{0},{1},{2},{3}', note: '수업 방식은 실상수 대신 SECTYPE/SECDATA 를 씁니다 (옛 요소용).' },
-    MP: { title: 'Define Material Model Behavior — Linear Isotropic', cmd: 'MP', fields: [{ label: 'Material number', def: '1' }, { label: 'EX (Young\'s modulus)', def: '' }, { label: 'PRXY (Poisson\'s ratio)', def: '0.3' }], build: function (v) { return 'MP,EX,' + v[0] + ',' + v[1] + (v[2] ? '\nMP,PRXY,' + v[0] + ',' + v[2] : ''); } },
-    SECB: { title: 'Beam Tool — Common Sections', cmd: 'SECTYPE', fields: [{ label: 'Section ID', def: '1' }, { label: 'Sub-Type', opts: [['RECT', 'RECT (B, H)'], ['CSOLID', 'CSOLID (R)'], ['CTUBE', 'CTUBE (Ri, Ro)'], ['I', 'I (W1,W2,W3,t1,t2,t3)'], ['CHAN', 'CHAN (W1,W2,W3,t1,t2,t3)'], ['HREC', 'HREC'], ['ASEC', 'ASEC (A,Iyy,Iyz,Izz,Iw,J)']], def: 'I' }, { label: 'SECDATA 값 (쉼표로)', def: '' }, { label: 'Offset (SECOFFSET)', opts: ['CENT', 'SHRC', 'ORIGIN', 'USER'], def: 'CENT' }], build: function (v) { return 'SECTYPE,' + v[0] + ',BEAM,' + v[1] + '\nSECDATA,' + v[2] + (v[3] !== 'CENT' ? '\nSECOFFSET,' + v[3] : ''); } },
+    MP: { title: 'Define Material Model Behavior — Linear Isotropic', cmd: 'MP', fields: [{ label: 'Material number', def: '1' }, { label: 'EX (Young\'s modulus)', def: '' }, { label: 'NUXY (Poisson\'s ratio)', def: '0.3' }], build: function (v) { return 'MP,EX,' + v[0] + ',' + v[1] + (v[2] ? '\nMP,NUXY,' + v[0] + ',' + v[2] : ''); } },
+    SECB: { title: 'Beam Tool — Common Sections', cmd: 'SECTYPE', fields: [{ label: 'Section ID', def: '1' }, { label: 'Sub-Type', opts: [['RECT', 'RECT (B, H)'], ['CSOLID', 'CSOLID (R)'], ['CTUBE', 'CTUBE (Ri, Ro)'], ['I', 'I (W1,W2,W3,t1,t2,t3)'], ['CHAN', 'CHAN (W1,W2,W3,t1,t2,t3)'], ['HREC', 'HREC'], ['ASEC', 'ASEC (A,Iyy,Iyz,Izz,Iw,J)']], def: 'I' }, { label: 'SECDATA 값 (쉼표로)', def: '' }, { label: 'Offset (SECOFFSET)', opts: ['CENT', 'SHRC', 'ORIGIN', 'USER'], def: 'CENT' }], build: function (v) { return 'SECTYPE,' + v[0] + ',BEAM,' + v[1] + '\nSECDATA,' + v[2] + (v[3] !== 'CENT' ? '\nSECOFF,' + v[3] : ''); } },
     SECL: { title: 'Link Sections — Add', cmd: 'SECTYPE', fields: [{ label: 'Section ID', def: '1' }, { label: 'Link area', def: '' }], build: 'SECTYPE,{0},LINK\nSECDATA,{1}' },
     K: { title: 'Create Keypoints in Active Coordinate System', cmd: 'K', fields: [{ label: 'NPT  Keypoint number', def: '' }, { label: 'X', def: '' }, { label: 'Y', def: '' }, { label: 'Z', def: '' }], build: 'K,{0},{1},{2},{3}' },
     L: { title: 'Straight Line', cmd: 'L', fields: [{ label: 'P1  Keypoint', def: '' }, { label: 'P2  Keypoint', def: '' }], build: 'L,{0},{1}' },
-    RECTNG: { title: 'Create Rectangle by Dimensions', cmd: 'RECTNG', fields: [{ label: 'X1, X2  X-coordinates (X1)', def: '' }, { label: '(X2)', def: '' }, { label: 'Y1, Y2  Y-coordinates (Y1)', def: '' }, { label: '(Y2)', def: '' }], build: 'RECTNG,{0},{1},{2},{3}' },
-    PCIRC: { title: 'Circular Area by Dimensions', cmd: 'PCIRC', fields: [{ label: 'RAD1  Outer radius', def: '' }, { label: 'RAD2  Optional inner radius', def: '' }, { label: 'THETA1  Starting angle (degrees)', def: '0' }, { label: 'THETA2  Ending angle (degrees)', def: '360' }], build: 'PCIRC,{0},{1},{2},{3}' },
+    RECTNG: { title: 'Create Rectangle by Dimensions', cmd: 'RECTNG', fields: [{ label: 'X1, X2  X-coordinates (X1)', def: '' }, { label: '(X2)', def: '' }, { label: 'Y1, Y2  Y-coordinates (Y1)', def: '' }, { label: '(Y2)', def: '' }], build: 'RECT,{0},{1},{2},{3}' },
+    PCIRC: { title: 'Circular Area by Dimensions', cmd: 'PCIRC', fields: [{ label: 'RAD1  Outer radius', def: '' }, { label: 'RAD2  Optional inner radius', def: '' }, { label: 'THETA1  Starting angle (degrees)', def: '0' }, { label: 'THETA2  Ending angle (degrees)', def: '360' }], build: 'PCIR,{0},{1},{2},{3}' },
     AADD: { title: 'Add Areas', cmd: 'AADD', fields: [{ label: 'NA1..  Areas (ALL 또는 번호들, 쉼표)', def: 'ALL' }], build: 'AADD,{0}' },
     ASBA: { title: 'Subtract Areas', cmd: 'ASBA', fields: [{ label: 'NA1  Area to be subtracted from', def: '' }, { label: 'NA2  Area to subtract (ALL 가능)', def: '' }], build: 'ASBA,{0},{1}' },
     WPAVE: { title: 'Offset WP to XYZ Locations', cmd: 'WPAVE', fields: [{ label: 'X', def: '0' }, { label: 'Y', def: '0' }, { label: 'Z', def: '0' }], build: 'WPAVE,{0},{1},{2}' },
@@ -169,7 +169,7 @@
     FILL: { title: 'Create Nodes Between 2 Nodes', cmd: 'FILL', fields: [{ label: 'NODE1', def: '' }, { label: 'NODE2', def: '' }, { label: 'NFILL  Number of nodes to fill', def: '' }], build: 'FILL,{0},{1},{2}' },
     NROTAT: { title: 'Rotate Node CS to Active CS', cmd: 'NROTAT', fields: [{ label: 'NODE1  (ALL 가능)', def: '' }], build: 'NROTAT,{0}' },
     NMODIF: { title: 'Modify Nodes', cmd: 'NMODIF', fields: [{ label: 'NODE', def: '' }, { label: 'X (빈칸=유지)', def: '' }, { label: 'Y', def: '' }, { label: 'Z', def: '' }, { label: 'THXY', def: '' }], build: 'NMODIF,{0},{1},{2},{3},{4}' },
-    ATT: { title: 'Element Attributes', cmd: 'TYPE', fields: [{ label: 'TYPE  Element type number', def: '1' }, { label: 'MAT  Material number', def: '1' }, { label: 'REAL  Real constant set number', def: '1' }, { label: 'SECNUM  Section number', def: '1' }], build: 'TYPE,{0}\nMAT,{1}\nREAL,{2}\nSECNUM,{3}' },
+    ATT: { title: 'Element Attributes', cmd: 'TYPE', fields: [{ label: 'TYPE  Element type number', def: '1' }, { label: 'MAT  Material number', def: '1' }, { label: 'REAL  Real constant set number', def: '1' }, { label: 'SECNUM  Section number', def: '1' }], build: 'TYPE,{0}\nMAT,{1}\nREAL,{2}\nSECN,{3}' },
     E: { title: 'Elements from Nodes', cmd: 'E', fields: [{ label: 'I  Node', def: '' }, { label: 'J  Node', def: '' }, { label: 'K  Node (BEAM188 방향 노드 / PLANE)', def: '' }, { label: 'L  Node (PLANE)', def: '' }], build: 'E,{0},{1},{2},{3}' },
     NGEN: { title: 'Copy Nodes', cmd: 'NGEN', fields: [{ label: 'ITIME  Total number of copies (원본 포함)', def: '2' }, { label: 'INC  Node number increment', def: '' }, { label: 'NODE1', def: '' }, { label: 'NODE2', def: '' }, { label: 'NINC', def: '1' }, { label: 'DX (원통 CS: dR)', def: '' }, { label: 'DY (원통 CS: dθ)', def: '' }, { label: 'DZ', def: '' }], build: 'NGEN,{0},{1},{2},{3},{4},{5},{6},{7}' },
     EGEN: { title: 'Copy Elements (Automatically Numbered)', cmd: 'EGEN', fields: [{ label: 'ITIME  Total number of copies', def: '2' }, { label: 'NINC  Node number increment', def: '' }, { label: 'IEL1  Element', def: '' }, { label: 'IEL2', def: '' }], build: 'EGEN,{0},{1},{2},{3}' },
@@ -185,7 +185,7 @@
     ANTYPE: { title: 'New Analysis', cmd: 'ANTYPE', fields: [{ label: 'Type of analysis', opts: [['STATIC', 'Static']], def: 'STATIC' }], build: 'ANTYPE,{0}' },
     PLDISP: { title: 'Plot Deformed Shape', cmd: 'PLDISP', fields: [{ label: 'KUND  Items to be plotted', opts: [['0', 'Def shape only'], ['1', 'Def + undeformed'], ['2', 'Def + undef edge']], def: '1' }], build: 'PLDISP,{0}' },
     PLNSOL: { title: 'Contour Nodal Solution Data', cmd: 'PLNSOL', fields: [{ label: 'Item', opts: [['U', 'DOF Solution — Displacement'], ['ROT', 'DOF Solution — Rotation'], ['S', 'Stress (2-D solid)']], def: 'U' }, { label: 'Comp', opts: ['SUM', 'X', 'Y', 'Z', 'EQV', '1', '2', 'XY'], def: 'SUM' }], build: 'PLNSOL,{0},{1}' },
-    PRNSOL: { title: 'List Nodal Solution', cmd: 'PRNSOL', fields: [{ label: 'Item', opts: [['U', 'Displacement U'], ['ROT', 'Rotation ROT'], ['S', 'Stress S (2-D solid)']], def: 'U' }, { label: 'Comp', opts: ['COMP', 'X', 'Y', 'Z', 'SUM', 'PRIN', 'EQV'], def: 'COMP' }], build: 'PRNSOL,{0},{1}' },
+    PRNSOL: { title: 'List Nodal Solution', cmd: 'PRNSOL', fields: [{ label: 'Item', opts: [['U', 'Displacement U'], ['ROT', 'Rotation ROT'], ['S', 'Stress S (2-D solid)']], def: 'U' }, { label: 'Comp', opts: ['SUM', 'COMP', 'X', 'Y', 'Z', 'PRIN', 'EQV'], def: 'SUM' }], build: 'PRNSOL,{0},{1}' },
     ETABLE: { title: 'Define Additional Element Table Items', cmd: 'ETABLE', fields: [{ label: 'Lab  User label for item', def: 'AXF' }, { label: 'Item', opts: ['SMISC', 'LS', 'NMISC', 'S'], def: 'SMISC' }, { label: 'Comp  (번호 또는 X/Y/EQV)', def: '1' }], build: 'ETABLE,{0},{1},{2}', note: 'LINK180: SMISC,1 축력 · LS,1 축응력 / BEAM188: SMISC,1·3·4·31~35 …' },
     PRETAB: { title: 'List Element Table Data', cmd: 'PRETAB', fields: [{ label: 'Lab1..  Items (비우면 전부)', def: '' }], build: 'PRETAB,{0}' },
     PLETAB: { title: 'Contour Plot of Elem Table Data', cmd: 'PLETAB', fields: [{ label: 'Itlab  Item to be plotted', def: '' }], build: 'PLETAB,{0}' },
@@ -232,7 +232,7 @@
       ['Read Results', { kids: [['Last Set', { cmd: 'SET,LAST' }]] }],
       ['Plot Results', { kids: [['Deformed Shape', { dlg: 'PLDISP' }], ['Contour Plot', { kids: [['Nodal Solu', { dlg: 'PLNSOL' }], ['Elem Table', { dlg: 'PLETAB' }], ['Line Elem Res', { dlg: 'PLLS' }]] }]] }],
       ['Query Results', { kids: [['Nodal Solu', { act: function () { queryPick('U'); } }], ['Reaction Solu', { act: function () { queryPick('RF'); } }]] }],
-      ['List Results', { kids: [['Nodal Solution', { dlg: 'PRNSOL' }], ['Reaction Solu', { cmd: 'PRRSOL' }]] }],
+      ['List Results', { kids: [['Nodal Solution', { dlg: 'PRNSOL' }], ['Reaction Solu', { cmd: 'PRRFOR' }]] }],
       ['Element Table', { kids: [['Define Table', { dlg: 'ETABLE' }], ['Plot Elem Table', { dlg: 'PLETAB' }], ['List Elem Table', { dlg: 'PRETAB' }]] }]
     ] }],
     ['TimeHist Postpro', { kids: [['Variable Viewer', { act: outScope }]] }],
@@ -350,19 +350,29 @@
       if (a === 'ok') { m.hidden = true; var t = ta.value; fresh(); runMany(t); }
     };
   }
+  function splitBlocks(t) { // 여러 예제가 /clear 없이 붙은 수업 파일: '/prep7' + '/title' 마다 한 블록
+    var L = t.split(/\r?\n/), starts = [];
+    L.forEach(function (l, i) { if (/^\s*\/prep7\b/i.test(l)) { for (var k = i + 1; k < Math.min(L.length, i + 4); k++) if (/^\s*\/title/i.test(L[k])) { starts.push({ i: i, name: L[k].replace(/^\s*\/title\s*,?/i, '').trim() || '(제목 없음)' }); break; } } });
+    if (starts.length < 2) return null;
+    return starts.map(function (st, q) { return { name: st.name, text: L.slice(q ? st.i : 0, q + 1 < starts.length ? starts[q + 1].i : L.length).join('\n') }; });
+  }
   function openRead() {
-    var m = $('#mwRead'), list = $('#mwReadList'); m.hidden = false; list.innerHTML = '';
+    var m = $('#mwRead'), list = $('#mwReadList'), bsel = $('#mwReadBlock'), cache = {}; m.hidden = false; list.innerHTML = '';
     (window.APDL_EXAMPLES || []).forEach(function (x, i) { var o = document.createElement('option'); o.value = 'ex' + i; o.textContent = x.name; list.appendChild(o); });
     (window.APDL_FILES || []).forEach(function (x) { var o = document.createElement('option'); o.value = 'f:' + x.path; o.textContent = '수업 파일: ' + x.name; list.appendChild(o); });
     list.selectedIndex = 0; list.focus();
     var go = function (text, name) { m.hidden = true; if ($('#mwReadClear').checked) fresh(); eng.p(' /INPUT,' + name); runMany(text); flash(name + ' 실행 완료'); };
     var dec = function (buf) { var t = new TextDecoder('utf-8').decode(buf); if (t.indexOf('�') > -1) t = new TextDecoder('euc-kr').decode(buf); return t; };
+    var load = function (v) { if (v.indexOf('ex') === 0) return Promise.resolve(window.APDL_EXAMPLES[+v.slice(2)].code); if (cache[v]) return Promise.resolve(cache[v]); return fetch(v.slice(2)).then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(function (b) { return (cache[v] = dec(b)); }); };
+    var blocks = null;
+    var showBlocks = function () { var v = list.value; bsel.innerHTML = '<option value="">파일 전체</option>'; $('#mwReadBlockRow').hidden = true; blocks = null; if (!v) return;
+      load(v).then(function (t) { if (list.value !== v) return; blocks = splitBlocks(t); if (!blocks) return; blocks.forEach(function (b, i) { var o = document.createElement('option'); o.value = i; o.textContent = (i + 1) + '. /title,' + b.name; bsel.appendChild(o); }); bsel.value = '0'; $('#mwReadBlockRow').hidden = false; }).catch(function () { }); };
+    list.onchange = showBlocks; showBlocks();
     m.onclick = function (e) {
       var a = e.target.getAttribute('data-act'); if (!a) return;
       if (a === 'cancel') { m.hidden = true; return; }
-      var v = list.value; if (!v) return;
-      if (v.indexOf('ex') === 0) { var x = window.APDL_EXAMPLES[+v.slice(2)]; go(x.code, x.name); }
-      else fetch(v.slice(2)).then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(function (buf) { go(dec(buf), list.options[list.selectedIndex].textContent.replace('수업 파일: ', '')); }).catch(function () { msgbox('Error', 'File ' + v.slice(2) + ' could not be opened.', 'e'); });
+      var v = list.value; if (!v) return; var name = list.options[list.selectedIndex].textContent.replace('수업 파일: ', '');
+      load(v).then(function (t) { if (blocks && bsel.value !== '') { var b = blocks[+bsel.value]; go(b.text, name + ' — /title,' + b.name); } else go(t, name); }).catch(function () { msgbox('Error', 'File ' + v.slice(2) + ' could not be opened.', 'e'); });
     };
     list.ondblclick = function () { m.querySelector('[data-act=ok]').click(); };
     $('#mwReadFile').onchange = function (e) {
@@ -752,7 +762,7 @@
     'SAVE': 'Fname, Ext, --, Slab|DB 저장', 'RESUME': 'Fname, Ext, --, NOPAR, KNOPLOT|DB 불러오기',
     'ET': 'ITYPE, Ename, KOP1, KOP2, KOP3, KOP4, KOP5, KOP6, INOPR|요소 종류 (LINK180 BEAM188 PLANE182 …)', 'KEYOPT': 'ITYPE, KNUM, VALUE|요소 옵션', 'R': 'NSET, R1, R2, R3, R4, R5, R6|실상수 (옛 요소)', 'RMORE': 'R7, R8, R9, R10, R11, R12|실상수 추가',
     'SECTYPE': 'SECID, Type, Subtype, Name, REFINEKEY|단면 (BEAM: RECT CSOLID CTUBE I CHAN HREC ASEC / LINK)', 'SECDATA': 'VAL1, VAL2, VAL3, VAL4, VAL5, VAL6, VAL7, VAL8, VAL9, VAL10, VAL11, VAL12|단면 치수', 'SECOFFSET': 'Location, OFFSET1, OFFSET2, CG-Y, CG-Z, SH-Y, SH-Z|단면 위치 (CENT SHRC ORIGIN USER)', 'SECNUM': 'SECID|현재 단면 번호',
-    'TYPE': 'ITYPE|현재 요소 종류', 'MAT': 'MAT|현재 재료', 'REAL': 'NSET|현재 실상수', 'MP': 'Lab, MAT, C0, C1, C2, C3, C4|재료 (EX PRXY NUXY GXY DENS)',
+    'TYPE': 'ITYPE|현재 요소 종류', 'MAT': 'MAT|현재 재료', 'REAL': 'NSET|현재 실상수', 'MP': 'Lab, MAT, C0, C1, C2, C3, C4|재료 (EX, NUXY = 푸아송비, GXY, DENS)',
     'CSYS': 'KCN|좌표계 (0 직교, 1 원통)', 'LOCAL': 'KCN, KCS, XC, YC, ZC, THXY, THYZ, THZX, PAR1, PAR2|국부 좌표계', 'WPAVE': 'X1, Y1, Z1, X2, Y2, Z2, X3, Y3, Z3|작업평면 이동', 'WPOFFS': 'XOFF, YOFF, ZOFF|작업평면 평행이동', 'WPROTA': 'THXY, THYZ, THZX|작업평면 회전', 'WPCSYS': 'WN, KCN|작업평면을 좌표계에 맞춤',
     'K': 'NPT, X, Y, Z|키포인트', 'L': 'P1, P2, NDIV, SPACE, XV1, YV1, ZV1, XV2, YV2, ZV2|선 (원통 CS면 호)', 'LSYMM': 'Ncomp, NL1, NL2, NINC, KINC, NOELEM, IMOVE|선 대칭복사', 'NUMMRG': 'Label, TOLER, GTOLER, Action, Switch|겹친 항목 합치기',
     'LATT': 'MAT, REAL, TYPE, --, KB, KE, SECNUM|선 속성 (KB = 방향 키포인트)', 'ESIZE': 'SIZE, NDIV|요소 크기', 'LESIZE': 'NL1, SIZE, ANGSIZ, NDIV, SPACE, KFORC, LAYER1, LAYER2, KYNDIV|선별 분할', 'LMESH': 'NL1, NL2, NINC|선 메쉬',
@@ -765,7 +775,7 @@
     'D': 'NODE, Lab, VALUE, VALUE2, NEND, NINC, Lab2, Lab3, Lab4, Lab5, Lab6|노드 구속 (UX UY UZ ROTX ROTY ROTZ ALL)', 'DDELE': 'NODE, Lab, NEND, NINC|구속 지우기', 'F': 'NODE, Lab, VALUE, VALUE2, NEND, NINC|노드 하중 (FX FY FZ MX MY MZ)', 'FDELE': 'NODE, Lab, NEND, NINC|하중 지우기',
     'DK': 'KPOI, Lab, VALUE, VALUE2, KEXPND, Lab2, Lab3, Lab4, Lab5, Lab6|키포인트 구속', 'FK': 'KPOI, Lab, VALUE, VALUE2|키포인트 하중', 'SFBEAM': 'Elem, LKEY, Lab, VALI, VALJ, VAL2I, VAL2J, IOFFST, JOFFST, LENRAT|보 분포하중 (BEAM188: 1=−z, 2=−y)', 'SFEDELE': 'ELEM, LKEY, Lab|면하중 지우기',
     'ANTYPE': 'Antype, Status, LDSTEP, SUBSTEP, Action|해석 종류 (STATIC)', 'SOLVE': 'Action|풀기', 'SET': 'Lstep, SBSTEP, Fact, KIMG, TIME, ANGLE, NSET, ORDER|결과 읽기', 'RSYS': 'KCN|결과 좌표계',
-    'PRNSOL': 'Item, Comp|노드 결과 출력 (U ROT S)', 'PRRSOL': 'Lab|반력 출력', 'ETABLE': 'Lab, Item, Comp, Option|요소 테이블 (SMISC LS NMISC S)', 'PRETAB': 'Lab1, Lab2, Lab3, Lab4, Lab5, Lab6, Lab7, Lab8, Lab9|요소 테이블 출력',
+    'PRNSOL': 'Item, Comp|노드 결과 출력 (prnsol,u,sum → UX UY UZ USUM)', 'PRRSOL': 'Lab|반력 출력', 'PRRFOR': 'Lab|반력 출력 (수업 파일 방식)', 'PCIR': 'RAD1, RAD2, THETA1, THETA2|= PCIRC 원 면 (수업 표기)', 'RECT': 'X1, X2, Y1, Y2|= RECTNG 직사각형 면 (수업 표기)', 'WPOFF': 'XOFF, YOFF, ZOFF|= WPOFFS 작업평면 평행이동 (수업 표기)', 'SECN': 'SECID|= SECNUM 현재 단면 번호 (수업 표기)', 'SECOFF': 'Location, OFFSET1, OFFSET2|= SECOFFSET 단면 위치 (수업 표기)', 'ETABLE': 'Lab, Item, Comp, Option|요소 테이블 (SMISC LS NMISC S)', 'PRETAB': 'Lab1, Lab2, Lab3, Lab4, Lab5, Lab6, Lab7, Lab8, Lab9|요소 테이블 출력',
     'PLDISP': 'KUND|변형 형상 (1 = 변형 전 같이)', 'PLNSOL': 'Item, Comp, KUND, Fact, FileID|노드 결과 등고선', 'PLESOL': 'Item, Comp, KUND, Fact|요소 결과 등고선', 'PLETAB': 'Itlab, Avglab|요소 테이블 그림', 'PLLS': 'LabI, LabJ, Fact, KUND, ViewUP|선 요소 결과도 (BMD·SFD)', 'ANDSCL': 'NFRAM, DELAY, NCYCL|변형 애니메이션',
     'NPLOT': 'KNUM|노드 그림', 'EPLOT': '|요소 그림', 'KPLOT': 'NP1, NP2, NINC, Lab|키포인트 그림', 'LPLOT': 'NL1, NL2, NINC|선 그림', 'APLOT': 'NA1, NA2, NINC, Degen, Scale|면 그림', 'GPLOT': '|전체 그림',
     'NLIST': 'NODE1, NODE2, NINC, Lcoord, SORT1, SORT2, SORT3|노드 목록', 'ELIST': 'IEL1, IEL2, INC, NNKEY, RKEY, PTKEY|요소 목록', 'KLIST': 'NP1, NP2, NINC, Lab|키포인트 목록', 'LLIST': 'NL1, NL2, NINC, Lab|선 목록', 'ALIST': 'NA1, NA2, NINC, Lab|면 목록',

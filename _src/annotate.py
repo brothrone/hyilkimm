@@ -4,6 +4,8 @@ import re, html, os, sys
 
 SRC = os.path.dirname(os.path.abspath(__file__))
 COL = 36  # 주석 시작 열
+# 수업 txt 파일이 쓰는 줄임 명령 → 정식 이름
+ALIAS = {'pcir': 'pcirc', 'rect': 'rectng', 'wpoff': 'wpoffs', 'secn': 'secnum', 'secoff': 'secoffset', 'secoffs': 'secoffset'}
 
 FACE = {'1': 'face 1 = element −z 방향', '2': 'face 2 = element −y 방향', '3': 'face 3 = 접선(+x)'}
 ETAB = {('smisc', '1'): '축력', ('ls', '1'): '축응력', ('smisc', '32'): '굽힘응력 SByT', ('smisc', '33'): '굽힘응력 SByB',
@@ -42,7 +44,7 @@ def explain(cmd, a, c):
     if '=' in cmd and not cmd.startswith('*'):
         k, v = cmd.split('=', 1)
         return f'파라미터 {k.strip()} = {v.strip()}' + (',' + ','.join(x for x in a if x) if any(a) else '')
-    m = cmd.lower()
+    m = cmd.lower(); m = ALIAS.get(m, m)
     if m == '/prep7': return '전처리기(모델링) 시작'
     if m == '/title': return f'제목 지정'
     if m == '/solu': return '솔루션(해석) 처리기 시작'
@@ -188,7 +190,7 @@ def explain(cmd, a, c):
 
 
 def track(cmd, a, c):
-    m = cmd.lower(); a = a + [''] * 4
+    m = cmd.lower(); m = ALIAS.get(m, m); a = a + [''] * 4
     if m == 'csys': c.cyl = a[0] == '1'
     if m == 'local': c.cyl = a[1] == '1'
 

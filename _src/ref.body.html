@@ -3,6 +3,20 @@
 <p>수업 스크립트 + 강의자료 + ANSYS Help(Mechanical APDL Command/Element Reference) 정리.
 모든 스크립트는 <strong>최신 요소(LINK180 / BEAM188 / PLANE182)</strong> 기준. <code>!</code> 뒤는 주석.</p>
 </blockquote>
+<h3 id="수업-표기">수업 txt 표기 (이 사이트의 모든 스크립트에 적용)</h3>
+<p>레포의 수업 txt 파일(9/30~10/21, 1001·1006·1013, 중간고사 대비·풀이)에 쓰인 표기를 우선한다. 오른쪽은 같은 뜻의 정식 이름.</p>
+<table>
+<tr><th>수업 표기</th><th>같은 뜻</th><th>메모</th></tr>
+<tr><td><code>mp,nuxy,1,0.3</code></td><td><code>mp,prxy</code></td><td>등방성 재료는 값이 같다. 둘 중 하나만</td></tr>
+<tr><td><code>prrfor</code></td><td><code>prrsol</code></td><td>반력 출력</td></tr>
+<tr><td><code>prnsol,u,sum</code> / <code>prnsol,rot,sum</code></td><td><code>prnsol,u,comp</code></td><td>실제 MAPDL에서도 UX UY UZ USUM 전부 출력</td></tr>
+<tr><td><code>et,1,beam188,,,3</code></td><td><code>et,1,beam188</code> + <code>keyopt,1,3,3</code></td><td>KEYOPT(3)=3 (3차)</td></tr>
+<tr><td><code>etable,axforce,smisc,1</code> · <code>etable,axstress,ls,1</code></td><td>(이름은 자유)</td><td><code>pretab,axstress,axforce</code> · <code>pletab,axstress</code></td></tr>
+<tr><td><code>pcir</code> · <code>rect</code> · <code>wpoff</code> · <code>secn</code> · <code>secoff</code></td><td>PCIRC · RECTNG · WPOFFS · SECNUM · SECOFFSET</td><td>4글자 이상 줄임은 ANSYS가 알아듣는다</td></tr>
+<tr><td><code>esize,,n</code></td><td>NDIV = n 등분</td><td><code>esize,크기</code>는 요소 길이</td></tr>
+<tr><td><code>finish</code> → <code>/solu</code> → <code>solve</code> → <code>finish</code> → <code>/post1</code></td><td></td><td>처리기 바꿀 때마다 finish</td></tr>
+</table>
+<blockquote><p>⚠ <code>1013.txt</code>의 <code>latt,,,,3</code>은 쉼표가 4개라 3이 비어 있는 4번째 칸(--)에 들어가 <b>무시된다</b>. 방향 키포인트 KB는 5번째 칸이므로 최신 수업 스크립트처럼 <code>latt,,,,,4</code>(쉼표 5개)로 쓴다. 연습기는 4개로 쓰면 NOTE로 알려 준다.</p></blockquote>
 <hr />
 <h2 id="0-기본-틀-모든-문제-공통">0. 기본 틀 (모든 문제 공통)</h2>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
@@ -12,7 +26,7 @@ et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 
 sectype,1,beam,i                    <span class="c">! 단면 1 정의: 보, I형 — 단면 형태</span>
 secdata,...                         <span class="c">! 단면 치수 (sectype 종류마다 순서가 다름)</span>
 mp,ex,1,30e6                        <span class="c">! 재료 1: 탄성계수 E = 30e6</span>
-mp,prxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
+mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 <span class="c">! 2) 형상: (top-down) k → l → esize → lmesh   또는   (bottom-up) n → e</span>
 <span class="c">! 3) 경계조건 · 하중  (d / f / sfbeam)</span>
 finish                              <span class="c">! 현재 처리기 종료</span>
@@ -21,13 +35,13 @@ solve                               <span class="c">! 해석 실행 → [K]{u} =
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
 set,last                            <span class="c">! 결과 읽기 (last 하중 단계)</span>
-prnsol,u,comp                       <span class="c">! 절점 변위 출력 (UX, UY, UZ, USUM) — 절점 변위 (X, Y, Z, SUM 한 번에)</span>
-prnsol,rot,comp                     <span class="c">! 절점 회전각 출력 [rad] (ROTX, ROTY, ROTZ) — 회전</span>
-prrsol                              <span class="c">! 반력 출력 (평형 검증: 반력 합 = 하중) — 반력  (= prrfor)</span>
+prnsol,u,sum                        <span class="c">! 절점 변위 출력 (UX, UY, UZ, USUM) — 절점 변위 (X, Y, Z, SUM 한 번에)</span>
+prnsol,rot,sum                      <span class="c">! 절점 회전각 출력 [rad] (ROTX, ROTY, ROTZ) — 회전</span>
+prrfor                              <span class="c">! 반력 출력 (평형 검증: 반력 합 = 하중) — 반력  (= prrfor)</span>
 </code></pre>
 <ul>
 <li><strong>단위는 ANSYS가 정하지 않는다</strong> → 입력을 한 단위계로 통일 (in-lb-psi / m-N-Pa).</li>
-<li>기본 attribute = <code>type,1</code> <code>mat,1</code> <code>real,1</code> <code>secnum,1</code>. 여러 개면 메쉬·요소 생성 <strong>전에</strong> 바꿔 준다.</li>
+<li>기본 attribute = <code>type,1</code> <code>mat,1</code> <code>real,1</code> <code>secn,1</code>. 여러 개면 메쉬·요소 생성 <strong>전에</strong> 바꿔 준다.</li>
 <li>확인용: <code>/pnum,node,1</code> <code>/pnum,elem,1</code> <code>/psymb,cs,1</code> <code>/pbc,all,,1</code> <code>nplot</code> <code>eplot</code> <code>/eshape,1</code>(단면 모양 보기) <code>slist</code>(단면 성질 목록)</li>
 </ul>
 <hr />
@@ -96,7 +110,7 @@ prrsol                              <span class="c">! 반력 출력 (평형 검�
 <pre><code>sectype,SECID,Type,Subtype          <span class="c">! 단면 SECID 정의: Type — Type = beam / link</span>
 secdata,VAL1,VAL2,...               <span class="c">! 단면 치수 (sectype 종류마다 순서가 다름)</span>
 secoffs,Location,OFFSETY,OFFSETZ    <span class="c">! 보 노드를 단면의 어디에 둘지 지정</span>
-secnum,SECID                        <span class="c">! 이후 만드는 요소의 단면 번호 = SECID — 이후 생성 요소의 단면 번호</span>
+secn,SECID                          <span class="c">! 이후 만드는 요소의 단면 번호 = SECID — 이후 생성 요소의 단면 번호</span>
 </code></pre>
 <div class="tbl"><table>
 <thead>
@@ -155,7 +169,7 @@ secnum,SECID                        <span class="c">! 이후 만드는 요소의
 <li>단위 환산: 강재표 mm → m. A [mm²]×1e-6, I [10⁶ mm⁴]×1e-6 → m⁴ (예: W310×52 Ix=119×10⁶ mm⁴ = 119e-6 m⁴).</li>
 </ul>
 <h3 id="secoffset-보-단면에서-노드-위치">SECOFFSET (보 단면에서 노드 위치)</h3>
-<p><code>secoffset,Location,OFFSETY,OFFSETZ,CG-Y,CG-Z,SH-Y,SH-Z</code> — <strong>가장 최근 <code>sectype</code></strong> 단면에 적용 → <code>sectype</code> / <code>secdata</code> 바로 다음에 쓴다. (<code>secoffs</code>로 줄여 써도 됨)
+<p><code>secoff,Location,OFFSETY,OFFSETZ,CG-Y,CG-Z,SH-Y,SH-Z</code> — <strong>가장 최근 <code>sectype</code></strong> 단면에 적용 → <code>sectype</code> / <code>secdata</code> 바로 다음에 쓴다. (<code>secoffs</code>로 줄여 써도 됨)
 | Location | 노드 위치 |
 |---|---|
 | <code>CENT</code> | 도심 (기본값) |
@@ -197,7 +211,7 @@ et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 
 sectype,1,beam,i                    <span class="c">! 단면 1 정의: 보, I형</span>
 secdata,6.49,6.49,12.22,0.380,0.380,0.230  <span class="c">! 위·아래 플랜지 폭 6.49, 6.49 / 높이 12.22 / 플랜지 두께 0.380, 0.380 / 웨브 두께 0.230</span>
 mp,ex,1,30e6                        <span class="c">! 재료 1: 탄성계수 E = 30e6</span>
-mp,prxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
+mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 n,1,0,108                           <span class="c">! 노드 1 생성: x=0, y=108 — 9 ft = 108 in</span>
 n,2,120,108                         <span class="c">! 노드 2 생성: x=120, y=108</span>
 n,3,120,0                           <span class="c">! 노드 3 생성: x=120, y=0</span>
@@ -248,32 +262,32 @@ face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = 
 </ul>
 <h3 id="수업-예제-i형강-프레임-분포하중">수업 예제: I형강 프레임 + 분포하중 (LATT 방향 키포인트 · SECOFFSET · /ESHAPE)</h3>
 <p>수업 시간 메모장 스크립트(<a href="sfbeam%20%EB%B6%84%ED%8F%AC%ED%95%98%EC%A4%91%20%28%EC%88%98%EC%97%85%29.txt">원본 txt</a>)를 그대로 옮기고 주석을 달았다. 원본 첫 줄 <code>sfbeam !분포하중</code>은 메모라서 빼고, 마지막 <code>pldisp</code> 앞에 <code>/post1</code>을 넣었다.</p>
-<pre><code>/clear                                    <span class="c">! 데이터베이스 지우고 새로 시작</span>
-/prep7                                    <span class="c">! 전처리기 들어가기</span>
-et,1,beam188                              <span class="c">! 요소 1번 = BEAM188 (3-D 보)</span>
-keyopt,1,3,3                              <span class="c">! KEYOPT(3)=3 → 3차 형상함수 (분포하중 정확도↑)</span>
-sectype,1,beam,i                          <span class="c">! 단면 1번 = I형강</span>
-secdata,6.49,6.49,12.22,0.38,0.38,0.23    <span class="c">! W1=6.49 W2=6.49 (플랜지 폭) W3=12.22 (높이) t1=t2=0.38 (플랜지 두께) t3=0.23 (웨브 두께) [in]</span>
-mp,ex,1,3e7                               <span class="c">! 탄성계수 E = 3×10^7 psi</span>
-k,1,0,108                                 <span class="c">! 키포인트 1 (0,108) — 보 왼쪽 끝</span>
-k,2,120,108                               <span class="c">! 키포인트 2 (120,108) — 모서리</span>
-k,3,120,0                                 <span class="c">! 키포인트 3 (120,0) — 기둥 아래 끝</span>
-k,4,0,109,0                               <span class="c">! 키포인트 4 (0,109,0) — 방향용 키포인트 (선에는 안 씀)</span>
-l,1,2                                     <span class="c">! 선 1 = 보 (KP1→KP2)</span>
-l,2,3                                     <span class="c">! 선 2 = 기둥 (KP2→KP3)</span>
-latt,,,,,4                                <span class="c">! LATT,MAT,REAL,TYPE,--,KB → KB=4 : 모든 선에 방향 키포인트 4 지정 (쉼표 5개!)</span>
-lmesh,1                                   <span class="c">! 선 1만 메쉬 (ESIZE 없음 → 기본 DESIZE: 선당 3개 이상)</span>
-sfbeam,all,1,pres,800/12                  <span class="c">! 지금 있는 요소(=보) 전부, face 1(−z 방향) 등분포 800 lb/ft = 800/12 lb/in</span>
-/eshape,1                                 <span class="c">! 보를 단면 모양(3-D)으로 그리기</span>
-eplot                                     <span class="c">! 요소 그림 → I형강 모양 확인</span>
-lmesh,2                                   <span class="c">! 선 2(기둥) 메쉬 — SFBEAM 뒤에 메쉬했으므로 기둥에는 하중 없음</span>
-secoff,user,0,12.22                       <span class="c">! SECOFFSET,USER,y=0,z=12.22 : 노드를 단면 z=12.22 쪽 면에 둠 (단면 1을 쓰는 모든 요소에 적용)</span>
-dk,1,all                                  <span class="c">! KP1 고정 (모든 자유도)</span>
-dk,3,all                                  <span class="c">! KP3 고정</span>
-/solu                                     <span class="c">! 해석 처리기</span>
-solve                                     <span class="c">! 풀기</span>
-/post1                                    <span class="c">! 후처리기 (PLDISP 는 POST1 명령)</span>
-pldisp,1                                  <span class="c">! 변형 형상 + 변형 전 모양</span>
+<pre><code>/clear                              <span class="c">! 데이터베이스 지우고 새로 시작</span>
+/prep7                              <span class="c">! 전처리기 들어가기</span>
+et,1,beam188                        <span class="c">! 요소 1번 = BEAM188 (3-D 보)</span>
+keyopt,1,3,3                        <span class="c">! KEYOPT(3)=3 → 3차 형상함수 (분포하중 정확도↑)</span>
+sectype,1,beam,i                    <span class="c">! 단면 1번 = I형강</span>
+secdata,6.49,6.49,12.22,0.38,0.38,0.23  <span class="c">! W1=6.49 W2=6.49 (플랜지 폭) W3=12.22 (높이) t1=t2=0.38 (플랜지 두께) t3=0.23 (웨브 두께) [in]</span>
+mp,ex,1,3e7                         <span class="c">! 탄성계수 E = 3×10^7 psi</span>
+k,1,0,108                           <span class="c">! 키포인트 1 (0,108) — 보 왼쪽 끝</span>
+k,2,120,108                         <span class="c">! 키포인트 2 (120,108) — 모서리</span>
+k,3,120,0                           <span class="c">! 키포인트 3 (120,0) — 기둥 아래 끝</span>
+k,4,0,109,0                         <span class="c">! 키포인트 4 (0,109,0) — 방향용 키포인트 (선에는 안 씀)</span>
+l,1,2                               <span class="c">! 선 1 = 보 (KP1→KP2)</span>
+l,2,3                               <span class="c">! 선 2 = 기둥 (KP2→KP3)</span>
+latt,,,,,4                          <span class="c">! LATT,MAT,REAL,TYPE,--,KB → KB=4 : 모든 선에 방향 키포인트 4 지정 (쉼표 5개!)</span>
+lmesh,1                             <span class="c">! 선 1만 메쉬 (ESIZE 없음 → 기본 DESIZE: 선당 3개 이상)</span>
+sfbeam,all,1,pres,800/12            <span class="c">! 지금 있는 요소(=보) 전부, face 1(−z 방향) 등분포 800 lb/ft = 800/12 lb/in</span>
+/eshape,1                           <span class="c">! 보를 단면 모양(3-D)으로 그리기</span>
+eplot                               <span class="c">! 요소 그림 → I형강 모양 확인</span>
+lmesh,2                             <span class="c">! 선 2(기둥) 메쉬 — SFBEAM 뒤에 메쉬했으므로 기둥에는 하중 없음</span>
+secoff,user,0,12.22                 <span class="c">! SECOFFSET,USER,y=0,z=12.22 : 노드를 단면 z=12.22 쪽 면에 둠 (단면 1을 쓰는 모든 요소에 적용)</span>
+dk,1,all                            <span class="c">! KP1 고정 (모든 자유도)</span>
+dk,3,all                            <span class="c">! KP3 고정</span>
+/solu                               <span class="c">! 해석 처리기</span>
+solve                               <span class="c">! 풀기</span>
+/post1                              <span class="c">! 후처리기 (PLDISP 는 POST1 명령)</span>
+pldisp,1                            <span class="c">! 변형 형상 + 변형 전 모양</span>
 </code></pre>
 <p class="runlink"><a href="apdl.html#code=L2NsZWFyCi9wcmVwNwpldCwxLGJlYW0xODgKa2V5b3B0LDEsMywzCnNlY3R5cGUsMSxiZWFtLGkKc2VjZGF0YSw2LjQ5LDYuNDksMTIuMjIsMC4zOCwwLjM4LDAuMjMKbXAsZXgsMSwzZTcKaywxLDAsMTA4CmssMiwxMjAsMTA4CmssMywxMjAsMAprLDQsMCwxMDksMApsLDEsMgpsLDIsMwpsYXR0LCwsLCw0CmxtZXNoLDEKc2ZiZWFtLGFsbCwxLHByZXMsODAwLzEyCi9lc2hhcGUsMQplcGxvdApsbWVzaCwyCnNlY29mZix1c2VyLDAsMTIuMjIKZGssMSxhbGwKZGssMyxhbGwKL3NvbHUKc29sdmUKL3Bvc3QxCnBsZGlzcCwxCg==">▶ 연습기에서 실행해 보기</a></p>
 <ul>
@@ -312,7 +326,7 @@ pldisp,1                                  <span class="c">! 변형 형상 + 변�
 </tr>
 <tr>
 <td>사각형</td>
-<td><code>rectng,X1,X2,Y1,Y2</code></td>
+<td><code>rect,X1,X2,Y1,Y2</code></td>
 <td>WP 기준, 양 끝 좌표</td>
 </tr>
 <tr>
@@ -322,8 +336,8 @@ pldisp,1                                  <span class="c">! 변형 형상 + 변�
 </tr>
 <tr>
 <td>원/도넛/부채꼴</td>
-<td><code>pcirc,RAD1,RAD2,THETA1,THETA2</code></td>
-<td><strong>항상 WP 원점 중심</strong>. RAD1·RAD2 순서 무관. <code>pcirc,1</code> 원, <code>pcirc,0.4,1</code> 도넛, <code>pcirc,2.6,3.67,-180,-90</code> 1/4</td>
+<td><code>pcir,RAD1,RAD2,THETA1,THETA2</code></td>
+<td><strong>항상 WP 원점 중심</strong>. RAD1·RAD2 순서 무관. <code>pcir,1</code> 원, <code>pcir,0.4,1</code> 도넛, <code>pcir,2.6,3.67,-180,-90</code> 1/4</td>
 </tr>
 <tr>
 <td>원 (중심 지정)</td>
@@ -384,7 +398,7 @@ pldisp,1                                  <span class="c">! 변형 형상 + 변�
 </tr>
 <tr>
 <td>WP 상대 이동</td>
-<td><code>wpoffs,DX,DY,DZ</code></td>
+<td><code>wpoff,DX,DY,DZ</code></td>
 <td><strong>현재 WP</strong> 기준</td>
 </tr>
 <tr>
@@ -405,12 +419,15 @@ pldisp,1                                  <span class="c">! 변형 형상 + 변�
 </ul>
 <hr />
 <h2 id="6-메쉬">6. 메쉬</h2>
-<pre><code>esize,SIZE,NDIV     <span class="c">! esize,0.2 (크기)  /  esize,,1 (선 하나당 1분할: 트러스·보)</span>
+<pre><code>esize,SIZE,NDIV                     <span class="c">! esize,0.2 (크기)  /  esize,,1 (선 하나당 1분할: 트러스·보)</span>
 lesize,NL1,SIZE,ANGSIZ,NDIV         <span class="c">! 선 NL1의 분할 지정 — 특정 선만: lesize,1,,,50</span>
-type,1 $ mat,1 $ secnum,1           <span class="c">! 이후 만드는 요소의 요소 타입 번호 = 1 · 이후 만드는 요소의 재료 번호 = 1 · 이후 만드는 요소의 단면 번호 = 1 — 메쉬 전에 속성 지정 (또는 latt / aatt)</span>
+type,1                              <span class="c">! 이후 만드는 요소의 요소 타입 번호 = 1</span>
+mat,1                               <span class="c">! 이후 만드는 요소의 재료 번호 = 1</span>
+secn,1                              <span class="c">! 이후 만드는 요소의 단면 번호 = 1 — 메쉬 전에 속성 지정 (또는 latt / aatt)</span>
 lmesh,all                           <span class="c">! 선 메쉬 (LINK/BEAM 요소 생성) — 선 → LINK/BEAM</span>
 amesh,all                           <span class="c">! 면 메쉬 (PLANE 요소 생성) — 면 → PLANE</span>
-mshape,0,2d $ mshkey,1              <span class="c">! 요소 모양 = 사각형 · 매핑 메쉬 — (선택) 사각형 매핑 메쉬</span>
+mshape,0,2d                         <span class="c">! 요소 모양 = 사각형</span>
+mshkey,1                            <span class="c">! 매핑 메쉬 — (선택) 사각형 매핑 메쉬</span>
 aclear,all / lclear,all             <span class="c">! 면 메쉬 지우기</span>
 </code></pre>
 <blockquote>
@@ -470,18 +487,18 @@ aclear,all / lclear,all             <span class="c">! 면 메쉬 지우기</span
 </tbody>
 </table></div>
 <blockquote>
-<p><strong><code>f</code>, <code>d</code>는 노드 좌표계 기준</strong>으로 걸린다 → 노드 좌표계를 돌리면 <code>f,5,fx,..</code>가 기울어진 방향. 결과 출력(<code>prnsol</code>, <code>prrsol</code>)은 기본 global(RSYS,0). 단 <code>*get,..,rf,..</code>는 노드 좌표계 기준.</p>
+<p><strong><code>f</code>, <code>d</code>는 노드 좌표계 기준</strong>으로 걸린다 → 노드 좌표계를 돌리면 <code>f,5,fx,..</code>가 기울어진 방향. 결과 출력(<code>prnsol</code>, <code>prrfor</code>)은 기본 global(RSYS,0). 단 <code>*get,..,rf,..</code>는 노드 좌표계 기준.</p>
 </blockquote>
 <h3 id="2025-1-형태-local-원통좌표계-ngen-egen-plane182">2025-1 형태: local 원통좌표계 + NGEN + EGEN (PLANE182)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,plane182                       <span class="c">! 요소 타입 1 = PLANE182 (2D 4절점 고체)</span>
 mp,ex,1,30e6                        <span class="c">! 재료 1: 탄성계수 E = 30e6</span>
-mp,prxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
+mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 local,11,1,2,2                      <span class="c">! 로컬 좌표계 11(원통) 원점 (2, 2) → 바로 활성화 — 원통좌표계, 원점 (2,2)  ← 그림 치수에 맞출 것</span>
 n,1,6,0                             <span class="c">! 노드 1 생성: R=6, θ=0</span>
 n,3,9,0                             <span class="c">! 노드 3 생성: R=9, θ=0</span>
 fill,1,3                            <span class="c">! 두 노드 사이를 등간격 노드로 채우기 (노드 1~3) — node 2 (R=7.5)</span>
-ngen,7,10,1,3,1,,15       <span class="c">! θ 방향 15°씩 6번 복사 → 0~90° (노드 1~3, 11~13, ..., 61~63)</span>
+ngen,7,10,1,3,1,,15                 <span class="c">! θ 방향 15°씩 6번 복사 → 0~90° (노드 1~3, 11~13, ..., 61~63)</span>
 e,1,2,12,11                         <span class="c">! 요소 생성: 노드 1 → 2 → 12 → 11 (반시계 순서)</span>
 egen,2,1,1                          <span class="c">! 요소 1 복사: 총 2세트, 노드 번호 +1씩 — 반지름 방향 2개</span>
 egen,6,10,1,2                       <span class="c">! 요소 1~2 복사: 총 6세트, 노드 번호 +10씩 — 원주 방향 6줄</span>
@@ -498,13 +515,18 @@ et,1,link180                        <span class="c">! 요소 타입 1 = LINK180 
 sectype,1,link                      <span class="c">! 단면 1 정의: LINK (단면적만)</span>
 secdata,8                           <span class="c">! 단면적 A = 8</span>
 mp,ex,1,1.9e6                       <span class="c">! 재료 1: 탄성계수 E = 1.9e6</span>
-mp,prxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
+mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 n,1,0,0                             <span class="c">! 노드 1 생성: x=0, y=0</span>
 n,2,36,0                            <span class="c">! 노드 2 생성: x=36, y=0</span>
 n,3,0,36                            <span class="c">! 노드 3 생성: x=0, y=36</span>
 n,4,36,36                           <span class="c">! 노드 4 생성: x=36, y=36</span>
 n,5,72,36                           <span class="c">! 노드 5 생성: x=72, y=36</span>
-e,1,2 $ e,2,3 $ e,3,4 $ e,2,4 $ e,2,5 $ e,4,5  <span class="c">! 요소 생성: 노드 1 – 2 · 요소 생성: 노드 2 – 3 · 요소 생성: 노드 3 – 4 · 요소 생성: 노드 2 – 4 · 요소 생성: 노드 2 – 5 · 요소 생성: 노드 4 – 5</span>
+e,1,2                               <span class="c">! 요소 생성: 노드 1 – 2</span>
+e,2,3                               <span class="c">! 요소 생성: 노드 2 – 3</span>
+e,3,4                               <span class="c">! 요소 생성: 노드 3 – 4</span>
+e,2,4                               <span class="c">! 요소 생성: 노드 2 – 4</span>
+e,2,5                               <span class="c">! 요소 생성: 노드 2 – 5</span>
+e,4,5                               <span class="c">! 요소 생성: 노드 4 – 5</span>
 d,1,all                             <span class="c">! 노드 1 완전 고정 (모든 자유도 = 0)</span>
 d,3,all                             <span class="c">! 노드 3 완전 고정 (모든 자유도 = 0)</span>
 d,all,uz,0                          <span class="c">! 모든 노드의 UZ = 0 구속 — 평면 트러스: 면외 구속</span>
@@ -521,10 +543,10 @@ finish                              <span class="c">! 현재 처리기 종료</s
 solve                               <span class="c">! 해석 실행 → [K]{u} = {F} 풀기</span>
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
-prnsol,u,comp                       <span class="c">! 절점 변위 출력 (UX, UY, UZ, USUM) — 결과는 기본적으로 global(RSYS,0)</span>
-etable,axf,smisc,1                  <span class="c">! 요소 표 "axf" = SMISC 1 (축력)</span>
-etable,axs,ls,1                     <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
-pretab,axf,axs                      <span class="c">! 요소 표 값 출력 (요소별)</span>
+prnsol,u,sum                        <span class="c">! 절점 변위 출력 (UX, UY, UZ, USUM) — 결과는 기본적으로 global(RSYS,0)</span>
+etable,axforce,smisc,1              <span class="c">! 요소 표 "axf" = SMISC 1 (축력)</span>
+etable,axstress,ls,1                <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
+pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요소별)</span>
 </code></pre>
 <p><strong>검증값 (파이썬 강성행렬 계산):</strong> 최대 변위 = 노드 5, |u| ≈ <strong>0.0271 in</strong> (UX 0.00647, UY −0.0263)
 축응력 [psi] (요소 = 1-2, 2-3, 3-4, 2-4, 2-5, 4-5): <strong>−216.5, 153.1, 170.8, 0, −153.1, 170.8</strong></p>
@@ -610,15 +632,15 @@ pretab,axf,axs                      <span class="c">! 요소 표 값 출력 (요
 </tr>
 <tr>
 <td>변위·회전 출력</td>
-<td><code>prnsol,u,comp</code> / <code>prnsol,rot,comp</code> (X, Y, Z, SUM 한 번에). 최신 Help 기준 <code>prnsol</code>의 Comp는 X/Y/Z/COMP — 수업 스크립트의 <code>prnsol,u,sum</code>이 학교 버전에서 되면 그대로 써도 됨</td>
+<td><code>prnsol,u,sum</code> / <code>prnsol,rot,sum</code> (X, Y, Z, SUM 한 번에). 최신 Help 기준 <code>prnsol</code>의 Comp는 X/Y/Z/COMP — 수업 스크립트의 <code>prnsol,u,sum</code>이 학교 버전에서 되면 그대로 써도 됨</td>
 </tr>
 <tr>
 <td>반력</td>
-<td><code>prrsol</code> (또는 <code>prrfor</code>) — <strong>평형 검증: 반력 합 = 전체 하중</strong></td>
+<td><code>prrfor</code> (또는 <code>prrfor</code>) — <strong>평형 검증: 반력 합 = 전체 하중</strong></td>
 </tr>
 <tr>
 <td>하중 합</td>
-<td><code>fsum</code> (선택 노드의 절점력 합. 분포하중(표면하중) 성분은 빠짐 → 평형 검증은 <code>prrsol</code> 반력 합으로)</td>
+<td><code>fsum</code> (선택 노드의 절점력 합. 분포하중(표면하중) 성분은 빠짐 → 평형 검증은 <code>prrfor</code> 반력 합으로)</td>
 </tr>
 <tr>
 <td>응력(PLANE)</td>
@@ -647,12 +669,12 @@ pretab,axf,axs                      <span class="c">! 요소 표 값 출력 (요
 <tr>
 <td>LINK180</td>
 <td>축력</td>
-<td><code>etable,axf,smisc,1</code></td>
+<td><code>etable,axforce,smisc,1</code></td>
 </tr>
 <tr>
 <td>LINK180</td>
 <td>축응력</td>
-<td><code>etable,axs,ls,1</code></td>
+<td><code>etable,axstress,ls,1</code></td>
 </tr>
 <tr>
 <td>BEAM188</td>
@@ -696,8 +718,12 @@ pretab,axf,axs                      <span class="c">! 요소 표 값 출력 (요
 A=k*L/E                             <span class="c">! 파라미터 A = k*L/E</span>
 *afun,deg                           <span class="c">! 삼각함수 각도 단위를 도(degree)로 — 삼각함수 각도 단위를 degree로</span>
 *get,uy5,node,5,u,y                 <span class="c">! uy5 = 노드 5의 UY 값</span>
-*do,i,1,10 $ ... $ *enddo           <span class="c">! 반복 시작: i = 1 ~ 10 · 반복 끝</span>
-*if,a,gt,b,then $ ... $ *endif      <span class="c">! 조건문 시작 · 조건문 끝</span>
+*do,i,1,10                          <span class="c">! 반복 시작: i = 1 ~ 10 · 반복 끝</span>
+...
+*enddo
+*if,a,gt,b,then                     <span class="c">! 조건문 시작 · 조건문 끝</span>
+...
+*endif
 </code></pre>
 <p>함수: <code>sqrt() abs() sin() cos() atan() nx(n) ny(n) kx(k) node(x,y,z) kp(x,y,z) ux(n) uy(n) distnd(n1,n2)</code></p>
 <hr />
@@ -711,24 +737,36 @@ et,1,link180                        <span class="c">! 요소 타입 1 = LINK180 
 sectype,1,link                      <span class="c">! 단면 1 정의: LINK (단면적만)</span>
 secdata,8                           <span class="c">! 단면적 A = 8</span>
 mp,ex,1,1.9e6                       <span class="c">! 재료 1: 탄성계수 E = 1.9e6</span>
-mp,prxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
-k,1,0,0 $ k,2,36,0 $ k,3,0,36 $ k,4,36,36 $ k,5,72,36  <span class="c">! 키포인트 1 생성: x=0, y=0 · 키포인트 2 생성: x=36, y=0 · 키포인트 3 생성: x=0, y=36 · 키포인트 4 생성: x=36, y=36 · 키포인트 5 생성: x=72, y=36</span>
-l,1,2 $ l,2,3 $ l,3,4 $ l,2,4 $ l,2,5 $ l,4,5  <span class="c">! 선 생성: 키포인트 1 – 2 · 선 생성: 키포인트 2 – 3 · 선 생성: 키포인트 3 – 4 · 선 생성: 키포인트 2 – 4 · 선 생성: 키포인트 2 – 5 · 선 생성: 키포인트 4 – 5</span>
+mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
+k,1,0,0                             <span class="c">! 키포인트 1 생성: x=0, y=0</span>
+k,2,36,0                            <span class="c">! 키포인트 2 생성: x=36, y=0</span>
+k,3,0,36                            <span class="c">! 키포인트 3 생성: x=0, y=36</span>
+k,4,36,36                           <span class="c">! 키포인트 4 생성: x=36, y=36</span>
+k,5,72,36                           <span class="c">! 키포인트 5 생성: x=72, y=36</span>
+l,1,2                               <span class="c">! 선 생성: 키포인트 1 – 2</span>
+l,2,3                               <span class="c">! 선 생성: 키포인트 2 – 3</span>
+l,3,4                               <span class="c">! 선 생성: 키포인트 3 – 4</span>
+l,2,4                               <span class="c">! 선 생성: 키포인트 2 – 4</span>
+l,2,5                               <span class="c">! 선 생성: 키포인트 2 – 5</span>
+l,4,5                               <span class="c">! 선 생성: 키포인트 4 – 5</span>
 esize,,1                            <span class="c">! 선 하나를 1개 요소로</span>
 lmesh,all                           <span class="c">! 선 메쉬 (LINK/BEAM 요소 생성)</span>
-dk,1,ux,0 $ dk,1,uy,0               <span class="c">! 키포인트 1의 UX = 0 구속 · 키포인트 1의 UY = 0 구속</span>
-dk,3,ux,0 $ dk,3,uy,0               <span class="c">! 키포인트 3의 UX = 0 구속 · 키포인트 3의 UY = 0 구속</span>
+dk,1,ux,0                           <span class="c">! 키포인트 1의 UX = 0 구속</span>
+dk,1,uy,0                           <span class="c">! 키포인트 1의 UY = 0 구속</span>
+dk,3,ux,0                           <span class="c">! 키포인트 3의 UX = 0 구속</span>
+dk,3,uy,0                           <span class="c">! 키포인트 3의 UY = 0 구속</span>
 d,all,uz,0                          <span class="c">! 모든 노드의 UZ = 0 구속</span>
-fk,4,fy,-500 $ fk,5,fy,-500         <span class="c">! 키포인트 4에 집중하중 FY = -500 (노드 좌표계 기준) · 키포인트 5에 집중하중 FY = -500 (노드 좌표계 기준)</span>
+fk,4,fy,-500                        <span class="c">! 키포인트 4에 집중하중 FY = -500 (노드 좌표계 기준)</span>
+fk,5,fy,-500                        <span class="c">! 키포인트 5에 집중하중 FY = -500 (노드 좌표계 기준)</span>
 finish                              <span class="c">! 현재 처리기 종료</span>
 /solu                               <span class="c">! 솔루션(해석) 처리기 시작</span>
 solve                               <span class="c">! 해석 실행 → [K]{u} = {F} 풀기</span>
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
-prnsol,u,comp                       <span class="c">! 절점 변위 출력 (UX, UY, UZ, USUM)</span>
-etable,axf,smisc,1                  <span class="c">! 요소 표 "axf" = SMISC 1 (축력)</span>
-etable,axs,ls,1                     <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
-pretab,axf,axs                      <span class="c">! 요소 표 값 출력 (요소별)</span>
+prnsol,u,sum                        <span class="c">! 절점 변위 출력 (UX, UY, UZ, USUM)</span>
+etable,axforce,smisc,1              <span class="c">! 요소 표 "axf" = SMISC 1 (축력)</span>
+etable,axstress,ls,1                <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
+pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요소별)</span>
 </code></pre>
 <p><strong>검증값:</strong> UY4 = −0.01144 in, UY5 = −0.01952 in.
 축력 [lb] (1-2, 2-3, 3-4, 2-4, 2-5, 4-5) = <strong>−1500, 1414.2, 500, −500, −707.1, 500</strong></p>
@@ -749,7 +787,7 @@ t=0.125                             <span class="c">! 파라미터 t = 0.125</sp
   n,i,0,-(i-1)*2.5                  <span class="c">! 노드 i 생성: x=0, y=-(i-1)*2.5</span>
 *enddo                              <span class="c">! 반복 끝</span>
 *do,i,1,4                           <span class="c">! 반복 시작: i = 1 ~ 4</span>
-  secnum,i                          <span class="c">! 이후 만드는 요소의 단면 번호 = i</span>
+  secn,i                            <span class="c">! 이후 만드는 요소의 단면 번호 = i</span>
   e,i,i+1                           <span class="c">! 요소 생성: 노드 i – i+1</span>
 *enddo                              <span class="c">! 반복 끝</span>
 d,1,all                             <span class="c">! 노드 1 완전 고정 (모든 자유도 = 0)</span>
@@ -768,20 +806,38 @@ prnsol,u,y                          <span class="c">! 절점 변위 출력 (Y �
 <h3 id="11-3-양단-고정-복합-축봉-2023-1">11-3. 양단 고정 복합 축봉 (2023-1)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,link180                        <span class="c">! 요소 타입 1 = LINK180 (3D 봉·트러스, 축력만)</span>
-sectype,1,link $ secdata,5e-4       <span class="c">! 단면 1 정의: LINK (단면적만) · 단면적 A = 5e-4 — 왼쪽 (5 cm²)</span>
-sectype,2,link $ secdata,2e-4       <span class="c">! 단면 2 정의: LINK (단면적만) · 단면적 A = 2e-4 — 가운데 각 부재 (2 cm²)</span>
-sectype,3,link $ secdata,5e-4       <span class="c">! 단면 3 정의: LINK (단면적만) · 단면적 A = 5e-4 — 오른쪽</span>
-mp,ex,1,69e9 $ mp,ex,2,101e9 $ mp,ex,3,73e9  <span class="c">! 재료 1: 탄성계수 E = 69e9 · 재료 2: 탄성계수 E = 101e9 · 재료 3: 탄성계수 E = 73e9</span>
-n,1,0 $ n,2,0.3 $ n,3,0.5 $ n,4,0.65 $ n,5,0.9 $ n,6,1.4   <span class="c">! D: 노드2(0.3 m, !확인), F: 노드4(0.5+0.15)</span>
-mat,1 $ secnum,1                    <span class="c">! 이후 만드는 요소의 재료 번호 = 1 · 이후 만드는 요소의 단면 번호 = 1</span>
-e,1,2 $ e,2,3                       <span class="c">! 요소 생성: 노드 1 – 2 · 요소 생성: 노드 2 – 3</span>
-mat,2 $ secnum,2                    <span class="c">! 이후 만드는 요소의 재료 번호 = 2 · 이후 만드는 요소의 단면 번호 = 2</span>
-e,3,4 $ e,4,5                       <span class="c">! 요소 생성: 노드 3 – 4 · 요소 생성: 노드 4 – 5 — 위 부재</span>
-e,3,4 $ e,4,5          <span class="c">! 아래 부재 (같은 노드 사이 병렬, E=101GPa, 면적은 그림상 2 cm²로 가정 !확인)</span>
-mat,3 $ secnum,3                    <span class="c">! 이후 만드는 요소의 재료 번호 = 3 · 이후 만드는 요소의 단면 번호 = 3</span>
+sectype,1,link                      <span class="c">! 단면 1 정의: LINK (단면적만)</span>
+secdata,5e-4                        <span class="c">! 단면적 A = 5e-4 — 왼쪽 (5 cm²)</span>
+sectype,2,link                      <span class="c">! 단면 2 정의: LINK (단면적만)</span>
+secdata,2e-4                        <span class="c">! 단면적 A = 2e-4 — 가운데 각 부재 (2 cm²)</span>
+sectype,3,link                      <span class="c">! 단면 3 정의: LINK (단면적만)</span>
+secdata,5e-4                        <span class="c">! 단면적 A = 5e-4 — 오른쪽</span>
+mp,ex,1,69e9                        <span class="c">! 재료 1: 탄성계수 E = 69e9</span>
+mp,ex,2,101e9                       <span class="c">! 재료 2: 탄성계수 E = 101e9</span>
+mp,ex,3,73e9                        <span class="c">! 재료 3: 탄성계수 E = 73e9</span>
+n,1,0                               <span class="c">! D: 노드2(0.3 m, !확인), F: 노드4(0.5+0.15)</span>
+n,2,0.3
+n,3,0.5
+n,4,0.65
+n,5,0.9
+n,6,1.4
+mat,1                               <span class="c">! 이후 만드는 요소의 재료 번호 = 1</span>
+secn,1                              <span class="c">! 이후 만드는 요소의 단면 번호 = 1</span>
+e,1,2                               <span class="c">! 요소 생성: 노드 1 – 2</span>
+e,2,3                               <span class="c">! 요소 생성: 노드 2 – 3</span>
+mat,2                               <span class="c">! 이후 만드는 요소의 재료 번호 = 2</span>
+secn,2                              <span class="c">! 이후 만드는 요소의 단면 번호 = 2</span>
+e,3,4                               <span class="c">! 요소 생성: 노드 3 – 4</span>
+e,4,5                               <span class="c">! 요소 생성: 노드 4 – 5 — 위 부재</span>
+e,3,4                               <span class="c">! 아래 부재 (같은 노드 사이 병렬, E=101GPa, 면적은 그림상 2 cm²로 가정 !확인)</span>
+e,4,5
+mat,3                               <span class="c">! 이후 만드는 요소의 재료 번호 = 3</span>
+secn,3                              <span class="c">! 이후 만드는 요소의 단면 번호 = 3</span>
 e,5,6                               <span class="c">! 요소 생성: 노드 5 – 6</span>
-d,1,all $ d,6,all                   <span class="c">! 노드 1 완전 고정 (모든 자유도 = 0) · 노드 6 완전 고정 (모든 자유도 = 0)</span>
-d,all,uy,0 $ d,all,uz,0             <span class="c">! 모든 노드의 UY = 0 구속 · 모든 노드의 UZ = 0 구속</span>
+d,1,all                             <span class="c">! 노드 1 완전 고정 (모든 자유도 = 0)</span>
+d,6,all                             <span class="c">! 노드 6 완전 고정 (모든 자유도 = 0)</span>
+d,all,uy,0                          <span class="c">! 모든 노드의 UY = 0 구속</span>
+d,all,uz,0                          <span class="c">! 모든 노드의 UZ = 0 구속</span>
 f,3,fx,-20e3                        <span class="c">! 노드 3에 집중하중 FX = -20e3 (노드 좌표계 기준) — 20 kN, 그림의 위치·방향 !확인</span>
 finish                              <span class="c">! 현재 처리기 종료</span>
 /solu                               <span class="c">! 솔루션(해석) 처리기 시작</span>
@@ -789,9 +845,9 @@ solve                               <span class="c">! 해석 실행 → [K]{u} =
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
 prnsol,u,x                          <span class="c">! 절점 변위 출력 (X 성분)</span>
-etable,axf,smisc,1                  <span class="c">! 요소 표 "axf" = SMISC 1 (축력)</span>
-etable,axs,ls,1                     <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
-pretab,axf,axs                      <span class="c">! 요소 표 값 출력 (요소별)</span>
+etable,axforce,smisc,1              <span class="c">! 요소 표 "axf" = SMISC 1 (축력)</span>
+etable,axstress,ls,1                <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
+pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요소별)</span>
 </code></pre>
 <p><strong>검증값 (20 kN이 x=50 cm에서 −x 방향일 때):</strong> u_D = −0.1078 mm, u_F = −0.1513 mm, 왼쪽 축력 −12.39 kN(−24.8 MPa), 가운데 각 부재 +3.80 kN(19.0 MPa), 오른쪽 +7.61 kN(15.2 MPa).</p>
 <h3 id="11-4-보-형강-단면-롤러-등분포-2018-1-asec-방식">11-4. 보 + 형강 단면 + 롤러 + 등분포 (2018-1, ASEC 방식)</h3>
@@ -800,13 +856,18 @@ et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 
 sectype,1,beam,asec                 <span class="c">! 단면 1 정의: 보, 임의 단면(성질 직접 입력)</span>
 secdata,6650e-6,10.2e-6,,119e-6,,1e-6  <span class="c">! A, Iyy, Iyz, Izz, Iw, J 순서로 단면 성질 직접 입력 — A, Iyy(약축), , Izz(강축), , J</span>
 mp,ex,1,200e9                       <span class="c">! 재료 1: 탄성계수 E = 200e9</span>
-mp,prxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
-n,1,0 $ n,2,5 $ n,3,7.5             <span class="c">! 노드 1 생성: x=0 · 노드 2 생성: x=5 · 노드 3 생성: x=7.5</span>
-e,1,2 $ e,2,3                       <span class="c">! 요소 생성: 노드 1 – 2 · 요소 생성: 노드 2 – 3</span>
+mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
+n,1,0                               <span class="c">! 노드 1 생성: x=0</span>
+n,2,5                               <span class="c">! 노드 2 생성: x=5</span>
+n,3,7.5                             <span class="c">! 노드 3 생성: x=7.5</span>
+e,1,2                               <span class="c">! 요소 생성: 노드 1 – 2</span>
+e,2,3                               <span class="c">! 요소 생성: 노드 2 – 3</span>
 d,1,all                             <span class="c">! 노드 1 완전 고정 (모든 자유도 = 0)</span>
 d,2,uy,0                            <span class="c">! 노드 2의 UY = 0 구속</span>
-d,all,uz,0 $ d,all,rotx,0 $ d,all,roty,0  <span class="c">! 모든 노드의 UZ = 0 구속 · 모든 노드의 ROTX = 0 구속 · 모든 노드의 ROTY = 0 구속 — 면외 구속</span>
-sfbeam,all,2,pres,25000                    <span class="c">! face 2 = element −y = global −Y</span>
+d,all,uz,0                          <span class="c">! 모든 노드의 UZ = 0 구속</span>
+d,all,rotx,0                        <span class="c">! 모든 노드의 ROTX = 0 구속</span>
+d,all,roty,0                        <span class="c">! 모든 노드의 ROTY = 0 구속 — 면외 구속</span>
+sfbeam,all,2,pres,25000             <span class="c">! face 2 = element −y = global −Y</span>
 finish                              <span class="c">! 현재 처리기 종료</span>
 /solu                               <span class="c">! 솔루션(해석) 처리기 시작</span>
 solve                               <span class="c">! 해석 실행 → [K]{u} = {F} 풀기</span>
@@ -814,7 +875,7 @@ finish                              <span class="c">! 현재 처리기 종료</s
 /post1                              <span class="c">! 일반 후처리기 시작</span>
 prnsol,u,y                          <span class="c">! 절점 변위 출력 (Y 성분)</span>
 prnsol,rot,z                        <span class="c">! 절점 회전각 출력 [rad] (ROTZ)</span>
-prrsol            <span class="c">! (b) 반력 합 FY = 25000 × 7.5 = 187,500 N 확인</span>
+prrfor                              <span class="c">! (b) 반력 합 FY = 25000 × 7.5 = 187,500 N 확인</span>
 </code></pre>
 <blockquote>
 <p>I 단면(<code>sectype,1,beam,i</code>, W310×52: <code>secdata,0.167,0.167,0.317,0.0132,0.0132,0.0076</code>)으로 하면 K 노드를 위(+Y)에 두고 face 1. (강재표: bf=167, d=317, tf=13.2, tw=7.6 mm)</p>
@@ -829,7 +890,9 @@ sectype,2,link                      <span class="c">! 단면 2 정의: LINK (단
 secdata,k_s*Ls/Es                   <span class="c">! 단면적 A = k_s*Ls/Es — A = kL/E</span>
 mp,ex,2,Es                          <span class="c">! 재료 2: 탄성계수 E = Es</span>
 n,4,5,-Ls                           <span class="c">! 노드 4 생성: x=5, y=-Ls — 스프링 바닥</span>
-type,2 $ mat,2 $ secnum,2           <span class="c">! 이후 만드는 요소의 요소 타입 번호 = 2 · 이후 만드는 요소의 재료 번호 = 2 · 이후 만드는 요소의 단면 번호 = 2</span>
+type,2                              <span class="c">! 이후 만드는 요소의 요소 타입 번호 = 2</span>
+mat,2                               <span class="c">! 이후 만드는 요소의 재료 번호 = 2</span>
+secn,2                              <span class="c">! 이후 만드는 요소의 단면 번호 = 2</span>
 e,2,4                               <span class="c">! 요소 생성: 노드 2 – 4</span>
 d,4,all                             <span class="c">! 노드 4 완전 고정 (모든 자유도 = 0)</span>
 </code></pre>
@@ -838,12 +901,17 @@ d,4,all                             <span class="c">! 노드 4 완전 고정 (�
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 (3D 보), KEYOPT(3)=3 3차 형상함수</span>
 sectype,1,beam,chan                 <span class="c">! 단면 1 정의: 보, C형(채널)</span>
-secdata,0.0805,0.0805,0.305,0.0127,0.0127,0.013   <span class="c">! C310×45: bf, bf, d, tf, tf, tw (m)</span>
+secdata,0.0805,0.0805,0.305,0.0127,0.0127,0.013  <span class="c">! C310×45: bf, bf, d, tf, tf, tw (m)</span>
 mp,ex,1,200e9                       <span class="c">! 재료 1: 탄성계수 E = 200e9</span>
-mp,prxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
-n,1,0 $ n,2,3.75 $ n,3,5 $ n,4,7.5  <span class="c">! 노드 1 생성: x=0 · 노드 2 생성: x=3.75 · 노드 3 생성: x=5 · 노드 4 생성: x=7.5 — 하중 꼭짓점(3.75), 롤러(5), 끝(7.5)</span>
-n,10,0,1                               <span class="c">! K: 위쪽 → element z = global +Y (단면 높이가 세로)</span>
-e,1,2,10 $ e,2,3,10 $ e,3,4,10      <span class="c">! 요소 생성: 노드 1 – 2, 방향 노드 K = 10 · 요소 생성: 노드 2 – 3, 방향 노드 K = 10 · 요소 생성: 노드 3 – 4, 방향 노드 K = 10</span>
+mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
+n,1,0                               <span class="c">! 노드 1 생성: x=0</span>
+n,2,3.75                            <span class="c">! 노드 2 생성: x=3.75</span>
+n,3,5                               <span class="c">! 노드 3 생성: x=5</span>
+n,4,7.5                             <span class="c">! 노드 4 생성: x=7.5 — 하중 꼭짓점(3.75), 롤러(5), 끝(7.5)</span>
+n,10,0,1                            <span class="c">! K: 위쪽 → element z = global +Y (단면 높이가 세로)</span>
+e,1,2,10                            <span class="c">! 요소 생성: 노드 1 – 2, 방향 노드 K = 10</span>
+e,2,3,10                            <span class="c">! 요소 생성: 노드 2 – 3, 방향 노드 K = 10</span>
+e,3,4,10                            <span class="c">! 요소 생성: 노드 3 – 4, 방향 노드 K = 10</span>
 d,1,all                             <span class="c">! 노드 1 완전 고정 (모든 자유도 = 0)</span>
 d,3,uy,0                            <span class="c">! 노드 3의 UY = 0 구속</span>
 d,all,uz,0                          <span class="c">! 모든 노드의 UZ = 0 구속</span>
@@ -855,7 +923,7 @@ finish                              <span class="c">! 현재 처리기 종료</s
 solve                               <span class="c">! 해석 실행 → [K]{u} = {F} 풀기</span>
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
-prrsol           <span class="c">! (a) 반력, (b) ΣFY = ½×7.5×25000 = 93,750 N</span>
+prrfor                              <span class="c">! (a) 반력, (b) ΣFY = ½×7.5×25000 = 93,750 N</span>
 prnsol,u,y                          <span class="c">! 절점 변위 출력 (Y 성분) — (c) 노드 4 변위</span>
 prnsol,rot,z                        <span class="c">! 절점 회전각 출력 [rad] (ROTZ) — (c) 노드 3(#2) 회전</span>
 </code></pre>
@@ -865,14 +933,27 @@ prnsol,rot,z                        <span class="c">! 절점 회전각 출력 [r
 <h3 id="11-7-비틀림-축-2016-1">11-7. 비틀림 축 (2016-1)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 (3D 보), KEYOPT(3)=3 3차 형상함수</span>
-sectype,1,beam,csolid $ secdata,1.5/2  <span class="c">! 단면 1 정의: 보, 꽉 찬 원형 · 반지름 R = 1.5/2 — 반지름!</span>
-sectype,2,beam,csolid $ secdata,1/2  <span class="c">! 단면 2 정의: 보, 꽉 찬 원형 · 반지름 R = 1/2</span>
-mp,ex,1,10.4e6 $ mp,gxy,1,3.9e6     <span class="c">! 재료 1: 탄성계수 E = 10.4e6 · 재료 1: 전단탄성계수 G = 3.9e6</span>
-mp,ex,2,10.4e6 $ mp,gxy,2,4.0e6     <span class="c">! 재료 2: 탄성계수 E = 10.4e6 · 재료 2: 전단탄성계수 G = 4.0e6</span>
-n,1,0 $ n,2,30 $ n,3,42 $ n,4,66        <span class="c">! A, D(2.5 ft), B(3.5 ft), C(5.5 ft)</span>
-mat,1 $ secnum,1 $ e,1,2 $ e,2,3    <span class="c">! 이후 만드는 요소의 재료 번호 = 1 · 이후 만드는 요소의 단면 번호 = 1 · 요소 생성: 노드 1 – 2 · 요소 생성: 노드 2 – 3</span>
-mat,2 $ secnum,2 $ e,3,4            <span class="c">! 이후 만드는 요소의 재료 번호 = 2 · 이후 만드는 요소의 단면 번호 = 2 · 요소 생성: 노드 3 – 4</span>
-d,1,all $ d,4,all                   <span class="c">! 노드 1 완전 고정 (모든 자유도 = 0) · 노드 4 완전 고정 (모든 자유도 = 0)</span>
+sectype,1,beam,csolid               <span class="c">! 단면 1 정의: 보, 꽉 찬 원형</span>
+secdata,1.5/2                       <span class="c">! 반지름 R = 1.5/2 — 반지름!</span>
+sectype,2,beam,csolid               <span class="c">! 단면 2 정의: 보, 꽉 찬 원형</span>
+secdata,1/2                         <span class="c">! 반지름 R = 1/2</span>
+mp,ex,1,10.4e6                      <span class="c">! 재료 1: 탄성계수 E = 10.4e6</span>
+mp,gxy,1,3.9e6                      <span class="c">! 재료 1: 전단탄성계수 G = 3.9e6</span>
+mp,ex,2,10.4e6                      <span class="c">! 재료 2: 탄성계수 E = 10.4e6</span>
+mp,gxy,2,4.0e6                      <span class="c">! 재료 2: 전단탄성계수 G = 4.0e6</span>
+n,1,0                               <span class="c">! A, D(2.5 ft), B(3.5 ft), C(5.5 ft)</span>
+n,2,30
+n,3,42
+n,4,66
+mat,1                               <span class="c">! 이후 만드는 요소의 재료 번호 = 1</span>
+secn,1                              <span class="c">! 이후 만드는 요소의 단면 번호 = 1</span>
+e,1,2                               <span class="c">! 요소 생성: 노드 1 – 2</span>
+e,2,3                               <span class="c">! 요소 생성: 노드 2 – 3</span>
+mat,2                               <span class="c">! 이후 만드는 요소의 재료 번호 = 2</span>
+secn,2                              <span class="c">! 이후 만드는 요소의 단면 번호 = 2</span>
+e,3,4                               <span class="c">! 요소 생성: 노드 3 – 4</span>
+d,1,all                             <span class="c">! 노드 1 완전 고정 (모든 자유도 = 0)</span>
+d,4,all                             <span class="c">! 노드 4 완전 고정 (모든 자유도 = 0)</span>
 f,2,mx,200*12                       <span class="c">! 노드 2에 집중하중 MX = 200*12 (노드 좌표계 기준) — 200 lb·ft → in·lb</span>
 finish                              <span class="c">! 현재 처리기 종료</span>
 /solu                               <span class="c">! 솔루션(해석) 처리기 시작</span>
@@ -880,7 +961,7 @@ solve                               <span class="c">! 해석 실행 → [K]{u} =
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
 prnsol,rot,x                        <span class="c">! 절점 회전각 출력 [rad] (ROTX) — D, B 비틀림각 (rad)</span>
-prrsol                              <span class="c">! 반력 출력 (평형 검증: 반력 합 = 하중) — 양 끝 반력 토크 MX</span>
+prrfor                              <span class="c">! 반력 출력 (평형 검증: 반력 합 = 하중) — 양 끝 반력 토크 MX</span>
 </code></pre>
 <blockquote>
 <p><code>중간고사 16년.txt</code>는 <code>gyz</code>를 넣었는데, BEAM188이 쓰는 전단탄성계수는 <strong>GXY·GXZ</strong>다(Help: 전단강성 TXY=A·GXY, TXZ=A·GXZ). G가 주어지면 <code>mp,gxy</code>·<code>mp,gxz</code> 둘 다 넣는 것이 안전. G를 안 넣으면 EX와 PRXY(기본 0.3)로 G=E/2(1+ν) 자동 계산 → 이 문제처럼 E와 G가 따로 주어지면 반드시 G 입력.</p>
@@ -889,7 +970,7 @@ prrsol                              <span class="c">! 반력 출력 (평형 검�
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
 et,1,beam188,,,3                    <span class="c">! 요소 타입 1 = BEAM188 (3D 보), KEYOPT(3)=3 3차 형상함수</span>
 mp,ex,1,30e6                        <span class="c">! 재료 1: 탄성계수 E = 30e6</span>
-mp,prxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
+mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 sectype,1,beam,i                    <span class="c">! 단면 1 정의: 보, I형</span>
 secdata,8.28,8.28,9,0.935,0.935,0.570  <span class="c">! 위·아래 플랜지 폭 8.28, 8.28 / 높이 9 / 플랜지 두께 0.935, 0.935 / 웨브 두께 0.570 — W8×67</span>
 secoffs,user,0,9                    <span class="c">! 보 노드를 단면 원점에서 (y, z) = (0, 9) 위치에 둔다 — 예: 노드를 위 플랜지 윗면(웹 중심)에  !확인</span>
@@ -901,8 +982,11 @@ n,2,60,0,0                          <span class="c">! 노드 2 생성: x=60, y=0
 n,3,120,0,0                         <span class="c">! 노드 3 생성: x=120, y=0, z=0 — B</span>
 n,4,120,0,120                       <span class="c">! 노드 4 생성: x=120, y=0, z=120 — C (B에서 Z방향 10 ft — 그림 방향 !확인)</span>
 n,10,0,100,0                        <span class="c">! 노드 10 생성: x=0, y=100, z=0 — K (위쪽)</span>
-secnum,1 $ e,1,2,10 $ e,2,3,10      <span class="c">! 이후 만드는 요소의 단면 번호 = 1 · 요소 생성: 노드 1 – 2, 방향 노드 K = 10 · 요소 생성: 노드 2 – 3, 방향 노드 K = 10</span>
-secnum,2 $ e,3,4,10                 <span class="c">! 이후 만드는 요소의 단면 번호 = 2 · 요소 생성: 노드 3 – 4, 방향 노드 K = 10</span>
+secn,1                              <span class="c">! 이후 만드는 요소의 단면 번호 = 1</span>
+e,1,2,10                            <span class="c">! 요소 생성: 노드 1 – 2, 방향 노드 K = 10</span>
+e,2,3,10                            <span class="c">! 요소 생성: 노드 2 – 3, 방향 노드 K = 10</span>
+secn,2                              <span class="c">! 이후 만드는 요소의 단면 번호 = 2</span>
+e,3,4,10                            <span class="c">! 요소 생성: 노드 3 – 4, 방향 노드 K = 10</span>
 d,1,all                             <span class="c">! 노드 1 완전 고정 (모든 자유도 = 0)</span>
 sfbeam,1,1,pres,0,30000/12          <span class="c">! 요소 1, face 1 = element −z 방향에 분포하중 0 → 30000/12 (선형 분포)</span>
 sfbeam,2,1,pres,30000/12,0          <span class="c">! 요소 2, face 1 = element −z 방향에 분포하중 30000/12 → 0 (선형 분포)</span>
@@ -911,18 +995,20 @@ finish                              <span class="c">! 현재 처리기 종료</s
 solve                               <span class="c">! 해석 실행 → [K]{u} = {F} 풀기</span>
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
-prnsol,rot,comp                <span class="c">! C(노드 4)의 비틀림각: 보 축(Z) 방향 회전 = ROTZ</span>
-etable,sbyt,smisc,32 $ etable,sbyb,smisc,33  <span class="c">! 요소 표 "sbyt" = SMISC 32 (굽힘응력 SByT) · 요소 표 "sbyb" = SMISC 33 (굽힘응력 SByB)</span>
-etable,sbzt,smisc,34 $ etable,sbzb,smisc,35  <span class="c">! 요소 표 "sbzt" = SMISC 34 (굽힘응력 SBzT) · 요소 표 "sbzb" = SMISC 35 (굽힘응력 SBzB)</span>
+prnsol,rot,sum                      <span class="c">! C(노드 4)의 비틀림각: 보 축(Z) 방향 회전 = ROTZ</span>
+etable,sbyt,smisc,32                <span class="c">! 요소 표 "sbyt" = SMISC 32 (굽힘응력 SByT)</span>
+etable,sbyb,smisc,33                <span class="c">! 요소 표 "sbyb" = SMISC 33 (굽힘응력 SByB)</span>
+etable,sbzt,smisc,34                <span class="c">! 요소 표 "sbzt" = SMISC 34 (굽힘응력 SBzT)</span>
+etable,sbzb,smisc,35                <span class="c">! 요소 표 "sbzb" = SMISC 35 (굽힘응력 SBzB)</span>
 pretab,sbyt,sbyb,sbzt,sbzb          <span class="c">! 요소 표 값 출력 (요소별) — (a) 최대 굽힘응력</span>
 <span class="c">! (b) 단위 모멘트만 걸어 θ1 → M = −θ0/θ1, 그 후 f,4,mz,M 추가해 θ≈0 확인</span>
 </code></pre>
 <h3 id="11-9-2d-면-형상-2018-2-exercise-abc">11-9. 2D 면 형상 (2018-2, Exercise A/B/C)</h3>
 <ul>
 <li>순서: <strong>큰 덩어리(rectng/pcirc) → aadd → 구멍·홈(pcirc/rectng) → asba</strong>. 매 단계 <code>/pnum,area,1</code> <code>aplot</code>으로 면 번호 확인 후 다음 명령.</li>
-<li>원통좌표로 WP 이동: <code>csys,1</code> → <code>wpave,R,θ</code> → <code>pcirc,r</code> → <code>csys,0</code> <code>wpave,0,0</code></li>
-<li>슬롯(긴 구멍) = <code>rectng</code> + 양 끝 <code>pcirc</code> 2개 → <code>aadd</code> 후 <code>asba</code>.</li>
-<li>코너 R(필렛) = 사각형에서 1/4 원 바깥 부분 빼기: <code>pcirc,R,R*sqrt(2),θ1,θ2</code> 처럼 링 조각을 만들어 <code>asba</code> (18년 풀이 방식).</li>
+<li>원통좌표로 WP 이동: <code>csys,1</code> → <code>wpave,R,θ</code> → <code>pcir,r</code> → <code>csys,0</code> <code>wpave,0,0</code></li>
+<li>슬롯(긴 구멍) = <code>rect</code> + 양 끝 <code>pcir</code> 2개 → <code>aadd</code> 후 <code>asba</code>.</li>
+<li>코너 R(필렛) = 사각형에서 1/4 원 바깥 부분 빼기: <code>pcir,R,R*sqrt(2),θ1,θ2</code> 처럼 링 조각을 만들어 <code>asba</code> (18년 풀이 방식).</li>
 </ul>
 <hr />
 <h2 id="12-에러경고-대처">12. 에러·경고 대처</h2>

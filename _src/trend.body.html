@@ -29,7 +29,7 @@
 <td>1</td>
 <td>지름 다른 2단 축, 양단 고정, 중간 토크 200 lb·ft → D·B 비틀림각, 반력 토크</td>
 <td>BEAM188 (CSOLID)</td>
-<td><code>sectype,,beam,csolid</code>, <code>mp,gxy</code>, <code>f,,mx</code>, <code>prrsol</code></td>
+<td><code>sectype,,beam,csolid</code>, <code>mp,gxy</code>, <code>f,,mx</code>, <code>prrfor</code></td>
 </tr>
 <tr>
 <td></td>
@@ -43,14 +43,14 @@
 <td>1</td>
 <td>W310×52 보, 고정+롤러, 등분포 25 kN/m → 변위·회전, <strong>평형 검증</strong>, (c) 롤러를 스프링으로 바꿔 끝단 ≤ 15 mm 되는 <strong>최소 k</strong></td>
 <td>BEAM188 (ASEC) + LINK1/COMBIN14</td>
-<td>강재표에서 A, Ix, Iy 찾기, <code>sfbeam</code>, <code>prrsol</code></td>
+<td>강재표에서 A, Ix, Iy 찾기, <code>sfbeam</code>, <code>prrfor</code></td>
 </tr>
 <tr>
 <td></td>
 <td>2</td>
 <td>원·사각형·슬롯으로 된 복잡한 2D 면 만들기</td>
 <td>(형상만)</td>
-<td><code>pcirc</code>, <code>rectng</code>, <code>wpave/wpoffs</code>, <code>csys,1</code>, <code>aadd</code>, <code>asba</code></td>
+<td><code>pcir</code>, <code>rect</code>, <code>wpave/wpoffs</code>, <code>csys,1</code>, <code>aadd</code>, <code>asba</code></td>
 </tr>
 <tr>
 <td>2019*</td>
@@ -99,7 +99,7 @@
 <td>2</td>
 <td><strong>C310×45</strong> 보, 고정+롤러, 삼각 분포하중(중앙 최대 25 kN/m) → 반력, 평형 검증, 변위·회전, 스프링 <strong>최소 k</strong> (LINK180)</td>
 <td>BEAM188 (CHAN) + LINK180</td>
-<td><code>sfbeam</code> VALI/VALJ, <code>prrsol</code></td>
+<td><code>sfbeam</code> VALI/VALJ, <code>prrfor</code></td>
 </tr>
 <tr>
 <td>2025</td>
@@ -130,12 +130,12 @@
 <ol>
 <li><strong>트러스 / 축부재 (LINK180)</strong> — 16·19·21·23·25년. 거의 매년 1문제.
    - Example 3.1(발코니 트러스), 3.2(3D 트러스), 계단식/테이퍼 봉이 뼈대.
-   - 출력: 절점 변위(<code>prnsol,u</code>), 요소 축력·축응력(<code>etable,,smisc,1</code> / <code>etable,,ls,1</code> → <code>pretab</code>).</li>
+   - 출력: 절점 변위(<code>prnsol,u,sum</code>), 요소 축력·축응력(<code>etable,,smisc,1</code> / <code>etable,,ls,1</code> → <code>pretab</code>).</li>
 <li><strong>보·프레임 (BEAM188 + 단면)</strong> — 18·19·21·23·25년. 매년.
    - <strong>실제 형강 단면</strong>(W310×52, C310×45, W8×67, C9×20)을 표에서 찾아 <code>secdata</code>에 넣게 함.
    - 분포하중은 <code>sfbeam</code>. <strong>최근 3번(21·23·25)은 모두 삼각(선형 변화) 분포하중</strong> → <code>sfbeam,elem,2,pres,VALI,VALJ</code> 필수.</li>
 <li><strong>스프링으로 바꿔서 "최소 k" 구하기</strong> — 16·18·23년 (3번). LINK로 스프링을 모델링(k = EA/L).</li>
-<li><strong>평형 조건으로 FEA 검증</strong> — 18·23년. 반력 합 = 전체 하중인지 <code>prrsol</code>로 확인.</li>
+<li><strong>평형 조건으로 FEA 검증</strong> — 18·23년. 반력 합 = 전체 하중인지 <code>prrfor</code>로 확인.</li>
 </ol>
 <h3 id="2-변화-방향">(2) 변화 방향</h3>
 <ul>
@@ -235,7 +235,7 @@
 <li>[ ] BEAM188 방향: 하중이 element −y로 가는지 (<code>/eshape,1</code> + <code>eplot</code>로 단면 방향 확인), 강축 I가 하중을 받는지</li>
 <li>[ ] 2D 문제를 BEAM188로 풀 때 <strong>면외 자유도(UZ, ROTX, ROTY) 구속</strong> 또는 <code>d,all</code>로 고정 지점 처리, 롤러는 UY만</li>
 <li>[ ] LINK180 트러스는 2D라도 <code>UZ</code> 구속이 필요할 수 있음(평면 트러스면 모든 노드 <code>d,all,uz,0</code>)</li>
-<li>[ ] <code>mp,prxy</code>(또는 <code>nuxy</code>) 빠뜨림 → BEAM188은 G 계산에 필요</li>
+<li>[ ] <code>mp,nuxy</code>(푸아송비, 수업 표기. <code>prxy</code>도 같은 값) 빠뜨림 → BEAM188은 G 계산에 필요</li>
 <li>[ ] <code>/post1</code> 전에 <code>finish</code>, 결과 읽기 <code>set,last</code></li>
 <li>[ ] 스프링 문제에서 k → LINK180 단면적 A = kL/E (E·L은 아무 값이나 정해도 됨)</li>
 </ul>
