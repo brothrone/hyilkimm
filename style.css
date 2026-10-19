@@ -113,6 +113,12 @@ blockquote{margin-left:0;margin-right:0;border-left:3px solid var(--accent)}
 figure.fig{margin:12px 0 18px}
 figure.fig img{display:block;max-width:min(100%,760px);height:auto;border:1px solid var(--line)}
 figure.fig figcaption{font-size:13px;color:var(--fg-2);margin-top:6px}
+.figrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 18px;margin:12px 0 16px}
+.figrow.six{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.figrow figure.fig{margin:0}
+figure.fig.help img{border:1px solid var(--line-2);background:#fff;padding:6px;width:100%;max-height:250px;object-fit:contain}
+figure.fig.help figcaption{font-size:12.5px;line-height:1.5}
+figure.fig .src{color:#888;font-size:11.5px}
 figure.fig figcaption::before{content:"그림. ";font-weight:700;color:var(--fg)}
 figure.svgfig svg{display:block;width:100%;max-width:640px;height:auto;border:1px solid var(--line);background:#fff;color:#333}
 
@@ -311,3 +317,8 @@ body.mw-lock{overflow:hidden}
 }
 .runlink{margin:-10px 0 16px;font-size:13px}
 .runlink a{font-weight:700;text-decoration:none}
+@media (max-width:760px){
+  main.content table{display:block;max-width:100%;overflow-x:auto}
+  main.content :not(pre)>code{white-space:normal;overflow-wrap:anywhere;word-break:break-all}
+}
+main.content hr{display:none}

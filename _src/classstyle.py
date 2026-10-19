@@ -3,7 +3,7 @@
 import re, os, html
 SRC = os.path.dirname(os.path.abspath(__file__))
 COL = 36
-RENAME = {'pcirc': 'pcir', 'rectng': 'rect', 'wpoffs': 'wpoff', 'secnum': 'secn', 'secoffset': 'secoff', 'prrsol': 'prrfor'}
+RENAME = {'pcirc': 'pcir', 'rectng': 'rect', 'wpoffs': 'wpoff', 'secnum': 'secn', 'secoffset': 'secoff', 'secoffs': 'secoff', 'prrsol': 'prrfor'}
 LABEL = {'axf': 'axforce', 'axs': 'axstress'}
 
 def fix_cmd(c):
@@ -51,7 +51,7 @@ def render(cmd, cm):
 
 def fix_inline(m):
     t = html.unescape(m.group(1))
-    if re.match(r'^(mp,prxy|prrsol|pcirc|rectng|wpoffs|secnum|secoffset|prnsol,(u|rot)(,comp)?$|etable,ax[fs],|pretab|pletab)', t, re.I):
+    if re.match(r'^(mp,prxy|prrsol|pcirc|rectng|wpoffs|secnum|secoffset|secoffs|prnsol,(u|rot)(,comp)?$|etable,ax[fs],|pretab|pletab)', t, re.I):
         return '<code>' + html.escape(fix_cmd(t), quote=False) + '</code>'
     return m.group(0)
 

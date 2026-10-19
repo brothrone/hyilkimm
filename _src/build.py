@@ -32,14 +32,14 @@ bodies = {}
 for f, *_ in PAGES:
     b = open(os.path.join(SRC, f.replace('.html', '.body.html'))).read()
     if f == 'ref.html':
+        b = b.replace('<div class="tbl">', '').replace('</table></div>', '</table>')  # 그림 넣기 전에 (안 그러면 </div> 가 남아 main 이 닫힘)
         # 그림 넣기
-        b = b.replace('<h3 id="secoffs', svgs.SECTIONS + '<h3 id="secoffs', 1) if '<h3 id="secoffs' in b else b
+        # (단면 그림은 본문에 ANSYS Help 그림으로 넣음)
         i = b.index('<h2 id="3-beam188'); j = b.index('</h2>', i) + 5
         b = b[:j] + svgs.BEAM + b[j:]
         i = b.index('<h3 id="삼각-분포하중'); b = b[:i] + svgs.TRI + b[i:]
         i = b.index('<h2 id="5-'); j = b.index('</table>', i) + 8
         b = b[:j] + svgs.PCIRC + b[j:]
-        b = b.replace('<div class="tbl">', '').replace('</table></div>', '</table>')
         b = b.replace('<code>sectype</code>의 단면에 적용', '<code>sectype</code>의 단면에 적용')
     if f == 'exams.html':
         import base64

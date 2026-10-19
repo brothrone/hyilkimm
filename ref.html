@@ -43,9 +43,9 @@
 <p>레포의 수업 txt 파일(9/30~10/21, 1001·1006·1013, 중간고사 대비·풀이)에 쓰인 표기를 우선한다. 오른쪽은 같은 뜻의 정식 이름.</p>
 <table>
 <tr><th>수업 표기</th><th>같은 뜻</th><th>메모</th></tr>
-<tr><td><code>mp,nuxy,1,0.3</code></td><td><code>mp,prxy</code></td><td>등방성 재료는 값이 같다. 둘 중 하나만</td></tr>
-<tr><td><code>prrfor</code></td><td><code>prrsol</code></td><td>반력 출력</td></tr>
-<tr><td><code>prnsol,u,sum</code> / <code>prnsol,rot,sum</code></td><td><code>prnsol,u,comp</code></td><td>실제 MAPDL에서도 UX UY UZ USUM 전부 출력</td></tr>
+<tr><td><code>mp,nuxy,1,0.3</code></td><td><code>mp,nuxy</code></td><td>등방성 재료는 값이 같다. 둘 중 하나만</td></tr>
+<tr><td><code>prrfor</code></td><td><code>prrfor</code></td><td>반력 출력</td></tr>
+<tr><td><code>prnsol,u,sum</code> / <code>prnsol,rot,sum</code></td><td><code>prnsol,u,sum</code></td><td>실제 MAPDL에서도 UX UY UZ USUM 전부 출력</td></tr>
 <tr><td><code>et,1,beam188,,,3</code></td><td><code>et,1,beam188</code> + <code>keyopt,1,3,3</code></td><td>KEYOPT(3)=3 (3차)</td></tr>
 <tr><td><code>etable,axforce,smisc,1</code> · <code>etable,axstress,ls,1</code></td><td>(이름은 자유)</td><td><code>pretab,axstress,axforce</code> · <code>pletab,axstress</code></td></tr>
 <tr><td><code>pcir</code> · <code>rect</code> · <code>wpoff</code> · <code>secn</code> · <code>secoff</code></td><td>PCIRC · RECTNG · WPOFFS · SECNUM · SECOFFSET</td><td>4글자 이상 줄임은 ANSYS가 알아듣는다</td></tr>
@@ -136,6 +136,12 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 </tr>
 </tbody>
 </table>
+<div class="figrow"><figure class="fig help"><img src="img/help/link180-geom.svg" alt="LINK180 요소: 노드 I에서 J로 가는 봉과 element x축" loading="lazy"><figcaption>LINK180 Geometry — 노드 I, J 두 개. element x는 I→J. 자유도는 이동 3개(UX UY UZ)뿐이라 <b>모멘트를 못 받는다</b>(핀 연결 트러스). <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/beam188-geom.svg" alt="BEAM188 요소: I에서 J로 x축, K 노드 쪽이 z축, 동그라미 숫자 1~5는 하중 면" loading="lazy"><figcaption>BEAM188 Geometry — I, J와 방향 노드 K. 동그라미 숫자는 <b>SFBEAM의 LKEY(face)</b>: ① −z 방향 압력, ② −y 방향, ③ 접선(x), ④ I 끝, ⑤ J 끝. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/plane182-geom.svg" alt="PLANE182 요소: 반시계 방향 I J K L 사각형과 K=L 삼각형" loading="lazy"><figcaption>PLANE182 Geometry — 노드 I J K L을 <b>반시계 방향</b>으로. K, L을 같은 노드로 주면 삼각형(권장하지 않음). 동그라미 숫자는 면 번호(압력 SFE). <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/combin14-geom.svg" alt="COMBIN14 요소: 축방향 스프링과 비틀림 스프링" loading="lazy"><figcaption>COMBIN14 Geometry — 위는 축방향 스프링(k), 아래는 비틀림 스프링. 강성 k는 실상수 <code>r,번호,k</code>로만 넣는다. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure></div>
+<ul>
+<li><b>그림의 소문자 x, y, z = element(국부) 좌표계</b>, 대문자 X, Y, Z = global 좌표계. 하중·구속(<code>d</code>, <code>f</code>)은 global(또는 노드 좌표계), <code>sfbeam</code>·결과 SMISC는 element 좌표계 기준이다.</li>
+<li>LINK180은 노드 2개짜리 직선 요소라 휘지 않는다 → 보처럼 하중을 받는 부재에는 BEAM188.</li>
+<li>PLANE182는 X-Y 평면(Z=0) 안에만 만든다. 노드 순서가 시계 방향이면 면적이 음수가 되어 오류.</li>
+</ul>
 <blockquote>
 <p>옛 요소 LINK1·LINK8·BEAM3은 <strong>ANSYS 13.0(2010)부터 문서에서 빠진 요소</strong>(BEAM3은 10년 넘게 미지원), PLANE42는 archive. 족보 16~19년 풀이는 이 요소들을 쓰므로 <strong>LINK180/BEAM188/PLANE182로 바꿔 쓸 것</strong>. BEAM188은 <strong>real constant(<code>r</code>)를 무시</strong>하므로 반드시 <code>sectype/secdata</code>.</p>
 <p><strong>수업 방식: 실상수 <code>r</code>은 쓰지 않고 단면은 전부 <code>sectype</code> / <code>secdata</code>로 넣는다.</strong> 스프링도 COMBIN14(실상수 필요) 대신 LINK180으로 모델링한다.</p>
@@ -145,8 +151,8 @@ prrfor                              <span class="c">! 반력 출력 (평형 검�
 <h2 id="2-단면-sectype-secdata">2. 단면 (SECTYPE / SECDATA)</h2>
 <pre><code>sectype,SECID,Type,Subtype          <span class="c">! 단면 SECID 정의: Type — Type = beam / link</span>
 secdata,VAL1,VAL2,...               <span class="c">! 단면 치수 (sectype 종류마다 순서가 다름)</span>
-secoffs,Location,OFFSETY,OFFSETZ    <span class="c">! 보 노드를 단면의 어디에 둘지 지정</span>
-secn,SECID                          <span class="c">! 이후 만드는 요소의 단면 번호 = SECID — 이후 생성 요소의 단면 번호</span>
+secoff,Location,OFFSETY,OFFSETZ     <span class="c">! 보 노드를 단면의 어디에 둘지 지정</span>
+secn,SECID                          <span class="c">! 이후 만드는 요소의 단면 번호 = SECID</span>
 </code></pre>
 <table>
 <thead>
@@ -179,17 +185,17 @@ secn,SECID                          <span class="c">! 이후 만드는 요소의
 </tr>
 <tr>
 <td><strong><code>i</code></strong></td>
-<td>W1(위 플랜지 폭), W2(아래 플랜지 폭), <strong>W3(전체 높이)</strong>, t1, t2(플랜지 두께), t3(웹 두께)</td>
+<td>W1(<b>아래</b> 플랜지 폭), W2(<b>위</b> 플랜지 폭), <strong>W3(전체 높이)</strong>, t1(아래), t2(위) 플랜지 두께, t3(웨브 두께)</td>
 <td>W12×26: <code>secdata,6.49,6.49,12.22,0.380,0.380,0.230</code></td>
 </tr>
 <tr>
 <td><strong><code>chan</code></strong></td>
-<td>W1, W2(플랜지 폭), <strong>W3(전체 높이)</strong>, t1, t2(플랜지 두께), t3(웹 두께)</td>
+<td>W1(아래), W2(위) 플랜지 폭, <strong>W3(전체 높이)</strong>, t1(아래), t2(위) 플랜지 두께, t3(웨브 두께)</td>
 <td>C9×20: <code>secdata,2.648,2.648,9,0.413,0.413,0.448</code></td>
 </tr>
 <tr>
 <td><code>hrec</code> (사각 중공)</td>
-<td>W1, W2, t1, t2, t3, t4</td>
+<td>W1(바깥 폭), W2(바깥 높이), t1(왼), t2(오른), t3(아래), t4(위) 벽 두께</td>
 <td><code>secdata,6,6,0.25,0.25,0.25,0.25</code></td>
 </tr>
 <tr>
@@ -199,56 +205,27 @@ secn,SECID                          <span class="c">! 이후 만드는 요소의
 </tr>
 </tbody>
 </table>
+<div class="figrow six"><figure class="fig help"><img src="img/help/sec-rect.svg" alt="RECT 단면: 폭 B, 높이 H, 가운데 원점" loading="lazy"><figcaption><code>rect</code>: B(y 방향 폭), H(z 방향 높이). 원점 = 도심. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/sec-csolid.svg" alt="CSOLID 단면: 반지름 R" loading="lazy"><figcaption><code>csolid</code>: <b>R = 반지름</b>(지름 아님!). 원점 = 중심. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/sec-ctube.svg" alt="CTUBE 단면: 안 반지름 Ri, 바깥 반지름 Ro" loading="lazy"><figcaption><code>ctube</code>: Ri(안 반지름), Ro(바깥 반지름). <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/sec-i.svg" alt="I 단면: 아래 플랜지 W1 t1, 위 플랜지 W2 t2, 높이 W3, 웨브 t3" loading="lazy"><figcaption><code>i</code>: W1·t1 = <b>아래</b> 플랜지, W2·t2 = <b>위</b> 플랜지, W3 = 전체 높이(z), t3 = 웨브. 원점(검은 점) = 아래 플랜지 밑면 가운데. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/sec-chan.svg" alt="CHAN 단면: 아래 플랜지 W1 t1, 위 플랜지 W2 t2, 높이 W3, 웨브 t3" loading="lazy"><figcaption><code>chan</code>: I와 같은 순서. 원점 = 웨브 바깥쪽 아래 모서리. 플랜지는 +y 쪽으로 뻗는다. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/sec-hrec.svg" alt="HREC 단면: 바깥 폭 W1, 높이 W2, 벽 두께 t1~t4" loading="lazy"><figcaption><code>hrec</code>(사각 관): W1 폭, W2 높이, t1~t4 벽 두께(왼·오·아래·위). 원점 = 왼쪽 아래 모서리. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure></div>
 <ul>
+<li><b>단면 그림의 y, z = BEAM188의 element y, z.</b> 그래서 방향 노드 K로 element z를 위(+Y)로 세우면 I형강의 높이 W3가 세로가 된다(3장).</li>
+<li>선은 셀(적분점) 분할을 나타낸다 — 입력할 필요 없음(<code>csolid</code>의 N, T 같은 뒤쪽 값은 생략 가능).</li>
 <li><strong>I / CHAN 단면의 높이(W3)는 단면 z방향</strong> → 강축 = Iyy (<code>slist</code>로 확인: W12×26 → Iyy≈201.8, Izz≈17.3).</li>
 <li><strong>ASEC는 Iyy·Izz를 직접 넣기 때문에</strong> 하중 방향과 맞춰야 함: 하중이 element −y 방향이면 강축 I를 <strong>Izz</strong>에, −z 방향이면 <strong>Iyy</strong>에.</li>
 <li>단위 환산: 강재표 mm → m. A [mm²]×1e-6, I [10⁶ mm⁴]×1e-6 → m⁴ (예: W310×52 Ix=119×10⁶ mm⁴ = 119e-6 m⁴).</li>
 </ul>
-<figure class="fig svgfig">
-<svg viewBox="0 0 640 300" role="img" aria-label="I 단면과 CHAN 단면의 SECDATA 치수 W1, W2, W3, t1, t2, t3와 SECOFFSET 기준점">
-<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
-<marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c4161c"/></marker>
-<marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0b59a8"/></marker></defs>
-<g font-family="Arial, sans-serif" font-size="13" fill="#222">
-<!-- I section -->
-<text x="40" y="22" font-weight="bold">Subtype = I</text>
-<rect x="60" y="50" width="160" height="16" fill="#9fc3e6" stroke="#245" />
-<rect x="60" y="234" width="160" height="16" fill="#9fc3e6" stroke="#245" />
-<rect x="133" y="66" width="14" height="168" fill="#9fc3e6" stroke="#245" />
-<line x1="60" y1="38" x2="220" y2="38" stroke="#0b59a8" marker-start="url(#ahb)" marker-end="url(#ahb)"/><text x="125" y="34" fill="#0b59a8">W1</text>
-<line x1="60" y1="264" x2="220" y2="264" stroke="#0b59a8" marker-start="url(#ahb)" marker-end="url(#ahb)"/><text x="125" y="282" fill="#0b59a8">W2</text>
-<line x1="240" y1="50" x2="240" y2="250" stroke="#0b59a8" marker-start="url(#ahb)" marker-end="url(#ahb)"/><text x="246" y="154" fill="#0b59a8">W3</text>
-<text x="226" y="62" fill="#c4161c">t1</text><text x="226" y="247" fill="#c4161c">t2</text><text x="112" y="200" fill="#c4161c">t3</text>
-<line x1="140" y1="150" x2="140" y2="96" stroke="#333" marker-end="url(#ah)"/><text x="128" y="92">z</text>
-<line x1="140" y1="150" x2="196" y2="150" stroke="#333" marker-end="url(#ah)"/><text x="200" y="154">y</text>
-<!-- CHAN section -->
-<text x="360" y="22" font-weight="bold">Subtype = CHAN</text>
-<rect x="400" y="50" width="90" height="16" fill="#9fc3e6" stroke="#245" />
-<rect x="400" y="234" width="90" height="16" fill="#9fc3e6" stroke="#245" />
-<rect x="400" y="66" width="16" height="168" fill="#9fc3e6" stroke="#245" />
-<line x1="400" y1="38" x2="490" y2="38" stroke="#0b59a8" marker-start="url(#ahb)" marker-end="url(#ahb)"/><text x="436" y="34" fill="#0b59a8">W1</text>
-<line x1="400" y1="264" x2="490" y2="264" stroke="#0b59a8" marker-start="url(#ahb)" marker-end="url(#ahb)"/><text x="436" y="282" fill="#0b59a8">W2</text>
-<line x1="510" y1="50" x2="510" y2="250" stroke="#0b59a8" marker-start="url(#ahb)" marker-end="url(#ahb)"/><text x="516" y="154" fill="#0b59a8">W3</text>
-<text x="496" y="62" fill="#c4161c">t1</text><text x="496" y="247" fill="#c4161c">t2</text><text x="420" y="200" fill="#c4161c">t3</text>
-<circle cx="400" cy="250" r="5" fill="#111"/><text x="352" y="270" font-size="12">ORIGIN</text>
-<text x="424" y="155" font-size="15" fill="#111">✕</text><text x="440" y="155" font-size="12">CENT</text>
-<circle cx="378" cy="150" r="5" fill="none" stroke="#111" stroke-width="1.6"/><text x="340" y="140" font-size="12">SHRC</text>
-<circle cx="400" cy="150" r="4" fill="#c4161c"/><text x="560" y="128" font-size="12" fill="#c4161c">USER 예:</text><text x="560" y="144" font-size="12" fill="#c4161c">(0, W3/2)</text>
-<line x1="556" y1="140" x2="408" y2="150" stroke="#c4161c" stroke-dasharray="3 3"/>
-</g></svg>
-<figcaption>I·CHAN 단면 <code>secdata,W1,W2,W3,t1,t2,t3</code> 순서 — W3 = 전체 높이(단면 z방향), t3 = 웨브 두께. CHAN의 SECOFFSET 기준점: ORIGIN(웨브 바깥 아래 모서리), CENT(도심), SHRC(전단중심, 웨브 바깥쪽), USER(OFFSETY, OFFSETZ). 직접 그린 개략도</figcaption>
-</figure>
 <h3 id="secoffset-보-단면에서-노드-위치">SECOFFSET (보 단면에서 노드 위치)</h3>
-<p><code>secoff,Location,OFFSETY,OFFSETZ,CG-Y,CG-Z,SH-Y,SH-Z</code> — <strong>가장 최근 <code>sectype</code></strong> 단면에 적용 → <code>sectype</code> / <code>secdata</code> 바로 다음에 쓴다. (<code>secoffs</code>로 줄여 써도 됨)
-| Location | 노드 위치 |
-|---|---|
-| <code>CENT</code> | 도심 (기본값) |
-| <code>SHRC</code> | 전단중심 |
-| <code>ORIGIN</code> | 단면 원점 (I/CHAN 그림의 아래 왼쪽 등) |
-| <code>USER</code> | OFFSETY, OFFSETZ로 지정한 점 (USER일 때만 이 두 값이 쓰임) |</p>
+<p><code>secoff,Location,OFFSETY,OFFSETZ,CG-Y,CG-Z,SH-Y,SH-Z</code> — <strong>가장 최근 <code>sectype</code></strong> 단면에 적용 → <code>sectype</code> / <code>secdata</code> 바로 다음에 쓴다. 메쉬한 뒤에 바꿔도 그 단면을 쓰는 <b>모든 요소</b>에 적용된다(수업 예제).</p>
+<table>
+<tr><th>Location</th><th>보 노드(선)가 놓이는 곳</th></tr>
+<tr><td><code>cent</code></td><td>도심 (기본값)</td></tr>
+<tr><td><code>shrc</code></td><td>전단중심 (C형강은 웨브 바깥쪽에 있음)</td></tr>
+<tr><td><code>origin</code></td><td>단면 원점 — I: 아래 플랜지 밑면 가운데, CHAN·HREC: 왼쪽 아래 모서리, RECT·CSOLID: 중심</td></tr>
+<tr><td><code>user</code></td><td>원점에서 (OFFSETY, OFFSETZ) 떨어진 점 — 예: <code>secoff,user,0,12.22</code> = I형강(W3 = 12.22) 위 플랜지 윗면</td></tr>
+</table>
+<figure class="fig help"><img src="img/help/secoffset-chan.svg" alt="CHAN 단면에서 ORIGIN, CENT, SHRC, USER 오프셋 위치" loading="lazy"><figcaption>CHAN 단면의 SECOFFSET 기준점: ORIGIN(검은 점), CENT(✕ 도심), SHRC(○ 전단중심, 웨브 바깥), USER(OFFSET-Y, OFFSET-Z로 지정). <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure>
 <blockquote>
 <p>단면 형태마다 쓸 수 없는 Location이 있을 수 있다. ASEC는 <code>secplot</code>으로 그릴 수 없고 응력도 안 나온다.</p>
-<p><strong>C형강은 전단중심 ≠ 도심</strong> → 도심을 지나는 하중은 비틀림을 일으킨다. 두 단면(W와 C)을 이어 붙일 때 같은 기준점(예: 위 플랜지 면, 웹 중심)에 노드가 오도록 <code>secoffs,user,..</code> 로 맞춤 (25년 3번).</p>
+<p><strong>C형강은 전단중심 ≠ 도심</strong> → 도심을 지나는 하중은 비틀림을 일으킨다. 두 단면(W와 C)을 이어 붙일 때 같은 기준점(예: 위 플랜지 면, 웹 중심)에 노드가 오도록 <code>secoff,user,..</code> 로 맞춤 (25년 3번).</p>
 </blockquote>
 <hr />
 <h2 id="3-beam188-방향-가장-많이-헷갈림">3. BEAM188 방향 (가장 많이 헷갈림)</h2><figure class="fig svgfig">
@@ -281,7 +258,8 @@ secn,SECID                          <span class="c">! 이후 만드는 요소의
 <li>element x: I → J</li>
 <li><strong>K 노드가 없으면</strong> element y가 global X-Y 평면에 평행 → 보가 global X 방향이면 <strong>element y = global Y, element z = global Z</strong>. (보가 global Z와 평행하면 element y = global Y)</li>
 <li><strong>K 노드(방향 노드)가 있으면</strong> I, J, K가 만드는 평면이 element <strong>x-z 평면</strong> → element z가 K 쪽을 향함.</li>
-<li>키포인트로 만들 때: <code>latt,MAT,REAL,TYPE,,KB,KE,SECNUM</code> 의 <strong>KB</strong> 키포인트가 방향점.</li>
+<li>키포인트로 만들 때: <code>latt,MAT,REAL,TYPE,,KB,KE,SECNUM</code> 의 <strong>KB</strong> 키포인트가 방향점 → <code>latt,,,,,4</code> (쉼표 5개).</li>
+<li>1장 Help 그림의 동그라미 ①②③ = <code>sfbeam</code>의 LKEY. 양(+)의 압력은 ① element <b>−z</b>, ② element <b>−y</b> 방향으로 누른다. 하중이 반대면 값을 음수로.</li>
 </ul>
 <table>
 <thead>
@@ -500,7 +478,7 @@ pldisp,1                            <span class="c">! 변형 형상 + 변형 전
 </g></svg>
 <figcaption><code>pcirc,RAD1,RAD2,THETA1,THETA2</code> — 항상 WP 원점이 중심. 위치를 바꾸려면 먼저 <code>wpave</code> / <code>wpoffs</code>. 직접 그린 개략도</figcaption>
 </figure>
-</div>
+
 <h3 id="좌표계-작업평면">좌표계 / 작업평면</h3>
 <table>
 <thead>
@@ -762,11 +740,11 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 </tr>
 <tr>
 <td>변위·회전 출력</td>
-<td><code>prnsol,u,sum</code> / <code>prnsol,rot,sum</code> (X, Y, Z, SUM 한 번에). 최신 Help 기준 <code>prnsol</code>의 Comp는 X/Y/Z/COMP — 수업 스크립트의 <code>prnsol,u,sum</code>이 학교 버전에서 되면 그대로 써도 됨</td>
+<td><code>prnsol,u,sum</code> / <code>prnsol,rot,sum</code> — UX UY UZ USUM(ROTX ROTY ROTZ RSUM)이 <b>한 번에</b> 나온다(실제 MAPDL 출력 확인). 한 성분만: <code>prnsol,u,y</code></td>
 </tr>
 <tr>
 <td>반력</td>
-<td><code>prrfor</code> (또는 <code>prrfor</code>) — <strong>평형 검증: 반력 합 = 전체 하중</strong></td>
+<td><code>prrfor</code> (= <code>prrfor</code>) — <strong>평형 검증: 반력 합 = 전체 하중</strong></td>
 </tr>
 <tr>
 <td>하중 합</td>
@@ -787,6 +765,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 </tbody>
 </table>
 <h3 id="etable-항목">ETABLE 항목</h3>
+<div class="figrow"><figure class="fig help"><img src="img/help/link180-out.svg" alt="LINK180 결과: 축방향 응력 S(AXL)" loading="lazy"><figcaption>LINK180 Stress Output — 결과는 축방향(AXL) 하나뿐: 축응력 S(AXL) = <code>ls,1</code>, 축력 = <code>smisc,1</code>. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure><figure class="fig help"><img src="img/help/plane182-out.svg" alt="PLANE182 결과: SX, SY 응력 방향" loading="lazy"><figcaption>PLANE182 Stress Output — SX, SY는 global X, Y 방향 응력. <code>plnsol,s,x</code> / <code>prnsol,s,comp</code>. <span class="src">— ANSYS Help (Element / Command Reference)</span></figcaption></figure></div>
 <table>
 <thead>
 <tr>
@@ -840,6 +819,7 @@ pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요
 </table>
 <ul>
 <li><strong>최대 굽힘응력</strong> (25-3): <code>etable,sbzt,smisc,34</code> … 4개 다 만들고 <code>esort,etab,sbzt,0,1</code> 또는 <code>pretab</code> 해서 절댓값 최대 찾기. (또는 <code>*get</code> + <code>esort</code> 후 <code>*get,smax,sort,,max</code>)</li>
+<li><b>굽힘모멘트도(BMD)·전단력도(SFD)</b>: <code>etable,mi,smisc,3</code> → <code>etable,mj,smisc,16</code> → <code>plls,mi,mj</code> (K 없이 XY 평면에 놓인 보: MZ). 방향점으로 element z를 위로 세운 보는 <b>MY</b> = <code>smisc,2</code> / <code>smisc,15</code>. 전단력 SFY = 6 / 19, SFZ = 5 / 18. I 끝 값과 J 끝 값을 짝으로 준다.</li>
 <li>BEAM188 굽힘응력이 0으로 나오면 → ASEC은 TKz/TKy를 안 넣으면 응력 계산 불가. I/CHAN 같은 표준 단면을 쓸 것.</li>
 </ul>
 <hr />
@@ -1058,7 +1038,7 @@ prnsol,u,y                          <span class="c">! 절점 변위 출력 (Y �
 prnsol,rot,z                        <span class="c">! 절점 회전각 출력 [rad] (ROTZ) — (c) 노드 3(#2) 회전</span>
 </code></pre>
 <blockquote>
-<p>요소를 더 잘게 하려면 <code>esize</code> + §4의 <code>*do</code> 반복문. C형강은 전단중심이 도심과 달라 <strong>비틀림(ROTX)이 생길 수 있음</strong> → 문제에서 묻지 않으면 <code>secoffs,shrc</code> 로 전단중심에 하중이 걸리게 할지 판단(교수님 의도 확인).</p>
+<p>요소를 더 잘게 하려면 <code>esize</code> + §4의 <code>*do</code> 반복문. C형강은 전단중심이 도심과 달라 <strong>비틀림(ROTX)이 생길 수 있음</strong> → 문제에서 묻지 않으면 <code>secoff,shrc</code> 로 전단중심에 하중이 걸리게 할지 판단(교수님 의도 확인).</p>
 </blockquote>
 <h3 id="11-7-비틀림-축-2016-1">11-7. 비틀림 축 (2016-1)</h3>
 <pre><code>/prep7                              <span class="c">! 전처리기(모델링) 시작</span>
@@ -1103,10 +1083,10 @@ mp,ex,1,30e6                        <span class="c">! 재료 1: 탄성계수 E =
 mp,nuxy,1,0.3                       <span class="c">! 재료 1: 포아송비 ν = 0.3</span>
 sectype,1,beam,i                    <span class="c">! 단면 1 정의: 보, I형</span>
 secdata,8.28,8.28,9,0.935,0.935,0.570  <span class="c">! 위·아래 플랜지 폭 8.28, 8.28 / 높이 9 / 플랜지 두께 0.935, 0.935 / 웨브 두께 0.570 — W8×67</span>
-secoffs,user,0,9                    <span class="c">! 보 노드를 단면 원점에서 (y, z) = (0, 9) 위치에 둔다 — 예: 노드를 위 플랜지 윗면(웹 중심)에  !확인</span>
+secoff,user,0,9                     <span class="c">! 보 노드를 단면 원점에서 (y, z) = (0, 9) 위치에 둔다 — 예: 노드를 위 플랜지 윗면(웹 중심)에  !확인</span>
 sectype,2,beam,chan                 <span class="c">! 단면 2 정의: 보, C형(채널)</span>
 secdata,2.648,2.648,9,0.413,0.413,0.448  <span class="c">! 플랜지 폭 2.648, 2.648 / 높이 9 / 플랜지 두께 0.413, 0.413 / 웨브 두께 0.448 — C9×20</span>
-secoffs,user,0,9                    <span class="c">! 보 노드를 단면 원점에서 (y, z) = (0, 9) 위치에 둔다 — 같은 기준(위 면)으로 맞춤  !확인</span>
+secoff,user,0,9                     <span class="c">! 보 노드를 단면 원점에서 (y, z) = (0, 9) 위치에 둔다 — 같은 기준(위 면)으로 맞춤  !확인</span>
 n,1,0,0,0                           <span class="c">! 노드 1 생성: x=0, y=0, z=0 — A (고정)</span>
 n,2,60,0,0                          <span class="c">! 노드 2 생성: x=60, y=0, z=0 — 삼각하중 꼭짓점 (5 ft)</span>
 n,3,120,0,0                         <span class="c">! 노드 3 생성: x=120, y=0, z=0 — B</span>
