@@ -17,7 +17,7 @@
 <p>수업 txt 파일(9/30~10/21, 1001·1006·1013, 중간고사 대비·풀이)에는 정식 이름과 다르게 쓴 표기가 몇 가지 있다. 모두 같은 일을 하므로 헷갈릴 때 아래 설명을 보면 된다.</p>
 <ul>
 <li><b>포아송비 — <code>nuxy</code>와 <code>prxy</code>.</b> 수업에서는 <code>mp,nuxy,1,0.3</code>으로 쓴다. 정식 이름은 <code>prxy</code>이지만 등방성 재료에서는 두 이름이 같은 값을 뜻한다. 둘 중 하나만 입력하면 된다.</li>
-<li><b>반력 출력 — <code>prrfor</code>와 <code>prrsol</code>.</b> 수업은 <code>prrfor</code>를 쓰지만 같은 반력 목록을 출력하는 정식 명령은 <code>prrsol</code>이다. 실습 중 <code>prrfor</code>가 실행되지 않는 경우가 있었으니 안 될 때는 <code>prrsol</code>로 바꿔 쓴다.</li>
+<li><b>반력 출력 — <code>prrfor</code>와 <code>prrsol</code>.</b> 수업은 <code>prrfor</code>를 쓰지만 ANSYS Help에는 <code>prrfor</code>가 "FORCE 명령과 함께 쓰는" 옛 명령으로 적혀 있다. 일반적인 반력 출력은 <code>prrsol</code>이고, 실습 중 <code>prrfor</code>가 실행되지 않은 것도 이 때문으로 보인다. 안 될 때는 <code>prrsol</code>로 바꿔 쓴다.</li>
 <li><b>변위·회전 출력 — <code>prnsol,u,sum</code>, <code>prnsol,rot,sum</code>.</b> 이름에 sum이 붙어도 UX UY UZ USUM이 한 번에 모두 나온다. 한 성분만 보고 싶으면 <code>prnsol,u,y</code>처럼 쓴다.</li>
 <li><b>요소 정의 줄임 — <code>et,1,beam188,,,3</code>.</b> 쉼표가 비어 있는 칸은 KEYOPT(1), KEYOPT(2)이고 세 번째 칸이 KEYOPT(3)이다. 그래서 <code>et,1,beam188</code>을 쓰고 <code>keyopt,1,3,3</code>을 따로 쓴 것과 같다. 3은 "3차 형상함수"를 뜻한다.</li>
 <li><b>요소 표 — <code>etable</code>.</b> 앞의 이름(예: axforce, axstress)은 마음대로 지어도 된다. 만든 뒤에는 <code>pretab</code>으로 목록을, <code>pletab</code>으로 그림을 본다. 축력은 <code>smisc,1</code>, 축응력은 <code>ls,1</code>이다.</li>
@@ -41,7 +41,7 @@
 <li><b>형상 만들기.</b> 두 가지 방법이 있다. 위에서 아래로 가는 방법은 <code>k</code>(키포인트) → <code>l</code>(선) → <code>esize</code> → <code>lmesh</code>이고, 아래에서 위로 가는 방법은 <code>n</code>(노드) → <code>e</code>(요소)이다.</li>
 <li><b>경계조건과 하중.</b> 구속은 <code>d</code>, 집중하중은 <code>f</code>, 보의 분포하중은 <code>sfbeam</code>으로 준다.</li>
 <li><b>해석.</b> <code>finish</code>로 전처리기를 나오고, <code>/solu</code>에 들어가 <code>solve</code>를 실행한 뒤 다시 <code>finish</code>한다.</li>
-<li><b>후처리.</b> <code>/post1</code>에 들어가 <code>set,last</code>로 결과를 읽는다. 변위와 회전은 <code>prnsol,u,sum</code>, <code>prnsol,rot,sum</code>으로, 반력은 <code>prrsol</code>(수업에서는 <code>prrfor</code>)로 본다. 반력의 합이 하중과 같은지 보면 평형 검증이 된다.</li>
+<li><b>후처리.</b> <code>/post1</code>에 들어가 <code>set,last</code>로 결과를 읽는다. 변위와 회전은 <code>prnsol,u,sum</code>, <code>prnsol,rot,sum</code>으로, 반력은 <code>prrsol</code>로 본다(수업의 <code>prrfor</code>는 안 될 수 있음). 반력의 합이 하중과 같은지 보면 평형 검증이 된다.</li>
 </ol>
 <ul>
 <li><strong>단위는 ANSYS가 정하지 않는다</strong> → 입력을 한 단위계로 통일 (in-lb-psi / m-N-Pa).</li>
@@ -616,7 +616,7 @@ face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = 
 </tr>
 <tr>
 <td>반력</td>
-<td><code>prrfor</code> (= <code class="alt">prrsol</code>) — <strong>평형 검증: 반력 합 = 전체 하중</strong></td>
+<td><code>prrsol</code> (수업의 <code class="alt">prrfor</code>는 FORCE 명령과 함께 쓰는 옛 명령) — <strong>평형 검증: 반력 합 = 전체 하중</strong></td>
 </tr>
 
 
@@ -698,3 +698,81 @@ face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = 
 <li><b>조건문 — <code>*if</code> / <code>*else</code> / <code>*endif</code>.</b> 삼각하중 꼭짓점이 가운데가 아닐 때, 점이 꼭짓점의 왼쪽인지 오른쪽인지에 따라 다른 식을 쓰려고 사용한다.</li>
 </ul>
 <p>함수: <code>sqrt() abs() sin() cos() nx(n) ny(n) nelem(e,i) ux(n) uy(n)</code> — <code>nx(nelem(i,1))</code> = 요소 i의 I 노드 x좌표 (삼각하중 반복문에서 사용)</p>
+
+<hr />
+<h2 id="11-확인-선택-삭제-ansys-help">11. Check · Select · Delete (ANSYS Help)</h2>
+<p>ANSYS Help(Command Reference)에서 시험 준비에 필요한 명령을 추가로 정리했다. 문법은 Help의 Synopsis 그대로이고, 대문자 인자는 직접 값을 넣는 자리이다. 모델이 이상하게 나올 때 <b>입력이 제대로 들어갔는지 확인</b>하고 <b>잘못 들어간 것을 고치는</b> 순서로 읽으면 된다.</p>
+<h3 id="확인-목록">Checking what was entered</h3>
+<div class="tbl"><table>
+<thead><tr><th>확인할 것</th><th>명령 (Help 문법)</th><th>설명</th></tr></thead>
+<tbody>
+<tr><td>재료 값</td><td><code>mplist,MAT1,MAT2,INC,Lab,TEVL</code></td><td>입력한 재료 성질(EX, NUXY, GXY 등)을 재료 번호별로 보여 준다. 인자 없이 <code>mplist</code>만 써도 전부 나온다. <b>모르는 번호의 재료가 생겼거나 값이 이상하면 입력 순서가 틀린 것</b>이다. <code>mp</code>는 속성 이름, <b>재료 번호</b>, 값 순서이다(<code>MP,Lab,MAT,C0</code>). 번호 자리에 값을 쓰면 그 값이 재료 번호가 되어 엉뚱한 재료가 생긴다.</td></tr>
+<tr><td>단면 목록</td><td><code>slist,SFIRST,SLAST,SINC,Details,Type</code></td><td>정의된 모든 단면의 성질(면적, 관성모멘트 등)을 요약해 준다. 단면 번호를 하나씩 쓰면 그 단면만 본다.</td></tr>
+<tr><td>단면 그림</td><td><code>secplot,SECID,VAL1,VAL2,VAL3</code></td><td>보 단면을 실제 비율로 그려 준다. <code>secdata</code> 순서를 잘못 넣었는지 눈으로 확인할 때 좋다. ASEC 단면은 그릴 수 없다.</td></tr>
+<tr><td>노드 · 요소</td><td><code>nlist,NODE1,NODE2,NINC</code> · <code>elist,IEL1,IEL2,INC</code></td><td>노드 좌표와 요소의 재료, 타입, 단면, 노드 번호를 목록으로 본다. 재료와 단면이 요소에 제대로 배정됐는지는 <code>elist</code>의 MAT, SEC 열로 확인한다.</td></tr>
+<tr><td>구속 목록</td><td><code>dlist,NODE1,NODE2,NINC</code></td><td>노드에 걸린 구속(DOF)을 목록으로 보여 준다.</td></tr>
+<tr><td>집중하중 목록</td><td><code>flist,NODE1,NODE2,NINC</code></td><td>노드에 걸린 힘과 모멘트를 목록으로 보여 준다.</td></tr>
+<tr><td>면하중 목록</td><td><code>sfelist,ELEM,Lab</code> · <code>sflist,NODE,Lab</code></td><td><code>sfbeam</code>으로 준 보 분포하중(요소 면하중)을 요소별로 보여 준다. <code>sfelist</code>는 요소 번호, <code>sflist</code>는 노드 번호 기준이다. 삼각하중이 요소마다 의도한 값으로 들어갔는지 볼 때 쓴다.</td></tr>
+<tr><td>현재 상태</td><td><code>/status,Lab</code></td><td>지금 설정된 항목과 해석 상태를 요약해서 보여 준다.</td></tr>
+</tbody></table></div>
+<h3 id="선택-명령">Selecting and unselecting (NSEL / ESEL / LSEL / ALLSEL)</h3>
+<p>후처리나 하중 입력은 <b>지금 선택된 대상에만</b> 적용된다. 일부만 선택된 상태에서 출력하면 일부만 나와서 결과가 빈 것처럼 보일 수 있다.</p>
+<div class="tbl"><table>
+<thead><tr><th>대상</th><th>명령 (Help 문법)</th></tr></thead>
+<tbody>
+<tr><td>노드 선택</td><td><code>nsel,Type,Item,Comp,VMIN,VMAX,VINC,KABS</code></td></tr>
+<tr><td>요소 선택</td><td><code>esel,Type,Item,Comp,VMIN,VMAX,VINC,KABS</code></td></tr>
+<tr><td>선 선택</td><td><code>lsel,Type,Item,Comp,VMIN,VMAX,VINC,KSWP</code></td></tr>
+<tr><td>전부 다시 선택</td><td><code>allsel,LabT,Entity</code></td></tr>
+</tbody></table></div>
+<ul>
+<li><b>Type</b>은 선택 방식이다. <code>s</code>는 새로 선택, <code>r</code>은 지금 선택에서 다시 거르기, <code>a</code>는 추가, <code>u</code>는 선택 해제이다.</li>
+<li><b>Item</b>은 기준이다. 노드는 번호(<code>node</code>)나 위치(<code>loc</code>), 요소는 번호(<code>elem</code>), 재료(<code>mat</code>), 단면(<code>sec</code>) 등을 쓴다. 예를 들어 <code>nsel,s,loc,x,0,10</code>은 x 좌표가 0~10인 노드만 선택한다.</li>
+<li>하중이나 반력이 일부만 나올 때는 먼저 <code>allsel</code>로 전부 선택한 뒤 다시 출력한다.</li>
+<li><code>sfbeam,all</code>의 <code>all</code>도 <b>그 순간 선택된 요소 전체</b>를 뜻한다(4장 참고).</li>
+</ul>
+<h3 id="삭제-초기화">Deleting and starting over</h3>
+<div class="tbl"><table>
+<thead><tr><th>지울 것</th><th>명령 (Help 문법)</th><th>설명</th></tr></thead>
+<tbody>
+<tr><td>전부 초기화</td><td><code>/clear,Read</code></td><td>데이터베이스를 완전히 비운다. 스크립트 첫 줄에 두는 것이 안전하다. 이전 실행에서 남은 요소·재료가 새 결과를 오염시키는 일을 막는다. 요소 번호가 1이 아닌 번호부터 시작하면 이전 데이터가 남아 있다는 신호이다.</td></tr>
+<tr><td>구속</td><td><code>ddele,NODE,Lab,NEND,NINC,Rkey</code></td><td>노드의 구속을 지운다. <code>ddele,5,uy</code>는 노드 5의 UY 구속을 지운다.</td></tr>
+<tr><td>집중하중</td><td><code>fdele,NODE,Lab,NEND,NINC,Lkey</code></td><td>노드의 힘이나 모멘트를 지운다.</td></tr>
+<tr><td>면하중</td><td><code>sfedele,ELEM,LKEY,Lab</code></td><td><code>sfbeam</code>으로 준 분포하중을 지운다(보 분포하중도 요소 면하중이다). 다른 하중으로 바꿔 다시 풀 때 먼저 지운다.</td></tr>
+<tr><td>요소</td><td><code>edele,IEL1,IEL2,INC</code></td><td>선택된 요소를 지운다. 번호를 잘못 만들었을 때 쓴다.</td></tr>
+<tr><td>노드</td><td><code>ndele,NODE1,NODE2,NINC</code></td><td>노드를 지운다. 요소에 쓰이는 노드는 지울 수 없다.</td></tr>
+</tbody></table></div>
+<h3 id="화면-표시-명령">Display controls</h3>
+<div class="tbl"><table>
+<thead><tr><th>명령 (Help 문법)</th><th>설명</th></tr></thead>
+<tbody>
+<tr><td><code>/pnum,Label,KEY</code></td><td>번호 표시를 켜고 끈다. Label은 <code>node</code>, <code>elem</code>, <code>kp</code>, <code>line</code>, <code>area</code>, <code>mat</code>, <code>sect</code>, <code>type</code> 등이고 KEY가 1이면 켜기, 0이면 끄기이다.</td></tr>
+<tr><td><code>/number,NKEY</code></td><td>번호와 색 중 무엇으로 구분할지 정한다. 0은 색과 번호 모두, 1은 색만, 2는 번호만이다.</td></tr>
+<tr><td><code>/psymb,Label,KEY</code></td><td>기호를 켜고 끈다. <code>cs</code>(좌표계 축), <code>ndir</code>(노드 좌표계 방향), <code>esys</code>(요소 좌표계 방향) 등이 있다. BEAM188의 element x, y, z 방향이나 <code>nrotat</code>으로 돌린 노드 방향을 확인할 때 쓴다.</td></tr>
+<tr><td><code>/pbc,Item,--,KEY,MIN,MAX,ABS</code></td><td>구속과 하중 기호(삼각형, 화살표)를 그래픽 창에 표시한다. 예: <code>/pbc,all,,1</code>.</td></tr>
+<tr><td><code>/eshape,SCALE,KEY</code></td><td>보 요소를 실제 단면 모양으로 그린다. I형강이 서 있는지 누워 있는지 볼 때 쓴다.</td></tr>
+<tr><td><code>/view,WN,XV,YV,ZV</code></td><td>보는 방향을 정한다. <code>/view,1,1,1,1</code>은 등각 투영이다.</td></tr>
+<tr><td><code>/replot</code> · <code>eplot</code> · <code>nplot</code></td><td>설정을 바꾼 뒤 화면을 다시 그린다. 번호나 기호를 켜고도 안 보이면 다시 그리지 않았기 때문이다.</td></tr>
+</tbody></table></div>
+<h3 id="반력-토크-부호">Reading reaction signs</h3>
+<ul>
+<li><b>반력 출력:</b> <code>prrsol,Lab</code>은 구속된 노드의 반력을 목록으로 출력한다. 마지막 TOTAL 줄이 반력의 합이므로, 이 값과 하중의 합이 크기가 같고 부호가 반대이면 평형이 맞은 것이다. Help에는 <code>prrfor</code>가 "FORCE 명령과 함께 쓰는" 명령으로 적혀 있어서 일반 해석에서는 <code>prrsol</code>을 쓴다.</li>
+<li><b>토크 부호:</b> 오른손 법칙을 쓴다. 엄지를 +축(축 방향, 예: A에서 C로 가는 +X)에 두고 손가락이 감기는 방향이 +MX이다. 그림의 화살표가 그 방향이면 양수, 반대이면 음수로 넣는다. 부호가 달라도 크기는 같고 결과 부호만 전부 뒤집힌다.</li>
+<li><b>반력의 부호:</b> 반력은 하중과 반대 방향으로 나와 하중이 +이면 반력은 −이다. 모든 구속 노드의 반력을 더하면 −하중이 된다.</li>
+</ul>
+<hr />
+<h2 id="12-beam188-keyopt-ansys-help">12. BEAM188 KEYOPT (ANSYS Help)</h2>
+<p>KEYOPT는 요소의 동작 옵션이다. <code>et,1,beam188,KOP1,KOP2,KOP3</code>처럼 <code>et</code>에서 앞에서부터 순서대로 칸을 채우거나 <code>keyopt,1,번호,값</code>으로 따로 준다. 시험에서는 <b>KEYOPT(3)</b>만 바꾸고 나머지는 기본값을 쓴다.</p>
+<div class="tbl"><table>
+<thead><tr><th>KEYOPT</th><th>값</th><th>의미</th></tr></thead>
+<tbody>
+<tr><td>(1)</td><td>0 (기본) / 1</td><td>0은 굽힘과 비틀림만 다루는 절점당 6 자유도이다. 1은 7번째 자유도로 뒴(warping)을 추가한다. 얇은 벽 단면의 비틀림에서만 쓴다.</td></tr>
+<tr><td>(2)</td><td>0 (기본) / 1</td><td>0은 축 방향으로 늘어나면 단면 크기도 따라 바뀐다. 1은 단면 크기를 고정한다.</td></tr>
+<tr><td><b>(3)</b></td><td>0 (기본) / 2 / <b>3</b></td><td>요소 길이 방향 형상함수이다. 0은 선형, 2는 2차(중간 절점이 생김), 3은 3차이다. <b>3차를 쓰면 요소를 적게 나눠도 보 이론의 해와 거의 일치</b>한다. 분포하중이나 굽힘 문제에서는 3을 준다. 3일 때만 <code>sfbeam</code>의 오프셋(IOFFST, JOFFST)을 쓸 수 있다.</td></tr>
+<tr><td>(4)</td><td>0 (기본) / 1 / 2</td><td>횡전단응력 출력 여부이다. 기본은 출력하지 않는다.</td></tr>
+</tbody></table></div>
+<ul>
+<li>쉼표 칸 세기가 중요하다. <code>et,1,beam188,,,3</code>은 KEYOPT(1), KEYOPT(2)를 비우고 KEYOPT(3)에 3을 넣은 것이다.</li>
+<li>BEAM188은 단면을 <code>sectype</code>과 <code>secdata</code>로 따로 준다. KEYOPT에는 단면 정보가 들어가지 않는다.</li>
+<li>이 표 외의 KEYOPT(예: 출력 제어, 테이퍼 단면)는 기본값을 그대로 쓴다.</li>
+</ul>
