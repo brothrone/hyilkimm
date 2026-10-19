@@ -162,7 +162,7 @@ prrfor                              <span class="c">! (b) ΣFY = 25000 × 7.5 = 
 <li>스프링 힘 R = −k·δ₂, δ₂ = δ₀₂/(1 + k f₂₂) → 끝단 δ₃ = δ₀₃ − f₃₂·k·δ₀₂/(1 + k f₂₂)</li>
 <li>|δ₃| = 0.015 m로 놓고 풀면 <b>k ≈ 3.55×10⁷ N/m</b>, LINK180 단면적 A = kL/E = 3.55×10⁷ × 3 / 200×10⁹ = <b>5.32×10⁻⁴ m²</b></li>
 </ol>
-<pre><code><span class="c">! (c) d,21,uy,0 (롤러) 대신</span>
+<pre><code><span class="c">! (c) d,21,uy,0 (롤러) 줄을 지우고, sfbeam 줄 다음(finish 앞)에 아래를 추가 — sfbeam,all 이 스프링(LINK180)에 걸리지 않게</span>
 et,2,link180                        <span class="c">! 요소 타입 2 = LINK180 (3D 봉·트러스, 축력만)</span>
 kmin=3.55e7                         <span class="c">! 파라미터 kmin = 3.55e7</span>
 sectype,2,link                      <span class="c">! 단면 2 정의: LINK (단면적만)</span>
@@ -332,7 +332,7 @@ solve                               <span class="c">! 해석 실행 → [K]{u} =
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
 prnsol,u,y                          <span class="c">! 절점 변위 출력 (Y 성분)</span>
-etable,axstress,ls,1                <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
+etable,axstress,ls,1                <span class="c">! 요소 표 "axstress" = LS 1 (축응력)</span>
 pretab,axstress                     <span class="c">! 요소 표 값 출력 (요소별)</span></code></pre>
 <table class="res"><tr><th>노드 / 요소</th><th>변위 [in]</th><th>축응력 [psi]</th></tr>
 <tr><td>노드 2 / 요소 ①</td><td>−0.000810</td><td>4,210.5</td></tr>
@@ -414,7 +414,7 @@ solve                               <span class="c">! 해석 실행 → [K]{u} =
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
 prnsol,u,y                          <span class="c">! 절점 변위 출력 (Y 성분) — 노드 7 (y = 7.5 in) 값 = 계수 × δ</span>
-etable,axstress,ls,1                <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
+etable,axstress,ls,1                <span class="c">! 요소 표 "axstress" = LS 1 (축응력)</span>
 pretab,axstress                     <span class="c">! 요소 표 값 출력 (요소별)</span></code></pre>
 <table class="res"><tr><th>결과</th><th>값</th></tr>
 <tr><td>y = 7.5 in 변위 (8요소)</td><td><b>0.678 δ</b> (0.6782)</td></tr>
@@ -530,8 +530,8 @@ solve                               <span class="c">! 해석 실행 → [K]{u} =
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
 prnsol,u,x                          <span class="c">! 절점 변위 출력 (X 성분)</span>
-etable,axforce,smisc,1              <span class="c">! 요소 표 "axf" = SMISC 1 (축력)</span>
-etable,axstress,ls,1                <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
+etable,axforce,smisc,1              <span class="c">! 요소 표 "axforce" = SMISC 1 (축력)</span>
+etable,axstress,ls,1                <span class="c">! 요소 표 "axstress" = LS 1 (축응력)</span>
 pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요소별)</span></code></pre>
 <table class="res"><tr><th>결과 (위 가정)</th><th>값</th></tr>
 <tr><td>u<sub>D</sub> (x = 0.30 m)</td><td>+0.108 mm</td></tr>
@@ -669,8 +669,8 @@ solve                               <span class="c">! 해석 실행 → [K]{u} =
 finish                              <span class="c">! 현재 처리기 종료</span>
 /post1                              <span class="c">! 일반 후처리기 시작</span>
 prnsol,u,sum                        <span class="c">! 절점 변위 출력 (UX, UY, UZ, USUM) — global 기준 출력 (RSYS,0)</span>
-etable,axforce,smisc,1              <span class="c">! 요소 표 "axf" = SMISC 1 (축력)</span>
-etable,axstress,ls,1                <span class="c">! 요소 표 "axs" = LS 1 (축응력)</span>
+etable,axforce,smisc,1              <span class="c">! 요소 표 "axforce" = SMISC 1 (축력)</span>
+etable,axstress,ls,1                <span class="c">! 요소 표 "axstress" = LS 1 (축응력)</span>
 pretab,axforce,axstress             <span class="c">! 요소 표 값 출력 (요소별)</span></code></pre>
 <table class="res"><tr><th>부재</th><th>축력 [lb]</th><th>축응력 [psi]</th></tr>
 <tr><td>(1) 1–2</td><td>−1732.1</td><td>−216.5</td></tr>

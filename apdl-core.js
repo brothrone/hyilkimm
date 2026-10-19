@@ -115,7 +115,7 @@
     if (s === 'I') { var W1 = d[0], W2 = d[1], W3 = d[2], t1 = d[3], t2 = d[4], t3 = d[5]; return rectsProps([{ y0: -W1 / 2, y1: W1 / 2, z0: 0, z1: t1 }, { y0: -t3 / 2, y1: t3 / 2, z0: t1, z1: W3 - t2 }, { y0: -W2 / 2, y1: W2 / 2, z0: W3 - t2, z1: W3 }], W3 * t3, (W1 * t1 + W2 * t2) * 5 / 6); } // Help 그림: 원점 = 아래 플랜지(W1, t1) 밑면 가운데
     if (s === 'CHAN') { var C1 = d[0], C2 = d[1], C3 = d[2], u1 = d[3], u2 = d[4], u3 = d[5]; return rectsProps([{ y0: 0, y1: C1, z0: 0, z1: u1 }, { y0: 0, y1: u3, z0: u1, z1: C3 - u2 }, { y0: 0, y1: C2, z0: C3 - u2, z1: C3 }], C3 * u3, (C1 * u1 + C2 * u2) * 5 / 6); } // 원점 = 웨브 바깥 아래 모서리, W1·t1 = 아래 플랜지
     if (s === 'HREC') { var a1 = d[0], a2 = d[1], q1 = d[2], q2 = d[3], q3 = d[4], q4 = d[5]; return rectsProps([{ y0: 0, y1: q1, z0: 0, z1: a2 }, { y0: a1 - q2, y1: a1, z0: 0, z1: a2 }, { y0: q1, y1: a1 - q2, z0: 0, z1: q3 }, { y0: q1, y1: a1 - q2, z0: a2 - q4, z1: a2 }]); } // 원점 = 왼쪽 아래 모서리 (W1 폭, W2 높이, t1 왼 t2 오 t3 아래 t4 위)
-    if (s === 'ASEC') return { A: d[0], Iyy: d[1], Iyz: d[2], Izz: d[3], J: d[5] || 0, cy: 0, cz: 0, ymin: d[11] ? -d[11] / 2 : 0, ymax: d[11] ? d[11] / 2 : 0, zmin: d[10] ? -d[10] / 2 : 0, zmax: d[10] ? d[10] / 2 : 0, Asy: d[0], Asz: d[0], asec: true };
+    if (s === 'ASEC') return { A: d[0], Iyy: d[1], Iyz: d[2], Izz: d[3], J: d[5] || 0, cy: 0, cz: 0, ymin: -0.5, ymax: 0.5, zmin: -0.5, zmax: 0.5, /* Help: ASEC 은 ±0.5 로 가정 */ Asy: d[0], Asz: d[0], asec: true };
     throw new ApdlError('Section subtype ' + s + ' is not supported in this trainer (연습기 미지원 단면).');
   };
 

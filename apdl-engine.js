@@ -724,7 +724,7 @@
       var u12 = new Array(12).fill(0); info.id2.forEach(function (j, q) { u12[j] = ue[q]; });
       var ul = C.Tv(info.Tb, u12); if (info.Toff) ul = C.Tv(info.Toff, ul); var fl = C.Tv(info.kl, ul); for (i = 0; i < 12; i++) fl[i] -= info.fl[i];
       var P = info.P, r = { FXI: -fl[0], SFYI: -fl[1], SFZI: -fl[2], TQI: -fl[3], MYI: -fl[4], MZI: -fl[5], FXJ: fl[6], SFYJ: fl[7], SFZJ: fl[8], TQJ: fl[9], MYJ: fl[10], MZJ: fl[11] };
-      ['I', 'J'].forEach(function (s) { var My = r['MY' + s], Mz = r['MZ' + s]; r['SDIR' + s] = r['FX' + s] / P.A; r['SBYT' + s] = P.asec || !P.ymax ? 0 : -Mz * P.ymax / P.Izz; r['SBYB' + s] = P.asec || !P.ymin ? 0 : -Mz * P.ymin / P.Izz; r['SBZT' + s] = P.asec || !P.zmax ? 0 : My * P.zmax / P.Iyy; r['SBZB' + s] = P.asec || !P.zmin ? 0 : My * P.zmin / P.Iyy; });
+      ['I', 'J'].forEach(function (s) { var My = r['MY' + s], Mz = r['MZ' + s]; r['SDIR' + s] = r['FX' + s] / P.A; r['SBYT' + s] = !P.ymax ? 0 : -Mz * P.ymax / P.Izz; r['SBYB' + s] = !P.ymin ? 0 : -Mz * P.ymin / P.Izz; r['SBZT' + s] = !P.zmax ? 0 : My * P.zmax / P.Iyy; r['SBZB' + s] = !P.zmin ? 0 : My * P.zmin / P.Iyy; });
       return r;
     }
     if (info.kind === 'plane') {
