@@ -51,7 +51,7 @@
   Engine.prototype.noteOnce = function (m) { if (!this._once[m]) { this._once[m] = 1; this.note(m); } };
   Engine.prototype.warnOnce = function (m) { if (!this._once[m]) { this._once[m] = 1; this.warn(m); } };
 
-  Engine.prototype.param = function (n) { if (n === 'PI') return Math.PI; if (n in this.params) return this.params[n]; throw new ApdlError('Parameter ' + n + ' is undefined (정의되지 않은 파라미터).'); };
+  Engine.prototype.param = function (n) { if (n === 'PI') return Math.PI; if (n in this.params) return this.params[n]; throw new ApdlError('Parameter ' + n + ' is undefined (undefined parameter).'); };
   Engine.prototype.func = function (f, a) {
     var self = this, ang = function (x) { return self.afunDeg ? x * DEG : x; }, inv = function (x) { return self.afunDeg ? x / DEG : x; };
     switch (f) {
@@ -91,8 +91,8 @@
   };
   Engine.prototype.inActive = function (gp) { return this.fromGlobal(this.acs, gp); };
   Engine.prototype.axesAt = function (id, gp) { var cs = this.cs[id]; if (cs.type === 1) { var t = this.fromGlobal(id, gp)[1] * DEG; return mm(cs.R, [[Math.cos(t), -Math.sin(t), 0], [Math.sin(t), Math.cos(t), 0], [0, 0, 1]]); } return cs.R; };
-  Engine.prototype.nodeXYZ = function (n) { var nd = this.nodes[n]; if (!nd) throw new ApdlError('Node ' + n + ' is not defined (노드 없음).'); return nd.x; };
-  Engine.prototype.kpXYZ = function (k) { var kp = this.kps[k]; if (!kp) throw new ApdlError('Keypoint ' + k + ' is not defined (키포인트 없음).'); return kp.x; };
+  Engine.prototype.nodeXYZ = function (n) { var nd = this.nodes[n]; if (!nd) throw new ApdlError('Node ' + n + ' is not defined (no such node).'); return nd.x; };
+  Engine.prototype.kpXYZ = function (k) { var kp = this.kps[k]; if (!kp) throw new ApdlError('Keypoint ' + k + ' is not defined (no such keypoint).'); return kp.x; };
   Engine.prototype.wpG = function (x, y) { return add(this.wp.o, mv(this.wp.R, [x, y, 0])); };
   var CSNAME = { 0: 'CARTESIAN', 1: 'CYLINDRICAL', 2: 'SPHERICAL' };
 
@@ -105,7 +105,7 @@
     this.prog = P; this.nErr = 0; this.errLines = [];
     var pc = 0, stack = [], guard = 0;
     while (pc < P.length) {
-      if (++guard > 300000) { this.err('Too many commands were executed (무한 반복?). Execution stopped.'); break; }
+      if (++guard > 300000) { this.err('Too many commands were executed (infinite loop?). Execution stopped.'); break; }
       var L = P[pc], f = this.split(L.t), cmd = this.lab(f[0]);
       this.curLine = L.ln;
       if (opts.record !== false) this.hist.push(L.t);
@@ -130,7 +130,7 @@
         this.run1(cmd, f);
       } catch (e) {
         if (e instanceof ApdlError) this.err(e.message);
-        else { this.err('Internal error: ' + e.message + ' (연습기 오류 — 이 명령은 무시됨)'); if (typeof console !== 'undefined') console.error(e); }
+        else { this.err('Internal error: ' + e.message + ' (trainer error - this command is ignored)'); if (typeof console !== 'undefined') console.error(e); }
       }
       pc++;
     }
@@ -163,10 +163,10 @@
   };
   Engine.prototype.run1 = function (cmd, f) {
     var r = this.resolve(cmd), pn = PROCNAME[this.proc];
-    if (!r) throw new ApdlError(cmd + ' is not a recognized ' + pn + ' command, abbreviation, or macro.  This command will be ignored.' + (/^[*\/]?[A-Z][A-Z0-9]*$/.test(cmd) ? '' : '\n(명령이 아닌 글입니다. 메모는 ! 뒤에 쓰세요.)'));
+    if (!r) throw new ApdlError(cmd + ' is not a recognized ' + pn + ' command, abbreviation, or macro.  This command will be ignored.' + (/^[*\/]?[A-Z][A-Z0-9]*$/.test(cmd) ? '' : '\n(This is not a command. Write notes after !.)'));
     if (r.c.p !== 'A' && r.c.p.indexOf(this.proc) < 0) {
       var where = r.c.p.split('').map(function (x) { return x === 'P' ? '/PREP7' : x === 'S' ? '/SOLU' : x === 'O' ? '/POST1' : 'BEGIN'; }).join(', ');
-      throw new ApdlError(r.name + ' is not a recognized ' + pn + ' command, abbreviation, or macro.  This command will be ignored.\n(' + r.name + ' 은 ' + where + ' 에서 쓰는 명령입니다.)');
+      throw new ApdlError(r.name + ' is not a recognized ' + pn + ' command, abbreviation, or macro.  This command will be ignored.\n(' + r.name + ' is used in ' + where + '.)');
     }
     var self = this;
     r.c.f.call(this, f, function (i, d) { return self.num(f[i], d); }, function (i) { return self.lab(f[i]); }, r.name);
@@ -196,9 +196,9 @@
   reg('/TITLE', 'A', function (f) { this.title = f.slice(1).join(','); this.p(' TITLE='); this.p('  ' + this.title); });
   reg('/COM', 'A', function (f) { this.p(' ' + f.slice(1).join(',')); });
   reg('/PSYMB /PBC /PSF /ESHAPE /VIEW /REPLOT /AUTO /DIST /FOCUS /ANGLE /UNITS /NOPR /GOPR /SHOW /EOF KEYW /UIS /CONFIG /NERR /GRAPHICS /TRIAD /PLOPTS /RGB /COLOR /EDGE /NUMBER /WINDOW /ZOOM /BATCH /FILNAME /CWD /DEVICE', 'A', function (f, N, S, name) {
-    if (name === '/ESHAPE') { this.eshape = N(1) ? 1 : 0; this.p(' ELEMENT SHAPE KEY = ' + this.eshape + (this.eshape ? '  (보·링크를 단면 모양으로 그림)' : '')); } if (name === '/VIEW') this.view = [N(2), N(3), N(4)]; if (name === '/REPLOT' && this.lastPlot) this.plot = this.lastPlot;
-    if (name === '/PSYMB' && this.lab(f[1]) === 'NDIR') this.pnum.NDIR = N(2) === 1; if (name === '/PSYMB' && this.lab(f[1]) === 'ESYS') { this.pnum.ESYS = N(2) === 1; this.p(' ELEMENT COORDINATE SYSTEM SYMBOL KEY = ' + (N(2) === 1 ? 1 : 0) + '  (요소 x·y·z 축 표시)'); }
-    this.p(' ' + name + (f.length > 1 ? ' ' + f.slice(1).join(',') : '') + '  (그래픽 설정)');
+    if (name === '/ESHAPE') { this.eshape = N(1) ? 1 : 0; this.p(' ELEMENT SHAPE KEY = ' + this.eshape + (this.eshape ? '  (beams and links drawn with their section shape)' : '')); } if (name === '/VIEW') this.view = [N(2), N(3), N(4)]; if (name === '/REPLOT' && this.lastPlot) this.plot = this.lastPlot;
+    if (name === '/PSYMB' && this.lab(f[1]) === 'NDIR') this.pnum.NDIR = N(2) === 1; if (name === '/PSYMB' && this.lab(f[1]) === 'ESYS') { this.pnum.ESYS = N(2) === 1; this.p(' ELEMENT COORDINATE SYSTEM SYMBOL KEY = ' + (N(2) === 1 ? 1 : 0) + '  (show element x/y/z axes)'); }
+    this.p(' ' + name + (f.length > 1 ? ' ' + f.slice(1).join(',') : '') + '  (graphics setting)');
   });
   reg('/PNUM', 'A', function (f, N, S) { var key = S(1); this.pnum[key] = N(2) === 1; this.p(' ' + key + ' NUMBERING KEY = ' + (N(2) === 1 ? 1 : 0)); });
   reg('*AFUN', 'A', function (f, N, S) { this.afunDeg = S(1) === 'DEG'; this.p(' ANGLE UNITS FOR PARAMETRIC FUNCTIONS = ' + (this.afunDeg ? 'DEGREES' : 'RADIANS')); });
@@ -227,15 +227,15 @@
     else if (ent === 'LINE' && it1 === 'NUM') v = maxKey(this.lines);
     else if (ent === 'ACTIVE' && it1 === 'CSYS') v = this.acs;
     else throw new ApdlError('*GET item ' + [ent, it1, c1].join(',') + ' is not supported in this trainer.');
-    if (typeof v !== 'number' || isNaN(v)) throw new ApdlError('*GET could not retrieve the value (해석 결과나 번호를 확인).');
+    if (typeof v !== 'number' || isNaN(v)) throw new ApdlError('*GET could not retrieve the value (check the results or the number).');
     this.params[par] = v; this.p(' *GET  ' + par + '  FROM  ' + ent + ' ' + (num || '') + '  ITEM=' + it1 + ' ' + c1 + '  VALUE= ' + g(v));
   });
   reg('SAVE', 'A', function (f) { this.saved = this.dbJSON(); var fn = (f[1] || 'file') + '.' + (f[2] || 'db'); this.p(' SAVE ALL MODEL DATA TO FILE ' + fn); this.p(' DATA BASE WRITTEN ONTO FILE ' + fn); });
-  reg('RESUME', 'A', function (f) { var fn = (f[1] || 'file') + '.' + (f[2] || 'db'); if (!this.saved) throw new ApdlError('File ' + fn + ' does not exist (먼저 SAVE).'); this.dbLoad(this.saved); this.p(' RESUME ALL MODEL DATA FROM FILE ' + fn); });
+  reg('RESUME', 'A', function (f) { var fn = (f[1] || 'file') + '.' + (f[2] || 'db'); if (!this.saved) throw new ApdlError('File ' + fn + ' does not exist (SAVE first).'); this.dbLoad(this.saved); this.p(' RESUME ALL MODEL DATA FROM FILE ' + fn); });
 
   reg('ET', 'P', function (f, N, S) {
     var name = S(2), id = N(1); if (/^\d+$/.test(name)) name = { '180': 'LINK180', '188': 'BEAM188', '182': 'PLANE182', '183': 'PLANE183', '1': 'LINK1', '8': 'LINK8', '3': 'BEAM3', '42': 'PLANE42', '14': 'COMBIN14', '82': 'PLANE82' }[name] || name;
-    if (!ETYPES[name]) throw new ApdlError('Element type ' + name + ' is not supported in this trainer (지원: LINK180 BEAM188 PLANE182 / LINK1 LINK8 BEAM3 PLANE42 COMBIN14).');
+    if (!ETYPES[name]) throw new ApdlError('Element type ' + name + ' is not supported in this trainer (supported: LINK180 BEAM188 PLANE182 / LINK1 LINK8 BEAM3 PLANE42 COMBIN14).');
     var kop = new Array(19).fill(0); for (var i = 1; i <= 6; i++) kop[i] = N(2 + i);
     this.ets[id] = { name: name, kop: kop }; var t = ETYPES[name];
     this.p(''); this.p(' ELEMENT TYPE ' + pad(id, 8) + ' IS ' + rpad(name, 8) + ' ' + t.desc);
@@ -243,8 +243,8 @@
     this.p('  KEYOPT( 7-12)=' + kop.slice(7, 13).map(function (v) { return pad(v, 7); }).join(''));
     this.p(''); this.p(' CURRENT NODAL DOF SET IS  ' + this.allDofs().map(function (d) { return rpad(DOFS[d], 5); }).join(' '));
     this.p('  ' + (this.is2D() ? 'TWO' : 'THREE') + '-DIMENSIONAL MODEL');
-    if (t.legacy) this.warn('Element type ' + name + ' is a legacy (archived) element. 최신 ANSYS 에서는 ' + ({ LINK1: 'LINK180', LINK8: 'LINK180', BEAM3: 'BEAM188', PLANE42: 'PLANE182', PLANE82: 'PLANE183' }[name]) + ' + SECTYPE/SECDATA 를 씁니다.');
-    if (name === 'PLANE183' || name === 'PLANE82') this.note('이 연습기는 ' + name + ' 를 4절점(PLANE182 방식)으로 계산합니다.');
+    if (t.legacy) this.warn('Element type ' + name + ' is a legacy (archived) element.  In current ANSYS use ' + ({ LINK1: 'LINK180', LINK8: 'LINK180', BEAM3: 'BEAM188', PLANE42: 'PLANE182', PLANE82: 'PLANE183' }[name]) + ' + SECTYPE/SECDATA instead.');
+    if (name === 'PLANE183' || name === 'PLANE82') this.note('This trainer solves ' + name + ' as a 4-node element (like PLANE182).');
   });
   reg('KEYOPT', 'P', function (f, N) { var et = this.ets[N(1)]; if (!et) throw new ApdlError('Element type ' + N(1) + ' is not defined.'); et.kop[N(2)] = N(3); this.p(' ELEMENT TYPE ' + pad(N(1), 8) + ' IS ' + et.name + '  KEYOPT(' + N(2) + ')= ' + N(3)); });
   reg('R', 'P', function (f, N) { var id = N(1), v = []; for (var i = 2; i <= 7; i++) v.push(N(i)); this.reals[id] = v; this.p(' REAL CONSTANT SET ' + pad(id, 10) + '  ITEMS   1 TO   6'); this.p(v.map(function (x) { return pad(g(x), 13); }).join('')); });
@@ -256,7 +256,7 @@
     this.p(''); this.p(' SECTION ID NUMBER= ' + pad(N(1), 10)); this.p(' SECTION TYPE = ' + type); if (type === 'BEAM') this.p(' SECTION SUBTYPE = ' + sub); this.p(' SECTION NAME = ' + (f[4] || ''));
   });
   reg('SECDATA', 'P', function (f, N) {
-    var s = this.secs[this.curSec]; if (!s) throw new ApdlError('No section was defined (SECDATA 앞에 SECTYPE 이 필요).');
+    var s = this.secs[this.curSec]; if (!s) throw new ApdlError('No section was defined (SECTYPE is required before SECDATA).');
     s.data = f.slice(1).map(function (x, i) { return x === '' ? 0 : N(i + 1); }); delete s.props;
     if (s.type === 'LINK') { this.p(' SECTION ID ' + pad(this.curSec, 6) + '  LINK   AREA = ' + g(s.data[0])); return; }
     s.props = C.secProps(s); this.secSummary(this.curSec, s);
@@ -266,7 +266,7 @@
     this.p(''); this.p(' SECTION ID NUMBER:  ' + id); this.p(' BEAM SECTION SUBTYPE: ' + s.sub); this.p(' BEAM SECTION DATA SUMMARY:');
     [['Area', P.A], ['Iyy', P.Iyy], ['Iyz', P.Iyz || 0], ['Izz', P.Izz], ['Torsion Constant', P.J], ['Centroid Y', P.cy], ['Centroid Z', P.cz]].forEach(function (r) { self.p('  ' + rpad(r[0], 20) + ' = ' + g(r[1])); });
   };
-  reg('SECOFFSET', 'P', function (f, N, S) { var s = this.secs[this.curSec]; if (!s) throw new ApdlError('No section was defined (SECOFFSET 앞에 SECTYPE).'); s.off = S(1) || 'CENT'; s.offyz = [N(2), N(3)]; this.p(' SECTION ' + this.curSec + ' OFFSET LOCATION = ' + s.off + (s.off === 'USER' ? '  OFFSETY= ' + g(N(2)) + '  OFFSETZ= ' + g(N(3)) : '')); if (s.off === 'SHRC') this.noteOnce('SHRC: 연습기는 전단중심을 도심과 같은 위치로 둡니다 (대칭 단면은 정확, C형강은 근사).'); this.result = null; });
+  reg('SECOFFSET', 'P', function (f, N, S) { var s = this.secs[this.curSec]; if (!s) throw new ApdlError('No section was defined (SECTYPE is required before SECOFFSET).'); s.off = S(1) || 'CENT'; s.offyz = [N(2), N(3)]; this.p(' SECTION ' + this.curSec + ' OFFSET LOCATION = ' + s.off + (s.off === 'USER' ? '  OFFSETY= ' + g(N(2)) + '  OFFSETZ= ' + g(N(3)) : '')); if (s.off === 'SHRC') this.noteOnce('SHRC: the trainer places the shear center at the centroid (exact for symmetric sections, approximate for channels).'); this.result = null; });
   reg('SECNUM', 'P', function (f, N) { this.att.sec = N(1, 1); this.p(' SECTION ID NUMBER =  ' + this.att.sec); });
   reg('TYPE', 'P', function (f, N) { this.att.type = N(1, 1); this.p(' ELEMENT TYPE SET TO ' + pad(this.att.type, 8)); });
   reg('MAT', 'P', function (f, N) { this.att.mat = N(1, 1); this.p(' MATERIAL NUMBER SET TO ' + pad(this.att.mat, 8)); });
@@ -304,12 +304,12 @@
     if (this.cs[cs].type === 1) { var d = lb[1] - la[1]; if (d > 180) lb[1] -= 360; if (d < -180) lb[1] += 360; for (var i = 0; i <= 48; i++) { var t = i / 48; pts.push(this.toGlobal(cs, la[0] + (lb[0] - la[0]) * t, la[1] + (lb[1] - la[1]) * t, la[2] + (lb[2] - la[2]) * t)); } }
     else pts = [a, b];
     var id = lowestFree(this.lines); this.lines[id] = { k: [k1, k2], pts: pts, ndiv: f[3] ? N(3) : 0 };
-    this.p(' LINE CONNECTING KEYPOINTS ' + pad(k1, 6) + pad(k2, 6) + (this.cs[cs].type === 1 ? '   (CSYS ' + cs + ' → 원호)' : ''));
+    this.p(' LINE CONNECTING KEYPOINTS ' + pad(k1, 6) + pad(k2, 6) + (this.cs[cs].type === 1 ? '   (CSYS ' + cs + ' -> arc)' : ''));
     this.p(' LINE NUMBER = ' + pad(id, 6));
   });
   reg('LSYMM', 'P', function (f, N, S) {
     var comp = 'XYZ'.indexOf(S(1)); if (comp < 0) throw new ApdlError('Ncomp must be X, Y or Z.');
-    if (this.cs[this.acs].type !== 0) throw new ApdlError('LSYMM requires a Cartesian active coordinate system (활성 좌표계를 직교로).');
+    if (this.cs[this.acs].type !== 0) throw new ApdlError('LSYMM requires a Cartesian active coordinate system (make the active coordinate system Cartesian).');
     var ids = this.rng(f, 2, this.lines), self = this, cs = this.acs, made = [];
     var mir = function (gp) { var l = self.fromGlobal(cs, gp); l[comp] = -l[comp]; return self.toGlobal(cs, l[0], l[1], l[2]); };
     ids.forEach(function (id) { var Ln = self.lines[id]; if (!Ln) return; var ks = Ln.k.map(function (k) { var nk = lowestFree(self.kps); self.kps[nk] = { x: mir(self.kps[k].x) }; return nk; }); var nl = lowestFree(self.lines); self.lines[nl] = { k: ks, pts: Ln.pts.map(mir), ndiv: Ln.ndiv, att: Ln.att }; made.push(nl); });
@@ -331,10 +331,10 @@
     }
     this.p(' MERGE COINCIDENT ' + what + ' ITEMS.   ' + merged + ' ITEMS MERGED');
   });
-  reg('LATT', 'P', function (f, N) { if (f[4] && !f[5]) this.note('LATT 의 4번째 칸은 쓰이지 않는 자리(--)라서 ' + f[4] + ' 은(는) 무시됩니다. 방향 키포인트 KB 는 5번째 칸: latt,,,,,' + f[4] + ' (쉼표 5개)'); var att = { mat: N(1, 1), real: N(2, 1), type: N(3, 1), kb: f[5] ? N(5) : 0, sec: N(7, 1) }; for (var l in this.lines) if (!this.lines[l].meshed) this.lines[l].att = att; this.p(' ASSOCIATE ATTRIBUTES WITH SELECTED LINES:  MAT=' + att.mat + '  REAL=' + att.real + '  TYPE=' + att.type + '  KB=' + att.kb + '  SECNUM=' + att.sec); });
+  reg('LATT', 'P', function (f, N) { if (f[4] && !f[5]) this.note('The 4th field of LATT is an unused slot (--), so ' + f[4] + ' is ignored. The orientation keypoint KB goes in the 5th field: latt,,,,,' + f[4] + ' (5 commas)'); var att = { mat: N(1, 1), real: N(2, 1), type: N(3, 1), kb: f[5] ? N(5) : 0, sec: N(7, 1) }; for (var l in this.lines) if (!this.lines[l].meshed) this.lines[l].att = att; this.p(' ASSOCIATE ATTRIBUTES WITH SELECTED LINES:  MAT=' + att.mat + '  REAL=' + att.real + '  TYPE=' + att.type + '  KB=' + att.kb + '  SECNUM=' + att.sec); });
   reg('ESIZE', 'P', function (f, N) { this.esz = { size: N(1), ndiv: N(2) }; if (N(1)) this.p(' DEFAULT ELEMENT SIZE ON LINES= ' + g(N(1))); else this.p(' DEFAULT ELEMENT DIVISIONS PER LINE= ' + pad(N(2), 6)); });
   reg('LESIZE', 'P', function (f, N, S) { var ids = S(1) === 'ALL' ? keysN(this.lines) : [N(1)], self = this; ids.forEach(function (l) { var Ln = self.lines[l]; if (!Ln) throw new ApdlError('Line ' + l + ' is not defined.'); Ln.size = N(2); Ln.ndiv = N(4); }); this.p(' SPECIFIED DIVISIONS FOR LINES ' + ids.join(' ') + ':  SIZE=' + g(N(2)) + '  NDIV=' + N(4)); });
-  reg('MSHAPE MSHKEY MOPT SMRTSIZE AESIZE', 'P', function (f, N, S, name) { this.p(' ' + name + ' ' + f.slice(1).join(',') + '   (연습기: 면 메쉬는 삼각형 자유 메쉬로 처리)'); });
+  reg('MSHAPE MSHKEY MOPT SMRTSIZE AESIZE', 'P', function (f, N, S, name) { this.p(' ' + name + ' ' + f.slice(1).join(',') + '   (trainer: area meshes are always free triangle meshes)'); });
   reg('LMESH', 'P', function (f, N, S) {
     var ids = S(1) === 'ALL' ? keysN(this.lines) : this.rng(f, 1, this.lines), self = this, cnt = 0, kset = {};
     // ANSYS 처럼 키포인트 노드를 먼저 (키포인트 번호 순서로) 만들고, 선 안쪽 노드는 그 다음
@@ -344,7 +344,7 @@
       var Ln = self.lines[id]; if (!Ln) throw new ApdlError('Line ' + id + ' is not defined.'); if (Ln.meshed) return;
       var len = 0, seg = [0]; for (var i = 1; i < Ln.pts.length; i++) { len += norm(sub(Ln.pts[i], Ln.pts[i - 1])); seg.push(len); }
       var nd = Ln.ndiv || (Ln.size ? Math.max(1, Math.round(len / Ln.size)) : 0) || self.esz.ndiv || (self.esz.size ? Math.max(1, Math.round(len / self.esz.size)) : 0);
-      if (!nd) { var turn = 0, P = Ln.pts; for (var q = 1; q < P.length - 1; q++) { var d1 = C.sub(P[q], P[q - 1]), d2 = C.sub(P[q + 1], P[q]), cs = C.dot(d1, d2) / (Math.hypot(d1[0], d1[1], d1[2]) * Math.hypot(d2[0], d2[1], d2[2]) || 1); turn += Math.acos(Math.max(-1, Math.min(1, cs))) * 180 / Math.PI; } nd = Math.min(15, Math.max(3, Math.ceil(turn / 15 - 1e-9))); self.noteOnce('No element size was specified (ESIZE 없음) — default DESIZE is used: at least 3 elements per line (MINL=3), 15° per element on arcs (ANGL), at most 15 (MXEL).'); }
+      if (!nd) { var turn = 0, P = Ln.pts; for (var q = 1; q < P.length - 1; q++) { var d1 = C.sub(P[q], P[q - 1]), d2 = C.sub(P[q + 1], P[q]), cs = C.dot(d1, d2) / (Math.hypot(d1[0], d1[1], d1[2]) * Math.hypot(d2[0], d2[1], d2[2]) || 1); turn += Math.acos(Math.max(-1, Math.min(1, cs))) * 180 / Math.PI; } nd = Math.min(15, Math.max(3, Math.ceil(turn / 15 - 1e-9))); self.noteOnce('No element size was specified (no ESIZE) - default DESIZE is used: at least 3 elements per line (MINL=3), 15° per element on arcs (ANGL), at most 15 (MXEL).'); }
       var at = function (s) { for (var i = 1; i < seg.length; i++) if (s <= seg[i] + 1e-12) { var t = (s - seg[i - 1]) / ((seg[i] - seg[i - 1]) || 1); return add(Ln.pts[i - 1], scl(sub(Ln.pts[i], Ln.pts[i - 1]), t)); } return Ln.pts[Ln.pts.length - 1]; };
       var kn = function (k) { if (self.kpNode[k] && self.nodes[self.kpNode[k]]) return self.kpNode[k]; var nn = maxKey(self.nodes) + 1; self.addNode(nn, self.kps[k].x.slice()); self.kpNode[k] = nn; return nn; };
       var list = [kn(Ln.k[0])]; for (var j = 1; j < nd; j++) { var nn = maxKey(self.nodes) + 1; self.addNode(nn, at(len * j / nd)); list.push(nn); } list.push(kn(Ln.k[1]));
@@ -354,12 +354,12 @@
     });
     this.p(' GENERATE NODES AND ELEMENTS   IN  ALL  SELECTED LINES'); this.p(''); this.p(' NUMBER OF LINES MESHED   = ' + pad(cnt, 9)); this.p(' MAXIMUM NODE NUMBER      = ' + pad(maxKey(this.nodes), 9)); this.p(' MAXIMUM ELEMENT NUMBER   = ' + pad(maxKey(this.elems), 9));
   });
-  reg('LCLEAR', 'P', function () { this.p(' LCLEAR  (연습기: 건너뜀)'); });
+  reg('LCLEAR', 'P', function () { this.p(' LCLEAR  (trainer: skipped)'); });
 
-  Engine.prototype.PB = function () { var pb = typeof PolyBool !== 'undefined' ? PolyBool : root.PolyBool; if (!pb) throw new ApdlError('Area Boolean library could not be loaded (인터넷 연결 확인).'); return pb; };
+  Engine.prototype.PB = function () { var pb = typeof PolyBool !== 'undefined' ? PolyBool : root.PolyBool; if (!pb) throw new ApdlError('Area Boolean library could not be loaded (check the internet connection).'); return pb; };
   Engine.prototype.newArea = function (regions) { var id = lowestFree(this.areas); this.areas[id] = { regions: regions }; return id; };
   Engine.prototype.wpPoly = function (pts) { var self = this; return pts.map(function (q) { var p3 = self.wpG(q[0], q[1]); return [p3[0], p3[1]]; }); };
-  Engine.prototype.areaField = function (fld, except) { var a = this.lab(fld); if (a === 'ALL') return keysN(this.areas).filter(function (n) { return except.indexOf(n) < 0; }); var n = this.num(fld); if (!this.areas[n]) throw new ApdlError('Area ' + n + ' is not defined (APLOT 과 /PNUM,AREA,1 로 면 번호 확인).'); return [n]; };
+  Engine.prototype.areaField = function (fld, except) { var a = this.lab(fld); if (a === 'ALL') return keysN(this.areas).filter(function (n) { return except.indexOf(n) < 0; }); var n = this.num(fld); if (!this.areas[n]) throw new ApdlError('Area ' + n + ' is not defined (check area numbers with APLOT and /PNUM,AREA,1).'); return [n]; };
   reg('RECTNG', 'P', function (f, N) { var x1 = N(1), x2 = N(2), y1 = N(3), y2 = N(4), id = this.newArea([this.wpPoly([[x1, y1], [x2, y1], [x2, y2], [x1, y2]])]); this.p(' CREATE A RECTANGULAR AREA WITH'); this.p('    X-DISTANCES FROM ' + pad(g(x1), 12) + ' TO ' + pad(g(x2), 12)); this.p('    Y-DISTANCES FROM ' + pad(g(y1), 12) + ' TO ' + pad(g(y2), 12)); this.p('    ON THE WORKING PLANE'); this.p(''); this.p(' OUTPUT AREA = ' + pad(id, 9)); });
   reg('BLC4', 'P', function (f, N) { var x = N(1), y = N(2), w = N(3), h = N(4), id = this.newArea([this.wpPoly([[x, y], [x + w, y], [x + w, y + h], [x, y + h]])]); this.p(' CREATE A RECTANGULAR AREA (BLC4)'); this.p(' OUTPUT AREA = ' + pad(id, 9)); });
   reg('BLC5', 'P', function (f, N) { var x = N(1), y = N(2), w = N(3) / 2, h = N(4) / 2, id = this.newArea([this.wpPoly([[x - w, y - h], [x + w, y - h], [x + w, y + h], [x - w, y + h]])]); this.p(' CREATE A RECTANGULAR AREA (BLC5)'); this.p(' OUTPUT AREA = ' + pad(id, 9)); });
@@ -390,7 +390,7 @@
     if (S(4) !== 'KEEP') a1.forEach(function (k) { if (made.indexOf(k) < 0) delete self.areas[k]; });
     if (S(5) !== 'KEEP') a2.forEach(function (k) { if (made.indexOf(k) < 0) delete self.areas[k]; });
     this.p(' SUBTRACT AREAS'); this.p(' BASE AREAS   = ' + a1.join(' ')); this.p(' SUBTRACTED   = ' + a2.join(' ')); this.p(''); this.p(' OUTPUT AREA' + (made.length > 1 ? 'S' : '') + ' = ' + made.join(' '));
-    if (!made.length) this.warn('The subtraction removed the whole area (면이 모두 사라짐).');
+    if (!made.length) this.warn('The subtraction removed the whole area (the whole area was removed).');
   });
   reg('ADELE', 'P', function (f) { var self = this, ids = this.areaField(f[1], []); ids.forEach(function (k) { delete self.areas[k]; }); this.p(' DELETE AREAS ' + ids.join(' ')); });
   reg('AMESH', 'P', function (f, N, S) {
@@ -401,13 +401,13 @@
       var xs = [], ys = []; A.regions.forEach(function (r) { r.forEach(function (q) { xs.push(q[0]); ys.push(q[1]); }); });
       var size = Math.max(Math.max.apply(null, xs) - Math.min.apply(null, xs), Math.max.apply(null, ys) - Math.min.apply(null, ys));
       var h = self.esz.size || (self.esz.ndiv ? size / (self.esz.ndiv * 2) : size / 12);
-      if (!self.esz.size) self.noteOnce('No element size was specified (ESIZE 없음). Default size ' + g(h) + ' is used.');
+      if (!self.esz.size) self.noteOnce('No element size was specified (no ESIZE). Default size ' + g(h) + ' is used.');
       var M = C.meshArea(A.regions, h), map = [];
       M.pts.forEach(function (q) { var nn = maxKey(self.nodes) + 1; self.addNode(nn, [q[0], q[1], 0]); map.push(nn); });
       M.tris.forEach(function (t) { self.addElem(maxKey(self.elems) + 1, [map[t[0]], map[t[1]], map[t[2]], map[t[2]]]); });
       A.meshed = true;
     });
-    this.p(' GENERATE NODES AND ELEMENTS   IN  ALL  SELECTED AREAS'); this.p('    ** AREA MESHING: FREE TRIANGLES (연습기) **'); this.p(''); this.p(' NUMBER OF AREAS MESHED   = ' + pad(ids.length, 9)); this.p(' MAXIMUM NODE NUMBER      = ' + pad(maxKey(this.nodes), 9)); this.p(' MAXIMUM ELEMENT NUMBER   = ' + pad(maxKey(this.elems), 9));
+    this.p(' GENERATE NODES AND ELEMENTS   IN  ALL  SELECTED AREAS'); this.p('    ** AREA MESHING: FREE TRIANGLES (trainer) **'); this.p(''); this.p(' NUMBER OF AREAS MESHED   = ' + pad(ids.length, 9)); this.p(' MAXIMUM NODE NUMBER      = ' + pad(maxKey(this.nodes), 9)); this.p(' MAXIMUM ELEMENT NUMBER   = ' + pad(maxKey(this.elems), 9));
   });
   reg('ACLEAR', 'P', function () { var self = this; Object.keys(this.elems).forEach(function (e) { if (ETYPES[self.ets[self.elems[e].type].name].kind === 'plane') delete self.elems[e]; }); for (var a in this.areas) delete this.areas[a].meshed; this.result = null; this.p(' CLEAR AREA MESH'); });
   reg('A', 'P', function (f, N) {
@@ -422,18 +422,18 @@
     var ring = segs[0].pts.slice(), endK = segs[0].k[1], startK = segs[0].k[0], used = [0];
     while (used.length < segs.length) {
       var found = -1; for (var j = 0; j < segs.length; j++) if (used.indexOf(j) < 0 && (segs[j].k[0] === endK || segs[j].k[1] === endK)) { found = j; break; }
-      if (found < 0) throw new ApdlError('Lines ' + ids.join(',') + ' do not form a closed loop (선이 닫힌 경계를 이루지 않음).');
+      if (found < 0) throw new ApdlError('Lines ' + ids.join(',') + ' do not form a closed loop (the lines do not form a closed boundary).');
       var sg = segs[found], pts = sg.k[0] === endK ? sg.pts : sg.pts.slice().reverse(); ring = ring.concat(pts.slice(1)); endK = sg.k[0] === endK ? sg.k[1] : sg.k[0]; used.push(found);
     }
     if (endK !== startK) throw new ApdlError('Lines ' + ids.join(',') + ' do not form a closed loop.');
     ring.pop(); var id = this.newArea([ring]); this.p(' AREA DEFINED BY LINES ' + ids.join(' ')); this.p(' OUTPUT AREA = ' + pad(id, 9));
   });
-  reg('AOVLAP AGLUE APTN ARSYM AGEN V BLOCK KGEN LGEN LFILLT DL SFL SFA DA VMESH', 'P', function (f, N, S, name) { throw new ApdlError(name + ' is a valid ANSYS command but is not supported in this trainer (연습기 미지원).'); });
+  reg('AOVLAP AGLUE APTN ARSYM AGEN V BLOCK KGEN LGEN LFILLT DL SFL SFA DA VMESH', 'P', function (f, N, S, name) { throw new ApdlError(name + ' is a valid ANSYS command but is not supported in this trainer (not supported).'); });
 
   Engine.prototype.addNode = function (id, x, T) { this.nodes[id] = { x: x, T: T || null }; this.lastNodes.push(id); if (this.lastNodes.length > 2) this.lastNodes.shift(); this.result = null; };
   Engine.prototype.addElem = function (id, ns, extra) {
-    var et = this.ets[this.att.type]; if (!et) throw new ApdlError('Element type ' + this.att.type + ' is not defined (ET 먼저, 또는 TYPE 확인).');
-    ns.forEach(function (n) { if (!this.nodes[n]) throw new ApdlError('Node ' + n + ' is not defined (요소에 쓰인 노드가 없음).'); }, this);
+    var et = this.ets[this.att.type]; if (!et) throw new ApdlError('Element type ' + this.att.type + ' is not defined (define ET first, or check TYPE).');
+    ns.forEach(function (n) { if (!this.nodes[n]) throw new ApdlError('Node ' + n + ' is not defined (a node used by the element does not exist).'); }, this);
     var kind = ETYPES[et.name].kind, e = { n: ns, type: this.att.type, mat: this.att.mat, real: this.att.real, sec: this.att.sec, k: null };
     if (kind === 'beam' && ns.length >= 3) { e.k = this.nodes[ns[2]].x.slice(); e.kn = ns[2]; e.n = ns.slice(0, 2); }
     else if (kind !== 'plane' && ns.length > 2) e.n = ns.slice(0, 2);
@@ -462,7 +462,7 @@
   });
   reg('NGEN', 'P', function (f, N, S) {
     var it = N(1), inc = N(2), ids = S(3) === 'ALL' ? this.selN() : this.rng(f, 3, this.nodes), d = [N(6), N(7), N(8)], self = this;
-    if (it < 2) throw new ApdlError('ITIME must be at least 2 (원본을 포함한 총 개수).');
+    if (it < 2) throw new ApdlError('ITIME must be at least 2 (total count including the original).');
     ids.forEach(function (n) { var nd = self.nodes[n]; if (!nd) return; var l = self.inActive(nd.x); for (var i = 1; i < it; i++) self.nodes[n + i * inc] = { x: self.toGlobal(self.acs, l[0] + d[0] * i, l[1] + d[1] * i, l[2] + d[2] * i), T: nd.T }; });
     this.result = null;
     this.p(' GENERATE ' + pad(it - 1, 4) + ' ADDITIONAL SETS OF NODES FROM SET BEGINNING WITH NODE ' + ids[0]); this.p(' TO ' + ids[ids.length - 1] + '   NODE NUMBER INCREMENT = ' + inc); this.p(' GEOMETRY INCREMENTS = ' + d.map(function (v) { return pad(g(v), 12); }).join('') + '  IN CSYS= ' + this.acs);
@@ -471,7 +471,7 @@
     var it = N(1), ninc = N(2), ids = !f[3] ? [maxKey(this.elems)] : S(3) === 'ALL' ? this.selE() : this.rng(f, 3, this.elems), self = this;
     for (var i = 1; i < it; i++) ids.forEach(function (e) {
       var s = self.elems[e]; if (!s) throw new ApdlError('Element ' + e + ' is not defined.');
-      var ns = s.n.map(function (n) { return n + i * ninc; }); ns.forEach(function (n) { if (!self.nodes[n]) throw new ApdlError('EGEN: node ' + n + ' is not defined (먼저 NGEN 등으로 노드를 만드세요).'); });
+      var ns = s.n.map(function (n) { return n + i * ninc; }); ns.forEach(function (n) { if (!self.nodes[n]) throw new ApdlError('EGEN: node ' + n + ' is not defined (create the nodes first, e.g. with NGEN).'); });
       self.elems[maxKey(self.elems) + 1] = { n: ns, type: s.type + N(7) * i, mat: s.mat + N(6) * i, real: s.real + N(8) * i, sec: s.sec + N(10) * i, k: s.k };
     });
     this.result = null;
@@ -499,7 +499,7 @@
     if (type === 'ALL') { if (w === 'n') this.nsel = null; else this.esel = null; this.p(' SELECT ALL ' + (w === 'n' ? 'NODES' : 'ELEMENTS')); return; }
     if (type === 'NONE') { if (w === 'n') this.nsel = {}; else this.esel = {}; this.p(' UNSELECT ALL'); return; }
     var lo = f[4] !== undefined && f[4] !== '' ? N(4) : null, hi = f[5] !== undefined && f[5] !== '' ? N(5) : lo, span = Math.abs(hi - lo), tol = 1e-5 * (span || Math.abs(lo || 1) || 1);
-    if (lo === null) throw new ApdlError('VMIN is missing (예: nsel,s,loc,x,0).');
+    if (lo === null) throw new ApdlError('VMIN is missing (e.g. nsel,s,loc,x,0).');
     var val = function (k) {
       if (item === 'NODE' || item === 'ELEM' || item === '') return k;
       if (item === 'LOC') { if (w === 'n') return self.inActive(self.nodes[k].x)['XYZ'.indexOf(S(3))]; var c = [0, 0, 0]; set[k].n.forEach(function (n) { c = add(c, scl(self.nodes[n].x, 1 / set[k].n.length)); }); return self.inActive(c)['XYZ'.indexOf(S(3))]; }
@@ -521,7 +521,7 @@
   function dofIdx(l) { var i = DOFS.indexOf(l); if (i < 0) throw new ApdlError('Label ' + l + ' is not a valid DOF label (UX UY UZ ROTX ROTY ROTZ ALL).'); return i; }
   reg('D', 'PS', function (f, N, S) {
     var self = this, labs = [S(2)].concat([7, 8, 9, 10, 11].map(S).filter(Boolean)), v = N(3);
-    if (!labs[0]) throw new ApdlError('DOF label is missing (예: d,1,ux,0).');
+    if (!labs[0]) throw new ApdlError('DOF label is missing (e.g. d,1,ux,0).');
     var ids = S(1) === 'ALL' ? this.selN() : f[5] ? this.rng([0, f[1], f[5], f[6]], 1, this.nodes) : [N(1)];
     ids.forEach(function (n) { if (!self.nodes[n]) throw new ApdlError('Node ' + n + ' is not defined.'); var d = self.D[n] || (self.D[n] = {}); labs.forEach(function (l) { if (l === 'ALL') DOFS.forEach(function (x, i) { d[i] = v; }); else d[dofIdx(l)] = v; }); });
     this.result && (this.result.stale = 1);
@@ -549,7 +549,7 @@
     if (S(3) && S(3) !== 'PRES') throw new ApdlError('Surface load label must be PRES.');
     var vi = N(4), vj = f[5] === undefined || f[5] === '' ? vi : N(5), io = N(8), jo = f[9] === undefined || f[9] === '' ? 0 : N(9), lr = N(10), n = 0;
     ids.forEach(function (e) { var el = self.elems[e]; if (!el) throw new ApdlError('Element ' + e + ' is not defined.'); var k = ETYPES[self.ets[el.type].name].kind; if (k !== 'beam' && k !== 'beam3') return; (self.SFB[e] || (self.SFB[e] = {}))[lk] = { vi: vi, vj: vj, io: io, jo: jo, lr: lr }; n++; });
-    if (!n) this.warn('No beam elements were selected for SFBEAM (보 요소가 아님).');
+    if (!n) this.warn('No beam elements were selected for SFBEAM (not a beam element).');
     this.p(' SPECIFIED SURFACE LOAD PRES FOR ELEMENTS ' + (ids.length > 1 ? ids[0] + ' TO ' + ids[ids.length - 1] : ids[0]) + '   LKEY= ' + lk); this.p(' VALI= ' + g(vi) + '   VALJ= ' + g(vj));
   });
   reg('SFEDELE SFBDELE', 'PS', function (f, N, S) { var self = this, ids = S(1) === 'ALL' ? keysN(this.SFB) : [N(1)]; ids.forEach(function (e) { if (!f[2] || S(2) === 'ALL') delete self.SFB[e]; else if (self.SFB[e]) delete self.SFB[e][N(2)]; }); this.p(' DELETE SURFACE LOADS FOR ELEMENTS ' + ids.join(' ')); });
@@ -560,16 +560,16 @@
   reg('SOLVE', 'S', function () { this.solve(); });
 
   reg('SET', 'O', function () { this.needRes(); this.p(' USE LOAD STEP     1  SUBSTEP     1  FOR LOAD CASE 0'); this.p(''); this.p(' SET COMMAND GOT LOAD STEP=     1  SUBSTEP=     1  CUMULATIVE ITERATION=     1'); this.p('   TIME/FREQUENCY=  1.0000'); this.p(' TITLE= ' + this.title); });
-  reg('RSYS', 'O', function (f, N) { if (N(1)) this.noteOnce('이 연습기는 결과를 항상 전역 직교(RSYS,0)로 출력합니다.'); this.p(' ACTIVE RESULTS COORDINATE SYSTEM= 0'); });
+  reg('RSYS', 'O', function (f, N) { if (N(1)) this.noteOnce('This trainer always reports results in the global Cartesian system (RSYS,0).'); this.p(' ACTIVE RESULTS COORDINATE SYSTEM= 0'); });
 
   // ================= 해석 =================
   Engine.prototype.allDofs = function () { var s = {}; for (var k in this.ets) etDofs(this.ets[k]).forEach(function (d) { s[d] = 1; }); return Object.keys(s).map(Number).sort(); };
   Engine.prototype.is2D = function () { var d = this.allDofs(); return d.length > 0 && d.indexOf(2) < 0; };
-  Engine.prototype.matOf = function (e) { var m = this.mats[e.mat]; if (!m || m.EX === undefined) throw new ApdlError('Material ' + e.mat + ' (EX) is not defined (mp,ex,' + e.mat + ',값).'); var nu = m.PRXY === undefined ? 0.3 : m.PRXY; return { E: m.EX, nu: nu, G: m.GXY || m.EX / (2 * (1 + nu)) }; };
+  Engine.prototype.matOf = function (e) { var m = this.mats[e.mat]; if (!m || m.EX === undefined) throw new ApdlError('Material ' + e.mat + ' (EX) is not defined (mp,ex,' + e.mat + ',value).'); var nu = m.PRXY === undefined ? 0.3 : m.PRXY; return { E: m.EX, nu: nu, G: m.GXY || m.EX / (2 * (1 + nu)) }; };
   Engine.prototype.realOf = function (e, what) { var r = this.reals[e.real]; if (!r) throw new ApdlError('Real constant set ' + e.real + ' is not defined (R,' + e.real + ',' + what + ').'); return r; };
   Engine.prototype.secOf = function (e, kind) {
     var s = this.secs[e.sec];
-    if (!s) throw new ApdlError('Section ' + e.sec + ' is not defined (SECTYPE, SECDATA 가 필요).');
+    if (!s) throw new ApdlError('Section ' + e.sec + ' is not defined (SECTYPE and SECDATA are required).');
     if (kind === 'LINK' && s.type !== 'LINK') throw new ApdlError('LINK180 uses section ' + e.sec + ' which is not a LINK section (sectype,' + e.sec + ',link).');
     if (kind === 'BEAM' && s.type !== 'BEAM') throw new ApdlError('BEAM188 uses section ' + e.sec + ' which is not a BEAM section.');
     if (!s.data.length) throw new ApdlError('Section ' + e.sec + ' has no SECDATA.');
@@ -577,7 +577,7 @@
   };
   Engine.prototype.beamAxes = function (e) {
     var a = this.nodes[e.n[0]].x, b = this.nodes[e.n[1]].x, x = unit(sub(b, a)), z, y;
-    if (e.k) { var v = sub(e.k, a); z = sub(v, scl(x, dot(v, x))); if (norm(z) < 1e-12) throw new ApdlError('Orientation node K is on the beam axis (방향 노드가 보 축 위에 있음).'); z = unit(z); y = cross(z, x); }
+    if (e.k) { var v = sub(e.k, a); z = sub(v, scl(x, dot(v, x))); if (norm(z) < 1e-12) throw new ApdlError('Orientation node K is on the beam axis (the orientation node lies on the beam axis).'); z = unit(z); y = cross(z, x); }
     else { if (Math.abs(x[2]) > 1 - 1e-9) y = [0, 1, 0]; else y = unit(cross([0, 0, 1], x)); z = cross(x, y); }
     return { x: x, y: y, z: z, L: norm(sub(b, a)) };
   };
@@ -590,7 +590,7 @@
       var L = norm(sub(b, a)), x = L ? scl(sub(b, a), 1 / L) : [1, 0, 0], kk, A;
       if (kind === 'link') {
         var m = this.matOf(e); if (!L) throw new ApdlError('Element ' + eid + ' has zero length.');
-        if (et.name === 'LINK180') { if (this.secs[e.sec]) A = this.secOf(e, 'LINK').A; else if (this.reals[e.real]) { A = this.reals[e.real][0]; this.noteOnce('LINK180 에 단면(SECTYPE)이 없어 실상수 R 값(' + g(A) + ')을 단면적으로 사용했습니다.'); } else this.secOf(e, 'LINK'); }
+        if (et.name === 'LINK180') { if (this.secs[e.sec]) A = this.secOf(e, 'LINK').A; else if (this.reals[e.real]) { A = this.reals[e.real][0]; this.noteOnce('LINK180 has no section (SECTYPE); the real constant R value (' + g(A) + ') was used as the area.'); } else this.secOf(e, 'LINK'); }
         else A = this.realOf(e, 'AREA')[0];
         if (!A) throw new ApdlError('Cross-sectional area of element ' + eid + ' is zero.');
         kk = m.E * A / L; info.EA = m.E * A; info.A = A;
@@ -598,7 +598,7 @@
       } else {
         kk = this.realOf(e, 'K')[0]; info.k = kk; var k2 = et.kop[2];
         if (k2 >= 1 && k2 <= 6) { info.oneD = k2 - 1; return { ke: [[kk, -kk], [-kk, kk]], fe: null, dofs: [[e.n[0], k2 - 1], [e.n[1], k2 - 1]], info: info }; }
-        if (!L) throw new ApdlError('COMBIN14 element ' + eid + ' has zero length (1-D 스프링이면 KEYOPT(2)=1~3).');
+        if (!L) throw new ApdlError('COMBIN14 element ' + eid + ' has zero length (for a 1-D spring use KEYOPT(2)=1 to 3).');
       }
       info.x = x; info.L = L;
       var k6 = []; for (r = 0; r < 6; r++) { k6.push([]); for (c = 0; c < 6; c++) k6[r].push((r < 3 === c < 3 ? 1 : -1) * kk * x[r % 3] * x[c % 3]); }
@@ -608,8 +608,8 @@
     if (kind === 'beam' || kind === 'beam3') {
       var M = this.matOf(e), ax = this.beamAxes(e), P;
       if (!ax.L) throw new ApdlError('Element ' + eid + ' has zero length.');
-      if (kind === 'beam') { P = this.secOf(e, 'BEAM'); if (P.asec && !P.J) this.warnOnce('ASEC section has J = 0 (비틀림 상수 0 → 비틀림 강성 없음).'); }
-      else { var rr = this.realOf(e, 'AREA,IZZ,HEIGHT'); P = { A: rr[0], Izz: rr[1], Iyy: rr[1], J: rr[1], H: rr[2], ymin: -(rr[2] || 0) / 2, ymax: (rr[2] || 0) / 2 }; if (!P.A) throw new ApdlError('BEAM3 needs real constant AREA (R,' + e.real + ',A,IZZ,HEIGHT).'); if (!P.Izz) this.warnOnce('BEAM3 real constant set ' + e.real + ' has IZZ = 0 (굽힘 강성 없음 — 축력만 받는 부재로 계산).'); if (Math.abs(ax.x[2]) > 1e-9) throw new ApdlError('BEAM3 is a 2-D element: nodes must lie in the X-Y plane.'); }
+      if (kind === 'beam') { P = this.secOf(e, 'BEAM'); if (P.asec && !P.J) this.warnOnce('ASEC section has J = 0 (torsion constant 0 -> no torsional stiffness).'); }
+      else { var rr = this.realOf(e, 'AREA,IZZ,HEIGHT'); P = { A: rr[0], Izz: rr[1], Iyy: rr[1], J: rr[1], H: rr[2], ymin: -(rr[2] || 0) / 2, ymax: (rr[2] || 0) / 2 }; if (!P.A) throw new ApdlError('BEAM3 needs real constant AREA (R,' + e.real + ',A,IZZ,HEIGHT).'); if (!P.Izz) this.warnOnce('BEAM3 real constant set ' + e.real + ' has IZZ = 0 (no bending stiffness - solved as an axial-only member).'); if (Math.abs(ax.x[2]) > 1e-9) throw new ApdlError('BEAM3 is a 2-D element: nodes must lie in the X-Y plane.'); }
       var kl = C.beamK(M.E, M.G, P, ax.L, kind === 'beam'), Lm = [ax.x, ax.y, ax.z], Tb = [];
       for (r = 0; r < 12; r++) Tb.push(new Array(12).fill(0));
       for (var blk = 0; blk < 4; blk++) for (r = 0; r < 3; r++) for (c = 0; c < 3; c++) Tb[blk * 3 + r][blk * 3 + c] = Lm[r][c];
@@ -645,9 +645,9 @@
   Engine.prototype.solve = function () {
     var self = this, ids = keysN(this.elems), r, c, i, j, n, k;
     this.p(''); this.p(' *****  MAPDL SOLVE    COMMAND  *****');
-    if (!ids.length) throw new ApdlError('There are no elements defined (요소가 없음). The solution cannot proceed.');
+    if (!ids.length) throw new ApdlError('There are no elements defined (no elements). The solution cannot proceed.');
     if (!this.title) this.note('There is no title defined for this analysis.');
-    var kpN = function (kk) { var nn = self.kpNode[kk]; if (nn && self.nodes[nn]) return nn; var b = self.nearest(self.nodes, self.kps[kk].x); if (b && norm(sub(self.nodes[b].x, self.kps[kk].x)) < 1e-6) return b; throw new ApdlError('Keypoint ' + kk + ' has no node (LMESH 먼저) — DK/FK cannot be transferred.'); };
+    var kpN = function (kk) { var nn = self.kpNode[kk]; if (nn && self.nodes[nn]) return nn; var b = self.nearest(self.nodes, self.kps[kk].x); if (b && norm(sub(self.nodes[b].x, self.kps[kk].x)) < 1e-6) return b; throw new ApdlError('Keypoint ' + kk + ' has no node (LMESH first) — DK/FK cannot be transferred.'); };
     var D = JSON.parse(JSON.stringify(this.D)), F = JSON.parse(JSON.stringify(this.F));
     for (k in this.DK) { n = kpN(k); D[n] = D[n] || {}; for (i in this.DK[k]) D[n][i] = this.DK[k][i]; }
     for (k in this.FK) { n = kpN(k); F[n] = F[n] || {}; for (i in this.FK[k]) F[n][i] = (F[n][i] || 0) + this.FK[k][i]; }
@@ -680,17 +680,17 @@
     for (n in F) { if (!map[n]) { this.warn('The load on node ' + n + ' is ignored: the node is not attached to any element.'); continue; } for (i in F[n]) { var gg = map[n][i]; if (gg < 0) { this.warn(FNAME[i] + ' on node ' + n + ' is ignored: this DOF is not active on the node.'); continue; } Fa[gg] += F[n][i]; } }
     var fixed = new Int8Array(ndof), uval = new Float64Array(ndof), nfix = 0;
     for (n in D) { if (!map[n]) continue; for (i in D[n]) { gg = map[n][i]; if (gg >= 0) { if (!fixed[gg]) nfix++; fixed[gg] = 1; uval[gg] = D[n][i]; } } }
-    if (!nfix) throw new ApdlError('There are no DOF constraints (구속 없음). The model is not supported (rigid body motion).');
+    if (!nfix) throw new ApdlError('There are no DOF constraints (no constraints). The model is not supported (rigid body motion).');
     var kmax = 0; for (i = 0; i < ndof; i++) kmax = Math.max(kmax, Math.abs(K[i][i]));
-    var zp = []; for (i = 0; i < ndof; i++) if (!fixed[i] && Math.abs(K[i][i]) < kmax * 1e-12) { if (Math.abs(Fa[i]) > 0) throw new ApdlError('A load is applied at the ' + this.dofName(map, i) + ' which has no stiffness (강성이 없는 방향에 하중).'); fixed[i] = 1; uval[i] = 0; zp.push(this.dofName(map, i)); }
-    if (zp.length) this.warn('There ' + (zp.length > 1 ? 'are ' + zp.length + ' small equation solver pivot terms' : 'is 1 small equation solver pivot term') + ' (e.g., at the ' + zp[0] + ').\n These DOFs have no stiffness and are held at zero (연습기: 하중이 없어 0 으로 두고 계속 진행).');
+    var zp = []; for (i = 0; i < ndof; i++) if (!fixed[i] && Math.abs(K[i][i]) < kmax * 1e-12) { if (Math.abs(Fa[i]) > 0) throw new ApdlError('A load is applied at the ' + this.dofName(map, i) + ' which has no stiffness (load on a direction with no stiffness).'); fixed[i] = 1; uval[i] = 0; zp.push(this.dofName(map, i)); }
+    if (zp.length) this.warn('There ' + (zp.length > 1 ? 'are ' + zp.length + ' small equation solver pivot terms' : 'is 1 small equation solver pivot term') + ' (e.g., at the ' + zp[0] + ').\n These DOFs have no stiffness and are held at zero (trainer: no load there, so they are held at zero and the run continues).');
     var free = []; for (i = 0; i < ndof; i++) if (!fixed[i]) free.push(i);
     var nf = free.length, A = new Array(nf), bv = new Float64Array(nf);
     for (i = 0; i < nf; i++) { A[i] = new Float64Array(nf); var gr = free[i]; bv[i] = Fa[gr]; for (j = 0; j < ndof; j++) if (fixed[j] && uval[j]) bv[i] -= K[gr][j] * uval[j]; for (j = 0; j < nf; j++) A[i][j] = K[gr][free[j]]; }
     var scale = 0; for (i = 0; i < nf; i++) scale = Math.max(scale, Math.abs(A[i][i]));
     for (var col = 0; col < nf; col++) {
       var piv = col, pv = Math.abs(A[col][col]); for (r = col + 1; r < nf; r++) if (Math.abs(A[r][col]) > pv) { pv = Math.abs(A[r][col]); piv = r; }
-      if (pv < scale * 1e-11) throw new ApdlError('There is at least 1 small equation solver pivot term (e.g., at the ' + this.dofName(map, free[col]) + ').\nPlease check for an insufficiently constrained model.\n(구속 부족 / 강체 운동: 해당 자유도를 d 로 구속하세요. 평면 모델을 3-D 요소로 풀면 UZ·ROTX·ROTY 도 구속.)');
+      if (pv < scale * 1e-11) throw new ApdlError('There is at least 1 small equation solver pivot term (e.g., at the ' + this.dofName(map, free[col]) + ').\nPlease check for an insufficiently constrained model.\n(Under-constrained / rigid body motion: constrain that DOF with d. If a planar model uses 3-D elements, also constrain UZ, ROTX and ROTY.)');
       if (piv !== col) { var tA = A[piv]; A[piv] = A[col]; A[col] = tA; var tb = bv[piv]; bv[piv] = bv[col]; bv[col] = tb; }
       for (r = col + 1; r < nf; r++) { var fc = A[r][col] / A[col][col]; if (!fc) continue; for (c = col; c < nf; c++) A[r][c] -= fc * A[col][c]; bv[r] -= fc * bv[col]; }
     }
@@ -708,7 +708,7 @@
   Engine.prototype.dofName = function (map, gg) { for (var n in map) for (var i = 0; i < 6; i++) if (map[n][i] === gg) return DOFS[i] + ' degree of freedom of node ' + n; return 'DOF ' + gg; };
 
   // ================= 결과 =================
-  Engine.prototype.needRes = function () { if (!this.result) throw new ApdlError('No results are available (해석 결과 없음 → /SOLU 에서 SOLVE 먼저. 해석 뒤 모델을 고쳤다면 다시 SOLVE).'); };
+  Engine.prototype.needRes = function () { if (!this.result) throw new ApdlError('No results are available (no solution - run SOLVE in /SOLU first. If the model was changed after solving, SOLVE again).'); };
   Engine.prototype.nodeU = function (n) { this.needRes(); var m = this.result.map[n], U = this.result.U; if (!m) return [0, 0, 0, 0, 0, 0]; var u = m.map(function (gg) { return gg >= 0 ? U[gg] : 0; }), T = this.nodes[n] && this.nodes[n].T; if (T) u = mv(T, u.slice(0, 3)).concat(mv(T, u.slice(3, 6))); return u; };
   Engine.prototype.reactionN = function (n) { this.needRes(); var m = this.result.map[n], self = this; if (!m) return null; var any = false, r = m.map(function (gg) { var f = gg >= 0 && self.result.fixed[gg]; if (f) any = true; return f ? self.result.Rf[gg] : 0; }); if (!any) return null; var T = this.nodes[n].T; if (T) r = mv(T, r.slice(0, 3)).concat(mv(T, r.slice(3, 6))); return r; };
   Engine.prototype.elemRes = function (eid) {
@@ -751,7 +751,7 @@
     if (it === 'S') {
       var st = this.nodalStress(), labs = cp === 'PRIN' ? ['S1', 'S2', 'S3', 'SINT', 'SEQV'] : cp === 'COMP' ? ['SX', 'SY', 'SZ', 'SXY', 'SYZ', 'SXZ'] : [cp === 'EQV' ? 'SEQV' : cp === 'INT' ? 'SINT' : 'S' + cp];
       var idx = { SX: 0, SY: 1, SZ: 2, SXY: 3, SYZ: -1, SXZ: -1, S1: 4, S2: 5, S3: 6, SINT: 7, SEQV: 8 };
-      if (!Object.keys(st).length) throw new ApdlError('No nodal stress results: PRNSOL,S is available for 2-D solid elements in this trainer (선 요소는 ETABLE 사용).');
+      if (!Object.keys(st).length) throw new ApdlError('No nodal stress results: PRNSOL,S is available for 2-D solid elements in this trainer (use ETABLE for line elements).');
       this.p(''); this.p(' PRINT S    NODAL SOLUTION PER NODE'); this.p(''); this.p('  ***** POST1 NODAL STRESS LISTING *****'); this.p(''); this.p('  LOAD STEP=     1  SUBSTEP=     1'); this.p('   TIME=    1.0000      LOAD CASE=   0'); this.p(''); this.p('  THE FOLLOWING X,Y,Z VALUES ARE IN GLOBAL COORDINATES'); this.p('');
       this.p('    NODE' + labs.map(function (l) { return pad(l, 13); }).join(''));
       mx = labs.map(function () { return -1e99; }); mn = labs.map(function () { return 1e99; }); mxn = []; mnn = [];
@@ -784,7 +784,7 @@
     rows.forEach(function (rw) { self.p(pad(rw[0], 8) + cols.map(function (c) { return pad(rw[2][c] ? g(rw[1][c]) : '', 13); }).join('')); cols.forEach(function (c) { if (rw[2][c]) tot[c] += rw[1][c]; }); });
     this.p(''); this.p(' TOTAL VALUES'); this.p(' VALUE  ' + cols.map(function (c) { return pad(g(tot[c]), 13); }).join(''));
   });
-  reg('FSUM', 'O', function () { this.needRes(); this.note('FSUM: 이 연습기는 FSUM 을 계산하지 않습니다. 반력 합은 PRRSOL 의 TOTAL VALUES 를 보세요.'); });
+  reg('FSUM', 'O', function () { this.needRes(); this.note('FSUM: this trainer does not compute FSUM. See TOTAL VALUES in PRRSOL for the reaction sum.'); });
   var SMISC_B188 = { 1: 'FXI', 2: 'MYI', 3: 'MZI', 4: 'TQI', 5: 'SFZI', 6: 'SFYI', 14: 'FXJ', 15: 'MYJ', 16: 'MZJ', 17: 'TQJ', 18: 'SFZJ', 19: 'SFYJ', 31: 'SDIRI', 32: 'SBYTI', 33: 'SBYBI', 34: 'SBZTI', 35: 'SBZBI', 36: 'SDIRJ', 37: 'SBYTJ', 38: 'SBYBJ', 39: 'SBZTJ', 40: 'SBZBJ' };
   var SMISC_B3 = { 1: 'FXI', 2: 'SFYI', 6: 'MZI', 7: 'FXJ', 8: 'SFYJ', 12: 'MZJ' }, LS_B3 = { 1: 'SDIRI', 2: 'SBYTI', 3: 'SBYBI', 4: 'SDIRJ', 5: 'SBYTJ', 6: 'SBYBJ' };
   reg('ETABLE', 'O', function (f, N, S) {
@@ -800,11 +800,11 @@
     });
     if (!this.etab[lab]) this.etabOrder.push(lab); this.etab[lab] = { vals: vals, desc: it + ' ' + (cp || '') };
     this.p(' STORE ' + rpad(lab, 9) + ' FROM ITEM=' + rpad(it, 5) + ' COMP=' + pad(cp, 4) + '   FOR ALL SELECTED ELEMENTS');
-    if (miss) this.warn('Item ' + it + ',' + cp + ' is not available for ' + miss + ' element(s) in this trainer (0 으로 저장).');
+    if (miss) this.warn('Item ' + it + ',' + cp + ' is not available for ' + miss + ' element(s) in this trainer (stored as 0).');
   });
   reg('PRETAB', 'O', function (f) {
     var self = this, labs = f.slice(1).filter(Boolean).map(function (x) { return self.lab(x); }); if (!labs.length) labs = this.etabOrder.slice();
-    if (!labs.length) throw new ApdlError('No element table items are defined (ETABLE 먼저).');
+    if (!labs.length) throw new ApdlError('No element table items are defined (ETABLE first).');
     labs.forEach(function (l) { if (!self.etab[l]) throw new ApdlError('Element table item ' + l + ' is not defined.'); });
     head(this, 'ELEMENT TABLE ITEMS PER ELEMENT');
     this.p('    STAT' + labs.map(function () { return pad('CURRENT', 13); }).join('')); this.p('    ELEM' + labs.map(function (l) { return pad(l, 13); }).join(''));
@@ -813,16 +813,16 @@
     this.p(''); this.p(' MINIMUM VALUES'); this.p(' ELEM   ' + mnE.map(function (v) { return pad(v, 13); }).join('')); this.p(' VALUE  ' + mn.map(function (v) { return pad(g(v), 13); }).join(''));
     this.p(''); this.p(' MAXIMUM VALUES'); this.p(' ELEM   ' + mxE.map(function (v) { return pad(v, 13); }).join('')); this.p(' VALUE  ' + mx.map(function (v) { return pad(g(v), 13); }).join(''));
   });
-  reg('ESORT', 'O', function (f, N, S) { this.p(' SORT ON ITEM=' + S(2) + '   (연습기: 정렬 없이 진행)'); });
-  reg('PRESOL', 'O', function () { this.noteOnce('PRESOL: 이 연습기에서는 ETABLE + PRETAB 으로 요소 결과를 보세요.'); });
+  reg('ESORT', 'O', function (f, N, S) { this.p(' SORT ON ITEM=' + S(2) + '   (trainer: continues without sorting)'); });
+  reg('PRESOL', 'O', function () { this.noteOnce('PRESOL: in this trainer use ETABLE + PRETAB to view element results.'); });
 
   function plotCmd(kind, extra, msg) { return function (f, N, S) { if (kind === 'DISP' || kind === 'NSOL' || kind === 'ESOL' || kind === 'ETAB') this.needRes(); var p = { kind: kind }; if (extra) extra.call(this, p, f, N, S); this.plot = p; this.lastPlot = p; this.p(' ' + msg + ' IN DSYS=      0'); }; }
   reg('NPLOT', 'A', plotCmd('node', null, 'PRODUCE NODE PLOT')); reg('EPLOT', 'A', plotCmd('elem', null, 'PRODUCE ELEMENT PLOT')); reg('KPLOT', 'A', plotCmd('kp', null, 'PRODUCE KEYPOINT PLOT'));
   reg('LPLOT', 'A', plotCmd('line', null, 'PRODUCE LINE PLOT')); reg('APLOT', 'A', plotCmd('area', null, 'PRODUCE AREA PLOT')); reg('GPLOT', 'A', plotCmd('all', null, 'PRODUCE GEOMETRY PLOT'));
   reg('PLDISP', 'O', plotCmd('DISP', function (p, f, N) { p.und = N(1); }, 'DISPLAY DEFORMED SHAPE'));
-  reg('PLNSOL', 'O', plotCmd('NSOL', function (p, f, N, S) { var it = S(1) || 'U', cp = S(2) || (it === 'S' ? 'EQV' : 'SUM'); p.item = it; p.comp = cp; p.und = N(3); if (it === 'S' && !Object.keys(this.nodalStress()).length) throw new ApdlError('No nodal stress results (PLNSOL,S 는 2-D 고체 요소만).'); }, 'PRODUCE NODAL PLOT'));
+  reg('PLNSOL', 'O', plotCmd('NSOL', function (p, f, N, S) { var it = S(1) || 'U', cp = S(2) || (it === 'S' ? 'EQV' : 'SUM'); p.item = it; p.comp = cp; p.und = N(3); if (it === 'S' && !Object.keys(this.nodalStress()).length) throw new ApdlError('No nodal stress results (PLNSOL,S works only for 2-D solid elements).'); }, 'PRODUCE NODAL PLOT'));
   reg('PLESOL', 'O', plotCmd('ESOL', function (p, f, N, S) { p.item = S(1) || 'S'; p.comp = S(2) || 'EQV'; }, 'PRODUCE ELEMENT SOLUTION PLOT'));
-  reg('PLLS', 'O', plotCmd('PLLS', function (p, f, N, S) { var li = S(1), lj = S(2) || S(1); if (!this.etab[li]) throw new ApdlError('Element table item ' + li + ' is not defined (먼저 ETABLE).'); if (!this.etab[lj]) throw new ApdlError('Element table item ' + lj + ' is not defined (먼저 ETABLE).'); p.li = li; p.lj = lj; p.fact = f[3] ? N(3) : 1; p.kund = N(4); }, 'PLOT LINE ELEMENT RESULTS'));
+  reg('PLLS', 'O', plotCmd('PLLS', function (p, f, N, S) { var li = S(1), lj = S(2) || S(1); if (!this.etab[li]) throw new ApdlError('Element table item ' + li + ' is not defined (ETABLE first).'); if (!this.etab[lj]) throw new ApdlError('Element table item ' + lj + ' is not defined (ETABLE first).'); p.li = li; p.lj = lj; p.fact = f[3] ? N(3) : 1; p.kund = N(4); }, 'PLOT LINE ELEMENT RESULTS'));
   reg('ANDSCL ANIM', 'O', function (f, N, S, name) { this.needRes(); this.anim = { nfram: N(1) || 5, delay: f[2] ? N(2) : 0.1, ncycl: N(3) || 5, t: Date.now() }; this.plot = { kind: 'DISP', und: 0 }; this.p(' ANIMATE DEFORMED SHAPE   NFRAM= ' + this.anim.nfram + '  DELAY= ' + this.anim.delay + '  NCYCL= ' + this.anim.ncycl); });
   reg('/DSCALE', 'A', function (f, N, S) { var v = S(2); this.dscale = (!v || v === 'AUTO' || v === '0') ? 0 : N(2); this.p(' DISPLACEMENT SCALING FACTOR = ' + (this.dscale ? g(this.dscale) : 'AUTO')); });
   reg('PLETAB', 'O', plotCmd('ETAB', function (p, f, N, S) { if (!this.etab[S(1)]) throw new ApdlError('Element table item ' + S(1) + ' is not defined.'); p.lab = S(1); }, 'PLOT ELEMENT TABLE ITEM'));

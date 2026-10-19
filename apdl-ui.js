@@ -23,8 +23,8 @@
         else if (warns.length) msgbox('Warning', warns.map(function (m) { return m.t; }).join('\n\n'), 'w');
         else if (eng.lastCmd === 'SOLVE' && eng.result) msgbox('Note', 'Solution is done!', 'n');
       } else if (errs.length || warns.length) {
-        var t = (errs.length ? errs.length + ' error(s)' : '') + (errs.length && warns.length ? ', ' : '') + (warns.length ? warns.length + ' warning(s)' : '') + ' — 입력 파일을 끝까지 실행했습니다 (오류 난 명령만 무시됨).\n\n';
-        t += (errs.length ? errs : warns).slice(0, 3).map(function (m) { return m.t; }).join('\n\n') + ((errs.length ? errs : warns).length > 3 ? '\n\n… 나머지는 Output Window 를 보세요.' : '');
+        var t = (errs.length ? errs.length + ' error(s)' : '') + (errs.length && warns.length ? ', ' : '') + (warns.length ? warns.length + ' warning(s)' : '') + ' - the input file ran to the end (only the commands with errors were ignored).\n\n';
+        t += (errs.length ? errs : warns).slice(0, 3).map(function (m) { return m.t; }).join('\n\n') + ((errs.length ? errs : warns).length > 3 ? '\n\n... see the Output Window for the rest.' : '');
         msgbox(errs.length ? 'Error' : 'Warning', t, errs.length ? 'e' : 'w');
       } else if (eng.lastCmd === 'SOLVE' && eng.result) msgbox('Note', 'Solution is done!', 'n');
     }
@@ -71,22 +71,22 @@
   var hl = $('#mwHistList');
   function refreshHist() { hl.innerHTML = ''; var seen = {}; hist.slice().reverse().forEach(function (h) { if (seen[h] || Object.keys(seen).length >= 40) return; seen[h] = 1; var b = document.createElement('button'); b.type = 'button'; b.textContent = h; b.onclick = function () { input.value = h; hideHist(); input.focus(); }; hl.appendChild(b); }); }
   function hideHist() { hl.hidden = true; }
-  $('#mwHistBtn').onclick = function (e) { e.stopPropagation(); if (!hl.childNodes.length) { flash('입력한 명령이 아직 없습니다.'); return; } hl.hidden = !hl.hidden; };
+  $('#mwHistBtn').onclick = function (e) { e.stopPropagation(); if (!hl.childNodes.length) { flash('No commands entered yet.'); return; } hl.hidden = !hl.hidden; };
   document.addEventListener('click', function (e) { if (!e.target.closest('.mw-combo')) hideHist(); });
 
   // ================= 대화상자 =================
   var dlg = $('#mwDlg');
   function dialog(spec) {
-    var html = '<div class="mw-dlgwin" role="dialog" aria-modal="true" aria-label="' + esc(spec.title) + '"><div class="mw-dlgtitle"><span>' + esc(spec.title) + '</span><button type="button" class="x" data-act="cancel" aria-label="닫기">✕</button></div><div class="mw-dlgbody">';
+    var html = '<div class="mw-dlgwin" role="dialog" aria-modal="true" aria-label="' + esc(spec.title) + '"><div class="mw-dlgtitle"><span>' + esc(spec.title) + '</span><button type="button" class="x" data-act="cancel" aria-label="Close">✕</button></div><div class="mw-dlgbody">';
     (spec.fields || []).forEach(function (fd, i) {
       var id = 'mwf' + i, lab = '<label for="' + id + '"><b>[' + spec.cmd + ']</b> ' + esc(fd.label) + '</label>', ctl;
       if (fd.opts) ctl = '<select id="' + id + '">' + fd.opts.map(function (o) { var v = Array.isArray(o) ? o[0] : o, t = Array.isArray(o) ? o[1] : o; return '<option value="' + esc(v) + '"' + (v === fd.def ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select>';
       else if (fd.check) ctl = '<span class="mw-chk"><input type="checkbox" id="' + id + '"' + (fd.def ? ' checked' : '') + '><span>' + (fd.def ? 'On' : 'Off') + '</span></span>';
-      else { ctl = '<input id="' + id + '" value="' + esc(fd.def === undefined ? '' : fd.def) + '" autocomplete="off">'; var pt = spec.cmd !== 'N' && spec.cmd !== 'K' ? pickType(fd.label) : null; if (pt) ctl = '<span class="mw-pk">' + ctl + '<button type="button" data-pick="' + i + '" data-pt="' + pt + '" title="그래픽 창에서 골라 넣기">Pick</button></span>'; }
+      else { ctl = '<input id="' + id + '" value="' + esc(fd.def === undefined ? '' : fd.def) + '" autocomplete="off">'; var pt = spec.cmd !== 'N' && spec.cmd !== 'K' ? pickType(fd.label) : null; if (pt) ctl = '<span class="mw-pk">' + ctl + '<button type="button" data-pick="' + i + '" data-pt="' + pt + '" title="Pick from the graphics window">Pick</button></span>'; }
       html += '<div class="mw-row">' + lab + ctl + '</div>';
     });
     if (spec.note) html += '<p class="mw-dnote">' + spec.note + '</p>';
-    html += '<div class="mw-cmdprev">명령: <code id="mwPrev"></code></div></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="apply">Apply</button><button type="button" data-act="cancel">Cancel</button><button type="button" data-act="help">Help</button></div></div>';
+    html += '<div class="mw-cmdprev">Command: <code id="mwPrev"></code></div></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="apply">Apply</button><button type="button" data-act="cancel">Cancel</button><button type="button" data-act="help">Help</button></div></div>';
     dlg.innerHTML = html; dlg.hidden = false;
     var vals = function () { return (spec.fields || []).map(function (fd, i) { var el = $('#mwf' + i); return fd.check ? (el.checked ? 1 : 0) : el.value.trim(); }); };
     var buildV = function (v) { return typeof spec.build === 'function' ? spec.build(v) : fill(spec.build, v); };
@@ -120,10 +120,10 @@
     m.onkeydown = function (e) { if (e.key === 'Escape') close(buttons.length - 1); };
   }
   function flash(t, k) { var f = $('#mwFlash'); f.textContent = t; f.className = 'mw-flash ' + (k || ''); f.hidden = false; clearTimeout(flash.t); flash.t = setTimeout(function () { f.hidden = true; }, 3500); }
-  function outScope() { msgbox('Note', '이 메뉴는 중간고사 범위(정적 구조 해석) 밖이라 연습기에서는 열리지 않습니다.', 'n'); }
+  function outScope() { msgbox('Note', 'This menu is outside the midterm scope (static structural analysis), so it does not open in the trainer.', 'n'); }
   function prefDlg() {
     var m = $('#mwDlg');
-    m.innerHTML = '<div class="mw-dlgwin" role="dialog" aria-modal="true" aria-label="Preferences for GUI Filtering"><div class="mw-dlgtitle"><span>Preferences for GUI Filtering</span><button type="button" class="x" data-act="c">✕</button></div><div class="mw-dlgbody"><p><b>[KEYW][/PMETH]</b> Preferences for GUI Filtering</p><fieldset class="mw-fs"><legend>Individual discipline(s) to show in the GUI</legend><label><input type="checkbox" checked disabled> Structural</label><br><label><input type="checkbox" disabled> Thermal</label><br><label><input type="checkbox" disabled> ANSYS Fluid</label><br><label><input type="checkbox" disabled> Electric</label></fieldset><p class="mw-dnote">연습기는 Structural (정적 구조 해석)만 다룹니다.</p></div><div class="mw-dlgbtns"><button type="button" data-act="c">OK</button><button type="button" data-act="c">Cancel</button></div></div>';
+    m.innerHTML = '<div class="mw-dlgwin" role="dialog" aria-modal="true" aria-label="Preferences for GUI Filtering"><div class="mw-dlgtitle"><span>Preferences for GUI Filtering</span><button type="button" class="x" data-act="c">✕</button></div><div class="mw-dlgbody"><p><b>[KEYW][/PMETH]</b> Preferences for GUI Filtering</p><fieldset class="mw-fs"><legend>Individual discipline(s) to show in the GUI</legend><label><input type="checkbox" checked disabled> Structural</label><br><label><input type="checkbox" disabled> Thermal</label><br><label><input type="checkbox" disabled> ANSYS Fluid</label><br><label><input type="checkbox" disabled> Electric</label></fieldset><p class="mw-dnote">The trainer covers Structural (static analysis) only.</p></div><div class="mw-dlgbtns"><button type="button" data-act="c">OK</button><button type="button" data-act="c">Cancel</button></div></div>';
     m.hidden = false; m.onclick = function (e) { if (e.target.getAttribute('data-act') === 'c') m.hidden = true; }; m.onkeydown = null;
   }
   function solveDlg() {
@@ -133,12 +133,12 @@
     m.innerHTML = '<div class="mw-stack"><div class="mw-dlgwin wide" role="dialog" aria-label="/STATUS Command"><div class="mw-dlgtitle"><span>/STATUS Command</span></div><div class="mw-dlgbody"><pre class="mw-stat">' + esc(st) + '</pre></div><div class="mw-dlgbtns"><button type="button" data-act="c">Close</button></div></div>' +
       '<div class="mw-dlgwin" role="dialog" aria-modal="true" aria-label="Solve Current Load Step"><div class="mw-dlgtitle"><span>Solve Current Load Step</span></div><div class="mw-dlgbody"><p><b>[SOLVE]</b> Begin Solution of Current Load Step</p><p class="mw-dnote">Review the summary information in the /STATUS window, then press OK to start the solution.</p></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="c">Cancel</button><button type="button" data-act="h">Help</button></div></div></div>';
     m.hidden = false; m.querySelector('[data-act=ok]').focus();
-    m.onclick = function (e) { var a = e.target.getAttribute('data-act'); if (a === 'c') m.hidden = true; if (a === 'h') window.open('ref.html#solve', '_blank'); if (a === 'ok') { m.hidden = true; if (eng.proc !== 'S') { flash('Solution 처리기로 들어갑니다 (/SOLU)'); cmd1('/SOLU'); } setTimeout(function () { cmd1('SOLVE'); }, 30); } };
+    m.onclick = function (e) { var a = e.target.getAttribute('data-act'); if (a === 'c') m.hidden = true; if (a === 'h') window.open('ref.html#solve', '_blank'); if (a === 'ok') { m.hidden = true; if (eng.proc !== 'S') { flash('Entering the Solution processor (/SOLU)'); cmd1('/SOLU'); } setTimeout(function () { cmd1('SOLVE'); }, 30); } };
     m.onkeydown = function (e) { if (e.key === 'Escape') m.hidden = true; };
   }
   function exitDlg() {
     var m = $('#mwDlg');
-    m.innerHTML = '<div class="mw-dlgwin" role="dialog" aria-modal="true" aria-label="Exit"><div class="mw-dlgtitle"><span>Exit</span><button type="button" class="x" data-act="c">✕</button></div><div class="mw-dlgbody"><p>Exit from Mechanical APDL</p><fieldset class="mw-fs"><label><input type="radio" name="mwq" value="geom"> Save Geom+Loads</label><br><label><input type="radio" name="mwq" value="solu"> Save Geo+Ld+Solu</label><br><label><input type="radio" name="mwq" value="all"> Save Everything</label><br><label><input type="radio" name="mwq" value="no" checked> Quit - No Save!</label></fieldset><p class="mw-dnote">연습기에서는 종료하면 처음(BEGIN) 상태로 돌아갑니다. 저장을 고르면 RESUM_DB 로 되살릴 수 있습니다.</p></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="c">Cancel</button></div></div>';
+    m.innerHTML = '<div class="mw-dlgwin" role="dialog" aria-modal="true" aria-label="Exit"><div class="mw-dlgtitle"><span>Exit</span><button type="button" class="x" data-act="c">✕</button></div><div class="mw-dlgbody"><p>Exit from Mechanical APDL</p><fieldset class="mw-fs"><label><input type="radio" name="mwq" value="geom"> Save Geom+Loads</label><br><label><input type="radio" name="mwq" value="solu"> Save Geo+Ld+Solu</label><br><label><input type="radio" name="mwq" value="all"> Save Everything</label><br><label><input type="radio" name="mwq" value="no" checked> Quit - No Save!</label></fieldset><p class="mw-dnote">In the trainer, exiting returns to the initial (BEGIN) state. If you choose to save, you can restore it with RESUM_DB.</p></div><div class="mw-dlgbtns"><button type="button" data-act="ok">OK</button><button type="button" data-act="c">Cancel</button></div></div>';
     m.hidden = false; m.querySelector('[data-act=ok]').focus();
     m.onclick = function (e) {
       var a = e.target.getAttribute('data-act'); if (a === 'c') m.hidden = true;
@@ -149,50 +149,50 @@
   function pad(v, n) { v = String(v); while (v.length < n) v = ' ' + v; return v; }
 
   // ================= 메뉴 대화상자 정의 =================
-  var ELS = [['LINK180', 'LINK180 (3-D Spar)'], ['BEAM188', 'BEAM188 (3-D 2-node beam)'], ['PLANE182', 'PLANE182 (2-D 4-node solid)'], ['LINK1', 'LINK1 (2-D spar, 옛 요소)'], ['LINK8', 'LINK8 (3-D spar, 옛 요소)'], ['BEAM3', 'BEAM3 (2-D elastic beam, 옛 요소)'], ['PLANE42', 'PLANE42 (옛 요소)'], ['COMBIN14', 'COMBIN14 (spring)']];
+  var ELS = [['LINK180', 'LINK180 (3-D Spar)'], ['BEAM188', 'BEAM188 (3-D 2-node beam)'], ['PLANE182', 'PLANE182 (2-D 4-node solid)'], ['LINK1', 'LINK1 (2-D spar, legacy)'], ['LINK8', 'LINK8 (3-D spar, legacy)'], ['BEAM3', 'BEAM3 (2-D elastic beam, legacy)'], ['PLANE42', 'PLANE42 (legacy)'], ['COMBIN14', 'COMBIN14 (spring)']];
   var DOFL = [['ALL', 'All DOF'], ['UX', 'UX'], ['UY', 'UY'], ['UZ', 'UZ'], ['ROTX', 'ROTX'], ['ROTY', 'ROTY'], ['ROTZ', 'ROTZ']];
   var D = {
-    ET: { title: 'Element Types — Add', cmd: 'ET', fields: [{ label: 'Element type reference number', def: '1' }, { label: 'Element type', opts: ELS, def: 'LINK180' }, { label: 'KEYOPT(3)  (BEAM188: 3=cubic, PLANE: 0 응력/2 변형/3 두께)', def: '' }], build: 'ET,{0},{1},,,{2}' },
-    R: { title: 'Real Constant Set', cmd: 'R', fields: [{ label: 'Real constant set no.', def: '1' }, { label: 'R1 (AREA / K / THK)', def: '' }, { label: 'R2 (IZZ)', def: '' }, { label: 'R3 (HEIGHT)', def: '' }], build: 'R,{0},{1},{2},{3}', note: '수업 방식은 실상수 대신 SECTYPE/SECDATA 를 씁니다 (옛 요소용).' },
+    ET: { title: 'Element Types — Add', cmd: 'ET', fields: [{ label: 'Element type reference number', def: '1' }, { label: 'Element type', opts: ELS, def: 'LINK180' }, { label: 'KEYOPT(3)  (BEAM188: 3=cubic, PLANE: 0 stress/2 strain/3 thickness)', def: '' }], build: 'ET,{0},{1},,,{2}' },
+    R: { title: 'Real Constant Set', cmd: 'R', fields: [{ label: 'Real constant set no.', def: '1' }, { label: 'R1 (AREA / K / THK)', def: '' }, { label: 'R2 (IZZ)', def: '' }, { label: 'R3 (HEIGHT)', def: '' }], build: 'R,{0},{1},{2},{3}', note: 'The course uses SECTYPE/SECDATA instead of real constants (real constants are for legacy elements).' },
     MP: { title: 'Define Material Model Behavior — Linear Isotropic', cmd: 'MP', fields: [{ label: 'Material number', def: '1' }, { label: 'EX (Young\'s modulus)', def: '' }, { label: 'NUXY (Poisson\'s ratio)', def: '0.3' }], build: function (v) { return 'MP,EX,' + v[0] + ',' + v[1] + (v[2] ? '\nMP,NUXY,' + v[0] + ',' + v[2] : ''); } },
-    SECB: { title: 'Beam Tool — Common Sections', cmd: 'SECTYPE', fields: [{ label: 'Section ID', def: '1' }, { label: 'Sub-Type', opts: [['RECT', 'RECT (B, H)'], ['CSOLID', 'CSOLID (R)'], ['CTUBE', 'CTUBE (Ri, Ro)'], ['I', 'I (W1,W2,W3,t1,t2,t3)'], ['CHAN', 'CHAN (W1,W2,W3,t1,t2,t3)'], ['HREC', 'HREC'], ['ASEC', 'ASEC (A,Iyy,Iyz,Izz,Iw,J)']], def: 'I' }, { label: 'SECDATA 값 (쉼표로)', def: '' }, { label: 'Offset (SECOFFSET)', opts: ['CENT', 'SHRC', 'ORIGIN', 'USER'], def: 'CENT' }], build: function (v) { return 'SECTYPE,' + v[0] + ',BEAM,' + v[1] + '\nSECDATA,' + v[2] + (v[3] !== 'CENT' ? '\nSECOFF,' + v[3] : ''); } },
+    SECB: { title: 'Beam Tool — Common Sections', cmd: 'SECTYPE', fields: [{ label: 'Section ID', def: '1' }, { label: 'Sub-Type', opts: [['RECT', 'RECT (B, H)'], ['CSOLID', 'CSOLID (R)'], ['CTUBE', 'CTUBE (Ri, Ro)'], ['I', 'I (W1,W2,W3,t1,t2,t3)'], ['CHAN', 'CHAN (W1,W2,W3,t1,t2,t3)'], ['HREC', 'HREC'], ['ASEC', 'ASEC (A,Iyy,Iyz,Izz,Iw,J)']], def: 'I' }, { label: 'SECDATA values (comma-separated)', def: '' }, { label: 'Offset (SECOFFSET)', opts: ['CENT', 'SHRC', 'ORIGIN', 'USER'], def: 'CENT' }], build: function (v) { return 'SECTYPE,' + v[0] + ',BEAM,' + v[1] + '\nSECDATA,' + v[2] + (v[3] !== 'CENT' ? '\nSECOFF,' + v[3] : ''); } },
     SECL: { title: 'Link Sections — Add', cmd: 'SECTYPE', fields: [{ label: 'Section ID', def: '1' }, { label: 'Link area', def: '' }], build: 'SECTYPE,{0},LINK\nSECDATA,{1}' },
     K: { title: 'Create Keypoints in Active Coordinate System', cmd: 'K', fields: [{ label: 'NPT  Keypoint number', def: '' }, { label: 'X', def: '' }, { label: 'Y', def: '' }, { label: 'Z', def: '' }], build: 'K,{0},{1},{2},{3}' },
     L: { title: 'Straight Line', cmd: 'L', fields: [{ label: 'P1  Keypoint', def: '' }, { label: 'P2  Keypoint', def: '' }], build: 'L,{0},{1}' },
     RECTNG: { title: 'Create Rectangle by Dimensions', cmd: 'RECTNG', fields: [{ label: 'X1, X2  X-coordinates (X1)', def: '' }, { label: '(X2)', def: '' }, { label: 'Y1, Y2  Y-coordinates (Y1)', def: '' }, { label: '(Y2)', def: '' }], build: 'RECT,{0},{1},{2},{3}' },
     PCIRC: { title: 'Circular Area by Dimensions', cmd: 'PCIRC', fields: [{ label: 'RAD1  Outer radius', def: '' }, { label: 'RAD2  Optional inner radius', def: '' }, { label: 'THETA1  Starting angle (degrees)', def: '0' }, { label: 'THETA2  Ending angle (degrees)', def: '360' }], build: 'PCIR,{0},{1},{2},{3}' },
-    AADD: { title: 'Add Areas', cmd: 'AADD', fields: [{ label: 'NA1..  Areas (ALL 또는 번호들, 쉼표)', def: 'ALL' }], build: 'AADD,{0}' },
-    ASBA: { title: 'Subtract Areas', cmd: 'ASBA', fields: [{ label: 'NA1  Area to be subtracted from', def: '' }, { label: 'NA2  Area to subtract (ALL 가능)', def: '' }], build: 'ASBA,{0},{1}' },
+    AADD: { title: 'Add Areas', cmd: 'AADD', fields: [{ label: 'NA1..  Areas (ALL or numbers, comma-separated)', def: 'ALL' }], build: 'AADD,{0}' },
+    ASBA: { title: 'Subtract Areas', cmd: 'ASBA', fields: [{ label: 'NA1  Area to be subtracted from', def: '' }, { label: 'NA2  Area to subtract (ALL allowed)', def: '' }], build: 'ASBA,{0},{1}' },
     WPAVE: { title: 'Offset WP to XYZ Locations', cmd: 'WPAVE', fields: [{ label: 'X', def: '0' }, { label: 'Y', def: '0' }, { label: 'Z', def: '0' }], build: 'WPAVE,{0},{1},{2}' },
     LOCAL: { title: 'Create Local CS at Specified Location', cmd: 'LOCAL', fields: [{ label: 'KCN  Ref number of new coord sys', def: '11' }, { label: 'KCS  Type of coordinate system', opts: [['0', 'Cartesian 0'], ['1', 'Cylindrical 1'], ['2', 'Spherical 2']], def: '0' }, { label: 'XC', def: '0' }, { label: 'YC', def: '0' }, { label: 'ZC', def: '0' }, { label: 'THXY  Rotation about local Z', def: '0' }], build: 'LOCAL,{0},{1},{2},{3},{4},{5}' },
     N: { title: 'Create Nodes in Active Coordinate System', cmd: 'N', fields: [{ label: 'NODE  Node number', def: '' }, { label: 'X', def: '' }, { label: 'Y', def: '' }, { label: 'Z', def: '' }, { label: 'THXY  Rotation angles (degrees)', def: '' }], build: 'N,{0},{1},{2},{3},{4}' },
     FILL: { title: 'Create Nodes Between 2 Nodes', cmd: 'FILL', fields: [{ label: 'NODE1', def: '' }, { label: 'NODE2', def: '' }, { label: 'NFILL  Number of nodes to fill', def: '' }], build: 'FILL,{0},{1},{2}' },
-    NROTAT: { title: 'Rotate Node CS to Active CS', cmd: 'NROTAT', fields: [{ label: 'NODE1  (ALL 가능)', def: '' }], build: 'NROTAT,{0}' },
-    NMODIF: { title: 'Modify Nodes', cmd: 'NMODIF', fields: [{ label: 'NODE', def: '' }, { label: 'X (빈칸=유지)', def: '' }, { label: 'Y', def: '' }, { label: 'Z', def: '' }, { label: 'THXY', def: '' }], build: 'NMODIF,{0},{1},{2},{3},{4}' },
+    NROTAT: { title: 'Rotate Node CS to Active CS', cmd: 'NROTAT', fields: [{ label: 'NODE1  (ALL allowed)', def: '' }], build: 'NROTAT,{0}' },
+    NMODIF: { title: 'Modify Nodes', cmd: 'NMODIF', fields: [{ label: 'NODE', def: '' }, { label: 'X (blank = keep)', def: '' }, { label: 'Y', def: '' }, { label: 'Z', def: '' }, { label: 'THXY', def: '' }], build: 'NMODIF,{0},{1},{2},{3},{4}' },
     ATT: { title: 'Element Attributes', cmd: 'TYPE', fields: [{ label: 'TYPE  Element type number', def: '1' }, { label: 'MAT  Material number', def: '1' }, { label: 'REAL  Real constant set number', def: '1' }, { label: 'SECNUM  Section number', def: '1' }], build: 'TYPE,{0}\nMAT,{1}\nREAL,{2}\nSECN,{3}' },
-    E: { title: 'Elements from Nodes', cmd: 'E', fields: [{ label: 'I  Node', def: '' }, { label: 'J  Node', def: '' }, { label: 'K  Node (BEAM188 방향 노드 / PLANE)', def: '' }, { label: 'L  Node (PLANE)', def: '' }], build: 'E,{0},{1},{2},{3}' },
-    NGEN: { title: 'Copy Nodes', cmd: 'NGEN', fields: [{ label: 'ITIME  Total number of copies (원본 포함)', def: '2' }, { label: 'INC  Node number increment', def: '' }, { label: 'NODE1', def: '' }, { label: 'NODE2', def: '' }, { label: 'NINC', def: '1' }, { label: 'DX (원통 CS: dR)', def: '' }, { label: 'DY (원통 CS: dθ)', def: '' }, { label: 'DZ', def: '' }], build: 'NGEN,{0},{1},{2},{3},{4},{5},{6},{7}' },
+    E: { title: 'Elements from Nodes', cmd: 'E', fields: [{ label: 'I  Node', def: '' }, { label: 'J  Node', def: '' }, { label: 'K  Node (BEAM188 orientation node / PLANE)', def: '' }, { label: 'L  Node (PLANE)', def: '' }], build: 'E,{0},{1},{2},{3}' },
+    NGEN: { title: 'Copy Nodes', cmd: 'NGEN', fields: [{ label: 'ITIME  Total number of copies (including the original)', def: '2' }, { label: 'INC  Node number increment', def: '' }, { label: 'NODE1', def: '' }, { label: 'NODE2', def: '' }, { label: 'NINC', def: '1' }, { label: 'DX (cylindrical CS: dR)', def: '' }, { label: 'DY (cylindrical CS: dθ)', def: '' }, { label: 'DZ', def: '' }], build: 'NGEN,{0},{1},{2},{3},{4},{5},{6},{7}' },
     EGEN: { title: 'Copy Elements (Automatically Numbered)', cmd: 'EGEN', fields: [{ label: 'ITIME  Total number of copies', def: '2' }, { label: 'NINC  Node number increment', def: '' }, { label: 'IEL1  Element', def: '' }, { label: 'IEL2', def: '' }], build: 'EGEN,{0},{1},{2},{3}' },
-    LSYMM: { title: 'Reflect Lines', cmd: 'LSYMM', fields: [{ label: 'Ncomp  Plane of symmetry', opts: [['X', 'Y-Z plane  X'], ['Y', 'X-Z plane  Y'], ['Z', 'X-Y plane  Z']], def: 'X' }, { label: 'NL1  Lines (ALL 가능)', def: 'ALL' }], build: 'LSYMM,{0},{1}' },
-    ESIZE: { title: 'Global Element Sizes', cmd: 'ESIZE', fields: [{ label: 'SIZE  Element edge length', def: '' }, { label: 'NDIV  No. of element divisions (SIZE 비우면 사용)', def: '' }], build: 'ESIZE,{0},{1}' },
+    LSYMM: { title: 'Reflect Lines', cmd: 'LSYMM', fields: [{ label: 'Ncomp  Plane of symmetry', opts: [['X', 'Y-Z plane  X'], ['Y', 'X-Z plane  Y'], ['Z', 'X-Y plane  Z']], def: 'X' }, { label: 'NL1  Lines (ALL allowed)', def: 'ALL' }], build: 'LSYMM,{0},{1}' },
+    ESIZE: { title: 'Global Element Sizes', cmd: 'ESIZE', fields: [{ label: 'SIZE  Element edge length', def: '' }, { label: 'NDIV  No. of element divisions (used if SIZE is blank)', def: '' }], build: 'ESIZE,{0},{1}' },
     LMESH: { title: 'Mesh Lines', cmd: 'LMESH', fields: [{ label: 'NL1  Lines', def: 'ALL' }], build: 'LMESH,{0}' },
     AMESH: { title: 'Mesh Areas (Free)', cmd: 'AMESH', fields: [{ label: 'NA1  Areas', def: 'ALL' }], build: 'AMESH,{0}' },
-    D: { title: 'Apply U,ROT on Nodes', cmd: 'D', fields: [{ label: 'NODE  (ALL = 선택된 노드)', def: '' }, { label: 'Lab2  DOFs to be constrained', opts: DOFL, def: 'ALL' }, { label: 'VALUE  Displacement value', def: '0' }, { label: '추가 DOF (Lab2)', opts: [['', '(없음)']].concat(DOFL.slice(1)), def: '' }, { label: '추가 DOF (Lab3)', opts: [['', '(없음)']].concat(DOFL.slice(1)), def: '' }], build: function (v) { var s = 'D,' + v[0] + ',' + v[1] + ',' + v[2]; if (v[3] || v[4]) s += ',,,,' + v[3] + ',' + v[4]; return s.replace(/,+$/, ''); } },
+    D: { title: 'Apply U,ROT on Nodes', cmd: 'D', fields: [{ label: 'NODE  (ALL = selected nodes)', def: '' }, { label: 'Lab2  DOFs to be constrained', opts: DOFL, def: 'ALL' }, { label: 'VALUE  Displacement value', def: '0' }, { label: 'Extra DOF (Lab2)', opts: [['', '(none)']].concat(DOFL.slice(1)), def: '' }, { label: 'Extra DOF (Lab3)', opts: [['', '(none)']].concat(DOFL.slice(1)), def: '' }], build: function (v) { var s = 'D,' + v[0] + ',' + v[1] + ',' + v[2]; if (v[3] || v[4]) s += ',,,,' + v[3] + ',' + v[4]; return s.replace(/,+$/, ''); } },
     DK: { title: 'Apply U,ROT on KPs', cmd: 'DK', fields: [{ label: 'KPOI  Keypoint', def: '' }, { label: 'Lab  DOF', opts: DOFL, def: 'ALL' }, { label: 'VALUE', def: '0' }], build: 'DK,{0},{1},{2}' },
     F: { title: 'Apply F/M on Nodes', cmd: 'F', fields: [{ label: 'NODE', def: '' }, { label: 'Lab  Direction of force/mom', opts: ['FX', 'FY', 'FZ', 'MX', 'MY', 'MZ'], def: 'FY' }, { label: 'VALUE  Force/moment value', def: '' }], build: 'F,{0},{1},{2}' },
     FK: { title: 'Apply F/M on KPs', cmd: 'FK', fields: [{ label: 'KPOI  Keypoint', def: '' }, { label: 'Lab', opts: ['FX', 'FY', 'FZ', 'MX', 'MY', 'MZ'], def: 'FY' }, { label: 'VALUE', def: '' }], build: 'FK,{0},{1},{2}' },
-    SFBEAM: { title: 'Apply PRES on Beams', cmd: 'SFBEAM', fields: [{ label: 'Elem  (ALL = 선택된 요소)', def: 'ALL' }, { label: 'LKEY  Load key (BEAM188: 1=−z, 2=−y)', def: '2' }, { label: 'VALI  Pressure value at node I', def: '' }, { label: 'VALJ  at node J (빈칸=VALI)', def: '' }], build: 'SFBEAM,{0},{1},PRES,{2},{3}' },
+    SFBEAM: { title: 'Apply PRES on Beams', cmd: 'SFBEAM', fields: [{ label: 'Elem  (ALL = selected elements)', def: 'ALL' }, { label: 'LKEY  Load key (BEAM188: 1=−z, 2=−y)', def: '2' }, { label: 'VALI  Pressure value at node I', def: '' }, { label: 'VALJ  at node J (blank = VALI)', def: '' }], build: 'SFBEAM,{0},{1},PRES,{2},{3}' },
     ANTYPE: { title: 'New Analysis', cmd: 'ANTYPE', fields: [{ label: 'Type of analysis', opts: [['STATIC', 'Static']], def: 'STATIC' }], build: 'ANTYPE,{0}' },
     PLDISP: { title: 'Plot Deformed Shape', cmd: 'PLDISP', fields: [{ label: 'KUND  Items to be plotted', opts: [['0', 'Def shape only'], ['1', 'Def + undeformed'], ['2', 'Def + undef edge']], def: '1' }], build: 'PLDISP,{0}' },
     PLNSOL: { title: 'Contour Nodal Solution Data', cmd: 'PLNSOL', fields: [{ label: 'Item', opts: [['U', 'DOF Solution — Displacement'], ['ROT', 'DOF Solution — Rotation'], ['S', 'Stress (2-D solid)']], def: 'U' }, { label: 'Comp', opts: ['SUM', 'X', 'Y', 'Z', 'EQV', '1', '2', 'XY'], def: 'SUM' }], build: 'PLNSOL,{0},{1}' },
     PRNSOL: { title: 'List Nodal Solution', cmd: 'PRNSOL', fields: [{ label: 'Item', opts: [['U', 'Displacement U'], ['ROT', 'Rotation ROT'], ['S', 'Stress S (2-D solid)']], def: 'U' }, { label: 'Comp', opts: ['SUM', 'COMP', 'X', 'Y', 'Z', 'PRIN', 'EQV'], def: 'SUM' }], build: 'PRNSOL,{0},{1}' },
-    ETABLE: { title: 'Define Additional Element Table Items', cmd: 'ETABLE', fields: [{ label: 'Lab  User label for item', def: 'AXF' }, { label: 'Item', opts: ['SMISC', 'LS', 'NMISC', 'S'], def: 'SMISC' }, { label: 'Comp  (번호 또는 X/Y/EQV)', def: '1' }], build: 'ETABLE,{0},{1},{2}', note: 'LINK180: SMISC,1 축력 · LS,1 축응력 / BEAM188: SMISC,1·3·4·31~35 …' },
-    PRETAB: { title: 'List Element Table Data', cmd: 'PRETAB', fields: [{ label: 'Lab1..  Items (비우면 전부)', def: '' }], build: 'PRETAB,{0}' },
+    ETABLE: { title: 'Define Additional Element Table Items', cmd: 'ETABLE', fields: [{ label: 'Lab  User label for item', def: 'AXF' }, { label: 'Item', opts: ['SMISC', 'LS', 'NMISC', 'S'], def: 'SMISC' }, { label: 'Comp  (number or X/Y/EQV)', def: '1' }], build: 'ETABLE,{0},{1},{2}', note: 'LINK180: SMISC,1 axial force · LS,1 axial stress / BEAM188: SMISC,1·3·4·31~35 …' },
+    PRETAB: { title: 'List Element Table Data', cmd: 'PRETAB', fields: [{ label: 'Lab1..  Items (blank = all)', def: '' }], build: 'PRETAB,{0}' },
     PLETAB: { title: 'Contour Plot of Elem Table Data', cmd: 'PLETAB', fields: [{ label: 'Itlab  Item to be plotted', def: '' }], build: 'PLETAB,{0}' },
     TITLE: { title: 'Change Title', cmd: '/TITLE', fields: [{ label: 'Title', def: '' }], build: '/TITLE,{0}' },
     PNUM: { title: 'Plot Numbering Controls', cmd: '/PNUM', fields: [{ label: 'KP  Keypoint numbers', check: 1, def: eng.pnum.KP }, { label: 'LINE  Line numbers', check: 1 }, { label: 'AREA  Area numbers', check: 1 }, { label: 'NODE  Node numbers', check: 1 }, { label: 'ELEM  Element numbers', check: 1 }], build: function (v) { return ['KP', 'LINE', 'AREA', 'NODE', 'ELEM'].map(function (k, i) { return '/PNUM,' + k + ',' + v[i]; }).join('\n') + '\n/REPLOT'; } },
-    NSEL: { title: 'Select Entities — Nodes by Location', cmd: 'NSEL', fields: [{ label: 'Type', opts: [['S', 'From Full (S)'], ['R', 'Reselect (R)'], ['A', 'Also Select (A)'], ['U', 'Unselect (U)']], def: 'S' }, { label: 'Coordinate', opts: ['X', 'Y', 'Z'], def: 'X' }, { label: 'Min', def: '' }, { label: 'Max (빈칸=Min)', def: '' }], build: 'NSEL,{0},LOC,{1},{2},{3}' },
-    PARAM: { title: 'Scalar Parameters', cmd: '*SET', fields: [{ label: 'Name', def: '' }, { label: 'Value (식 가능)', def: '' }], build: '{0}={1}' }
+    NSEL: { title: 'Select Entities — Nodes by Location', cmd: 'NSEL', fields: [{ label: 'Type', opts: [['S', 'From Full (S)'], ['R', 'Reselect (R)'], ['A', 'Also Select (A)'], ['U', 'Unselect (U)']], def: 'S' }, { label: 'Coordinate', opts: ['X', 'Y', 'Z'], def: 'X' }, { label: 'Min', def: '' }, { label: 'Max (blank = Min)', def: '' }], build: 'NSEL,{0},LOC,{1},{2},{3}' },
+    PARAM: { title: 'Scalar Parameters', cmd: '*SET', fields: [{ label: 'Name', def: '' }, { label: 'Value (expression allowed)', def: '' }], build: '{0}={1}' }
   };
   D.PNUM.fields.forEach(function (f, i) { f.def = !!eng.pnum[['KP', 'LINE', 'AREA', 'NODE', 'ELEM'][i]]; });
 
@@ -241,10 +241,10 @@
     ['Finish', { cmd: 'FINISH' }]
   ];
 
-  D.PLLS = { title: 'Plot Line-Element Results', cmd: 'PLLS', fields: [{ label: 'LabI  Elem table item at node I', def: 'MI' }, { label: 'LabJ  Elem table item at node J', def: 'MJ' }, { label: 'Fact  Optional scale factor', def: '1' }], build: 'PLLS,{0},{1},{2}', note: 'BEAM188 SMISC: MY = 2 / 15, MZ = 3 / 16, SFZ = 5 / 18, SFY = 6 / 19 (I / J)<br>K 없이 XY 평면 보 → 모멘트도 ETABLE,MI,SMISC,3 / ETABLE,MJ,SMISC,16, 전단력도 6 / 19<br>방향점으로 element z 를 위로 둔 보 → MY (2 / 15), SFZ (5 / 18)<br>BEAM3: MZ = SMISC 6 / 12, SFY = 2 / 8' };
+  D.PLLS = { title: 'Plot Line-Element Results', cmd: 'PLLS', fields: [{ label: 'LabI  Elem table item at node I', def: 'MI' }, { label: 'LabJ  Elem table item at node J', def: 'MJ' }, { label: 'Fact  Optional scale factor', def: '1' }], build: 'PLLS,{0},{1},{2}', note: 'BEAM188 SMISC: MY = 2 / 15, MZ = 3 / 16, SFZ = 5 / 18, SFY = 6 / 19 (I / J)<br>Beam in the XY plane without K -> moment: ETABLE,MI,SMISC,3 / ETABLE,MJ,SMISC,16; shear force: 6 / 19<br>Beam with element z up via an orientation point -> MY (2 / 15), SFZ (5 / 18)<br>BEAM3: MZ = SMISC 6 / 12, SFY = 2 / 8' };
   D.ANDSCL = { title: 'Animation of Deformed Shape', cmd: 'ANDSCL', fields: [{ label: 'NFRAM  No. of frames', def: '10' }, { label: 'DELAY  Time delay (sec)', def: '0.1' }, { label: 'NCYCL  No. of cycles', def: '5' }], build: 'ANDSCL,{0},{1},{2}' };
   D.DSCALE = { title: 'Displacement Display Scaling', cmd: '/DSCALE', fields: [{ label: 'DMULT  Displacement scale factor', opts: [['AUTO', 'Auto calculated'], ['1', '1.0 (true scale)'], ['10', '10'], ['100', '100'], ['1000', '1000']], def: 'AUTO' }], build: '/DSCALE,1,{0}' };
-  D.VIEW = { title: 'Viewing Direction', cmd: '/VIEW', fields: [{ label: 'WN  Window number', def: '1' }, { label: 'XV  coords of view point', def: '1' }, { label: 'YV', def: '1' }, { label: 'ZV', def: '1' }], build: '/VIEW,{0},{1},{2},{3}', note: '(XV,YV,ZV) 쪽에서 원점을 바라봅니다. 0,0,1 = Front, 1,1,1 = Iso' };
+  D.VIEW = { title: 'Viewing Direction', cmd: '/VIEW', fields: [{ label: 'WN  Window number', def: '1' }, { label: 'XV  coords of view point', def: '1' }, { label: 'YV', def: '1' }, { label: 'ZV', def: '1' }], build: '/VIEW,{0},{1},{2},{3}', note: 'Looks at the origin from the (XV,YV,ZV) side. 0,0,1 = Front, 1,1,1 = Iso' };
 
   function buildTree(items, depth) {
     var ul = document.createElement('ul');
@@ -271,16 +271,16 @@
   // ================= Utility Menu =================
   function toggle(sel) { var e = $(sel); e.hidden = !e.hidden; draw(); }
   var UMENU = [
-    ['File', 0, [['Clear & Start New…', function () { msgbox('Clear Database and Start New', 'Clear database and Start new?\n(/CLEAR — 모델·하중·결과가 모두 지워집니다)', 'q', ['OK', 'Cancel'], function (i) { if (i === 0) { fresh(); run('/CLEAR', { quiet: true }); boot(); } }); }], ['Change Jobname…', function () { flash('연습기의 Jobname 은 file 로 고정입니다.'); }], ['Change Title…', function () { dialog(D.TITLE); }], '-', ['Resume Jobname.db…', resumeDb], ['Save as Jobname.db', saveDb], '-', ['Read Input from…', openRead], ['Write DB log file…', function () { download('file.log', eng.hist.join('\n') + '\n'); }], '-', ['Exit…', exitDlg]]],
+    ['File', 0, [['Clear & Start New…', function () { msgbox('Clear Database and Start New', 'Clear database and Start new?\n(/CLEAR - the model, loads and results are all erased)', 'q', ['OK', 'Cancel'], function (i) { if (i === 0) { fresh(); run('/CLEAR', { quiet: true }); boot(); } }); }], ['Change Jobname…', function () { flash('The trainer\'s Jobname is fixed to file.'); }], ['Change Title…', function () { dialog(D.TITLE); }], '-', ['Resume Jobname.db…', resumeDb], ['Save as Jobname.db', saveDb], '-', ['Read Input from…', openRead], ['Write DB log file…', function () { download('file.log', eng.hist.join('\n') + '\n'); }], '-', ['Exit…', exitDlg]]],
     ['Select', 0, [['Entities…', function () { dialog(D.NSEL); }], '-', ['Everything', 'ALLSEL']]],
     ['List', 0, [['Keypoints', 'KLIST'], ['Lines', 'LLIST'], ['Areas', 'ALIST'], ['Nodes', 'NLIST'], ['Elements', 'ELIST'], '-', ['Properties › Element Types', 'ETLIST'], ['Properties › Real Constants', 'RLIST'], ['Properties › All Materials', 'MPLIST'], ['Properties › Section Properties', 'SLIST'], '-', ['Loads › DOF Constraints', 'DLIST'], ['Loads › Nodal Loads', 'FLIST'], ['Loads › Surface Loads', 'SFELIST'], '-', ['Other › Parameters', '*STATUS']]],
     ['Plot', 0, [['Replot', '/REPLOT'], '-', ['Keypoints', 'KPLOT'], ['Lines', 'LPLOT'], ['Areas', 'APLOT'], ['Nodes', 'NPLOT'], ['Elements', 'EPLOT'], '-', ['Multi-Plots', 'GPLOT']]],
-    ['PlotCtrls', 4, [['Pan Zoom Rotate…', function () { setDyn(!view.dyn); }], ['View Settings › Viewing Direction…', function () { dialog(D.VIEW); }], '-', ['Numbering…', function () { D.PNUM.fields.forEach(function (f, i) { f.def = !!eng.pnum[['KP', 'LINE', 'AREA', 'NODE', 'ELEM'][i]]; }); dialog(D.PNUM); }], ['Symbols… (구속·하중 표시 켜기/끄기)', function () { view.noBC = !view.noBC; draw(); }], '-', ['Capture Image…', capture], ['Reset Plot Ctrls…', function () { setDir([0, 0, 1]); run('/PNUM,KP,0\n/PNUM,LINE,0\n/PNUM,AREA,0\n/PNUM,NODE,0\n/PNUM,ELEM,0', { quiet: true }); }]]],
+    ['PlotCtrls', 4, [['Pan Zoom Rotate…', function () { setDyn(!view.dyn); }], ['View Settings › Viewing Direction…', function () { dialog(D.VIEW); }], '-', ['Numbering…', function () { D.PNUM.fields.forEach(function (f, i) { f.def = !!eng.pnum[['KP', 'LINE', 'AREA', 'NODE', 'ELEM'][i]]; }); dialog(D.PNUM); }], ['Symbols… (toggle constraint/load symbols)', function () { view.noBC = !view.noBC; draw(); }], '-', ['Capture Image…', capture], ['Reset Plot Ctrls…', function () { setDir([0, 0, 1]); run('/PNUM,KP,0\n/PNUM,LINE,0\n/PNUM,AREA,0\n/PNUM,NODE,0\n/PNUM,ELEM,0', { quiet: true }); }]]],
     ['WorkPlane', 0, [['Display Working Plane', function () { view.wp = !view.wp; draw(); }], ['Offset WP to › XYZ Locations…', function () { dialog(D.WPAVE); }], ['Offset WP to › Global Origin', 'WPAVE,0,0,0'], '-', ['Local Coordinate Systems › Create Local CS…', function () { dialog(D.LOCAL); }], ['Change Active CS to › Global Cartesian', 'CSYS,0'], ['Change Active CS to › Global Cylindrical', 'CSYS,1']]],
     ['Parameters', 1, [['Scalar Parameters…', function () { dialog(D.PARAM); }], ['List Parameters', '*STATUS']]],
     ['Macro', 0, [['Execute Data Block…', openRead], ['Create Macro… (Session Editor)', openSession]]],
-    ['MenuCtrls', 2, [['Toolbar 보이기/숨기기', function () { toggle('#mwTb'); }], ['Main Menu 보이기/숨기기', function () { $('#mapdl').classList.toggle('nomm'); draw(); }], ['Output Window 보이기/숨기기', function () { toggle('#mwOutWin'); }], ['메모 보이기/숨기기', function () { root.classList.toggle('nomemo'); draw(); }]]],
-    ['Help', 0, [['Help Topics (APDL 명령 참고자료)', function () { window.open('ref.html', '_blank'); }], ['기출 풀이', function () { window.open('exams.html', '_blank'); }], ['연습기 사용법', function () { document.getElementById('howto').scrollIntoView(); }]]]
+    ['MenuCtrls', 2, [['Show/Hide Toolbar', function () { toggle('#mwTb'); }], ['Show/Hide Main Menu', function () { $('#mapdl').classList.toggle('nomm'); draw(); }], ['Show/Hide Output Window', function () { toggle('#mwOutWin'); }], ['Show/Hide Memo', function () { root.classList.toggle('nomemo'); draw(); }]]],
+    ['Help', 0, [['Help Topics (APDL command reference)', function () { window.open('ref.html', '_blank'); }], ['Past Exam Solutions', function () { window.open('exams.html', '_blank'); }], ['How to Use the Trainer', function () { document.getElementById('howto').scrollIntoView(); }]]]
   ];
   var bar = $('#mwMenubar');
   UMENU.forEach(function (mn) {
@@ -322,10 +322,10 @@
   $('#icPzr').onclick = function () { setDyn(!view.dyn); };
   $('#icPrint').onclick = capture; $('#icHelp').onclick = function () { window.open('ref.html', '_blank'); };
   $('#icRaise').onclick = function () { var o = $('#mwOutWin'); o.hidden = false; o.classList.remove('omin'); o.scrollIntoView({ block: 'nearest' }); };
-  $('#icReset').onclick = function () { flash('Reset Picking — 연습기에는 마우스 선택(picking)이 없습니다. 번호를 직접 입력하세요.'); };
+  $('#icReset').onclick = function () { flash('Reset Picking - the trainer has no mouse picking. Enter the numbers directly.'); };
   $('#icContact').onclick = outScope;
   $('#tbSave').onclick = saveDb; $('#tbResume').onclick = resumeDb; $('#tbQuit').onclick = exitDlg;
-  $('#tbPower').onclick = function () { cmd1('/GRAPHICS,POWER'); flash('POWRGRPH: PowerGraphics 는 항상 켜져 있습니다.'); };
+  $('#tbPower').onclick = function () { cmd1('/GRAPHICS,POWER'); flash('POWRGRPH: PowerGraphics is always on.'); };
   function saveDb() { cmd1('SAVE'); try { localStorage.setItem(KEY, eng.saved); } catch (e) { } }
   function resumeDb() { try { if (!eng.saved) eng.saved = localStorage.getItem(KEY); } catch (e) { } cmd1('RESUME'); }
   root.querySelectorAll('[data-coll]').forEach(function (b) { b.onclick = function () { var k = b.getAttribute('data-coll'); if (k === 'tb') toggle('#mwTb'); else { root.classList.toggle('nomm'); draw(); } b.classList.toggle('flip'); }; });
@@ -352,26 +352,26 @@
   }
   function splitBlocks(t) { // 여러 예제가 /clear 없이 붙은 수업 파일: '/prep7' + '/title' 마다 한 블록
     var L = t.split(/\r?\n/), starts = [];
-    L.forEach(function (l, i) { if (/^\s*\/prep7\b/i.test(l)) { for (var k = i + 1; k < Math.min(L.length, i + 4); k++) if (/^\s*\/title/i.test(L[k])) { starts.push({ i: i, name: L[k].replace(/^\s*\/title\s*,?/i, '').trim() || '(제목 없음)' }); break; } } });
+    L.forEach(function (l, i) { if (/^\s*\/prep7\b/i.test(l)) { for (var k = i + 1; k < Math.min(L.length, i + 4); k++) if (/^\s*\/title/i.test(L[k])) { starts.push({ i: i, name: L[k].replace(/^\s*\/title\s*,?/i, '').trim() || '(untitled)' }); break; } } });
     if (starts.length < 2) return null;
     return starts.map(function (st, q) { return { name: st.name, text: L.slice(q ? st.i : 0, q + 1 < starts.length ? starts[q + 1].i : L.length).join('\n') }; });
   }
   function openRead() {
     var m = $('#mwRead'), list = $('#mwReadList'), bsel = $('#mwReadBlock'), cache = {}; m.hidden = false; list.innerHTML = '';
     (window.APDL_EXAMPLES || []).forEach(function (x, i) { var o = document.createElement('option'); o.value = 'ex' + i; o.textContent = x.name; list.appendChild(o); });
-    (window.APDL_FILES || []).forEach(function (x) { var o = document.createElement('option'); o.value = 'f:' + x.path; o.textContent = '수업 파일: ' + x.name; list.appendChild(o); });
+    (window.APDL_FILES || []).forEach(function (x) { var o = document.createElement('option'); o.value = 'f:' + x.path; o.textContent = 'Course file: ' + x.name; list.appendChild(o); });
     list.selectedIndex = 0; list.focus();
-    var go = function (text, name) { m.hidden = true; if ($('#mwReadClear').checked) fresh(); eng.p(' /INPUT,' + name); runMany(text); flash(name + ' 실행 완료'); };
+    var go = function (text, name) { m.hidden = true; if ($('#mwReadClear').checked) fresh(); eng.p(' /INPUT,' + name); runMany(text); flash(name + ' executed'); };
     var dec = function (buf) { var t = new TextDecoder('utf-8').decode(buf); if (t.indexOf('�') > -1) t = new TextDecoder('euc-kr').decode(buf); return t; };
     var load = function (v) { if (v.indexOf('ex') === 0) return Promise.resolve(window.APDL_EXAMPLES[+v.slice(2)].code); if (cache[v]) return Promise.resolve(cache[v]); return fetch(v.slice(2)).then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(function (b) { return (cache[v] = dec(b)); }); };
     var blocks = null;
-    var showBlocks = function () { var v = list.value; bsel.innerHTML = '<option value="">파일 전체</option>'; $('#mwReadBlockRow').hidden = true; blocks = null; if (!v) return;
+    var showBlocks = function () { var v = list.value; bsel.innerHTML = '<option value="">Whole file</option>'; $('#mwReadBlockRow').hidden = true; blocks = null; if (!v) return;
       load(v).then(function (t) { if (list.value !== v) return; blocks = splitBlocks(t); if (!blocks) return; blocks.forEach(function (b, i) { var o = document.createElement('option'); o.value = i; o.textContent = (i + 1) + '. /title,' + b.name; bsel.appendChild(o); }); bsel.value = '0'; $('#mwReadBlockRow').hidden = false; }).catch(function () { }); };
     list.onchange = showBlocks; showBlocks();
     m.onclick = function (e) {
       var a = e.target.getAttribute('data-act'); if (!a) return;
       if (a === 'cancel') { m.hidden = true; return; }
-      var v = list.value; if (!v) return; var name = list.options[list.selectedIndex].textContent.replace('수업 파일: ', '');
+      var v = list.value; if (!v) return; var name = list.options[list.selectedIndex].textContent.replace('Course file: ', '');
       load(v).then(function (t) { if (blocks && bsel.value !== '') { var b = blocks[+bsel.value]; go(b.text, name + ' — /title,' + b.name); } else go(t, name); }).catch(function () { msgbox('Error', 'File ' + v.slice(2) + ' could not be opened.', 'e'); });
     };
     list.ondblclick = function () { m.querySelector('[data-act=ok]').click(); };
@@ -408,7 +408,7 @@
     view.zoom = Math.max(0.02, Math.min(500, view.zoom * f)); var sc2 = T.base * view.zoom;
     view.panX = toX - rx * sc2 - T.W / 2 + T.cx * sc2; view.panY = toY + ry * sc2 - T.Hc - T.cy * sc2;
   }
-  function setDyn(on) { view.dyn = on; $('#vtDyn').classList.toggle('on', on); flash(on ? 'Dynamic Mode: 그래픽 창을 드래그하면 회전, 휠 = 확대/축소' : 'Dynamic Mode 끔 (드래그 = 이동, Ctrl+오른쪽 드래그 = 회전)'); }
+  function setDyn(on) { view.dyn = on; $('#vtDyn').classList.toggle('on', on); flash(on ? 'Dynamic Mode: drag in the graphics window to rotate, wheel = zoom' : 'Dynamic Mode off (drag = pan, Ctrl+right-drag = rotate)'); }
   function cube(f) {
     var P = { front: '3,7 12,7 12,16 3,16', top: '3,7 7,3 16,3 12,7', right: '12,7 16,3 16,12 12,16', back: '7,3 16,3 16,12 7,12', left: '3,7 7,3 7,12 3,16', bottom: '3,16 7,12 16,12 12,16' };
     var hl = f === 'iso' ? ['front', 'top', 'right'] : f === 'obliq' ? ['top', 'right'] : [f], s = '';
@@ -435,8 +435,8 @@
     ['top', cube('top'), 'Top View', function () { viewCmd([0, 1, 0]); }], ['bottom', cube('bottom'), 'Bottom View', function () { viewCmd([0, -1, 0]); }],
     ['left', cube('left'), 'Left View', function () { viewCmd([-1, 0, 0]); }], ['right', cube('right'), 'Right View', function () { viewCmd([1, 0, 0]); }],
     ['fit', mag('fit'), 'Fit View', function () { pushView(); view.zoom = 1; view.panX = view.panY = 0; run('/AUTO,1\n/REPLOT', { quiet: true }); }],
-    ['box', mag('box'), 'Box Zoom', function () { view.box = !view.box; $('#vt_box').classList.toggle('on', view.box); if (view.box) flash('Box Zoom: 그래픽 창에서 확대할 영역을 드래그하세요'); }],
-    ['back2', mag('back'), 'Back Up', function () { var p = view.stack.pop(); if (!p) { flash('되돌릴 보기가 없습니다.'); return; } view.R = p.R; view.zoom = p.zoom; view.panX = p.panX; view.panY = p.panY; draw(); }],
+    ['box', mag('box'), 'Box Zoom', function () { view.box = !view.box; $('#vt_box').classList.toggle('on', view.box); if (view.box) flash('Box Zoom: drag the area to zoom into in the graphics window'); }],
+    ['back2', mag('back'), 'Back Up', function () { var p = view.stack.pop(); if (!p) { flash('No previous view to go back to.'); return; } view.R = p.R; view.zoom = p.zoom; view.panX = p.panX; view.panY = p.panY; draw(); }],
     ['zin', mag('in'), 'Zoom In', function () { pushView(); var T = view.T; zoomAt(T.W / 2, T.Hc, 1 + 0.15 * view.rate, T.W / 2, T.Hc); draw(); }],
     ['zout', mag('out'), 'Zoom Out', function () { pushView(); var T = view.T; zoomAt(T.W / 2, T.Hc, 1 / (1 + 0.15 * view.rate), T.W / 2, T.Hc); draw(); }],
     ['pl', panI('l'), 'Pan Left', function () { view.panX -= panStep(); draw(); }], ['pr', panI('r'), 'Pan Right', function () { view.panX += panStep(); draw(); }],
@@ -454,7 +454,7 @@
   var vt = $('#mwVtool');
   VT.forEach(function (v) {
     if (v[0] === 'sel' || v[0] === 'rate') {
-      var s = document.createElement('select'); s.className = 'mw-vsel'; s.title = v[0] === 'sel' ? 'Window 1' : 'Rate (회전·이동 단위)'; s.setAttribute('aria-label', s.title);
+      var s = document.createElement('select'); s.className = 'mw-vsel'; s.title = v[0] === 'sel' ? 'Window 1' : 'Rate (rotation/pan step)'; s.setAttribute('aria-label', s.title);
       (v[0] === 'sel' ? ['1', 'All'] : ['1', '2', '3', '4', '5', '6', '7', '8', '9']).forEach(function (x) { var o = document.createElement('option'); o.textContent = x; s.appendChild(o); });
       if (v[0] === 'rate') { s.value = '3'; s.onchange = function () { view.rate = +s.value; }; }
       vt.appendChild(s); return;
@@ -517,7 +517,7 @@
     var ls = sm ? 0.7 : 1;
     txt(RX, F + 30 * ls, 'MAPDL', { fill: '#fff', 'font-size': 29 * ls, 'font-weight': 900, 'font-family': 'Arial Black,Arial,sans-serif', 'text-anchor': 'end', 'font-style': 'italic', 'letter-spacing': -0.5 });
     el('line', { x1: RX - 112 * ls, y1: F + 36 * ls, x2: RX, y2: F + 36 * ls, stroke: '#fff', 'stroke-width': 1.5 });
-    txt(RX, F + 52 * ls, '연습기 R1', { fill: '#fff', 'font-size': 15 * ls, 'font-weight': 700, 'font-family': 'Arial,sans-serif', 'text-anchor': 'end' });
+    txt(RX, F + 52 * ls, 'Trainer R1', { fill: '#fff', 'font-size': 15 * ls, 'font-weight': 700, 'font-family': 'Arial,sans-serif', 'text-anchor': 'end' });
     el('line', { x1: RX - 112 * ls, y1: F + 58 * ls, x2: RX, y2: F + 58 * ls, stroke: '#fff', 'stroke-width': 1.5 });
     txt(RX - 8 * ls, F + 76 * ls, 'STUDENT', { fill: '#fff', 'font-size': 16 * ls, 'font-weight': 700, 'font-family': 'Arial,sans-serif', 'text-anchor': 'end' });
     var p2 = function (v) { return (v < 10 ? '0' : '') + v; };
@@ -715,7 +715,7 @@
     stopAnim();
     var w = $('#mwPick'); if (!w) { w = document.createElement('div'); w.id = 'mwPick'; w.className = 'mw-pick'; $('.mw-win').appendChild(w); }
     view.picking = { type: type, ids: [], unpick: false, cb: cb };
-    w.innerHTML = '<div class="mw-dlgtitle"><span>' + esc(title || ('Pick ' + TYPEN[type])) + '</span></div><div class="mw-pickbody"><div class="mw-pkrow"><label><input type="radio" name="mwpu" value="0" checked> Pick</label><label><input type="radio" name="mwpu" value="1"> Unpick</label></div><div class="mw-pkrow"><label><input type="radio" checked disabled> Single</label></div><div class="mw-pkinfo">Count&nbsp;&nbsp;&nbsp;= <b id="mwPkCnt">0</b><br>Maximum = <span id="mwPkMax">0</span><br>Minimum = <span id="mwPkMin">0</span><br>' + TYPEN[type].slice(0, -1) + ' No. = <span id="mwPkLast"></span></div><div class="mw-pkhint">그래픽 창에서 ' + ({ node: '노드', kp: '키포인트', elem: '요소', line: '선', area: '면' }[type]) + '를 클릭하세요.</div></div><div class="mw-pkbtns"><button type="button" data-pk="ok">OK</button><button type="button" data-pk="all">Pick All</button><button type="button" data-pk="reset">Reset</button><button type="button" data-pk="cancel">Cancel</button></div>';
+    w.innerHTML = '<div class="mw-dlgtitle"><span>' + esc(title || ('Pick ' + TYPEN[type])) + '</span></div><div class="mw-pickbody"><div class="mw-pkrow"><label><input type="radio" name="mwpu" value="0" checked> Pick</label><label><input type="radio" name="mwpu" value="1"> Unpick</label></div><div class="mw-pkrow"><label><input type="radio" checked disabled> Single</label></div><div class="mw-pkinfo">Count&nbsp;&nbsp;&nbsp;= <b id="mwPkCnt">0</b><br>Maximum = <span id="mwPkMax">0</span><br>Minimum = <span id="mwPkMin">0</span><br>' + TYPEN[type].slice(0, -1) + ' No. = <span id="mwPkLast"></span></div><div class="mw-pkhint">Click a \' + ({ node: \'node\', kp: \'keypoint\', elem: \'element\', line: \'line\', area: \'area\' }[type]) + \' in the graphics window.</div></div><div class="mw-pkbtns"><button type="button" data-pk="ok">OK</button><button type="button" data-pk="all">Pick All</button><button type="button" data-pk="reset">Reset</button><button type="button" data-pk="cancel">Cancel</button></div>';
     w.hidden = false; svg.style.cursor = 'crosshair'; draw();
     w.onchange = function (e) { if (e.target.name === 'mwpu') view.picking.unpick = e.target.value === '1'; };
     w.onclick = function (e) {
@@ -730,18 +730,18 @@
   function doPick(x, y) {
     var pkg = view.picking, list = (view.pk && view.pk[pkg.type]) || [], best = null, bd = 22;
     list.forEach(function (q) { var d = Math.hypot(q[1] - x, q[2] - y); if (d < bd) { bd = d; best = q[0]; } });
-    if (best === null) { flash('가까운 ' + TYPEN[pkg.type] + ' 없음 — 더 가까이 클릭하세요'); return; }
+    if (best === null) { flash('No nearby ' + TYPEN[pkg.type] + ' - click closer'); return; }
     var i = pkg.ids.indexOf(best); if (pkg.unpick) { if (i > -1) pkg.ids.splice(i, 1); } else if (i < 0) pkg.ids.push(best);
     pkInfo(); draw();
   }
   function queryPick(what) {
-    if (!eng.result) { msgbox('Error', 'No results are available. 먼저 /SOLU → SOLVE 하세요.', 'e'); return; }
+    if (!eng.result) { msgbox('Error', 'No results are available. Run /SOLU then SOLVE first.', 'e'); return; }
     if (eng.proc !== 'O') cmd1('/POST1');
     startPick('node', what === 'RF' ? 'Query Reaction Solution' : 'Query Nodal Solution (DOF Solution)', function (ids) {
       if (!ids) return; var rows = [], q = [];
       ids.forEach(function (n) {
         var u = eng.nodeU(+n), t;
-        if (what === 'RF') { var r = eng.reactionN(+n); t = r ? 'FX=' + gfmt(r[0]) + '\nFY=' + gfmt(r[1]) + '\nFZ=' + gfmt(r[2]) + (r[3] || r[4] || r[5] ? '\nMX=' + gfmt(r[3]) + '\nMY=' + gfmt(r[4]) + '\nMZ=' + gfmt(r[5]) : '') : '(구속 없음)'; }
+        if (what === 'RF') { var r = eng.reactionN(+n); t = r ? 'FX=' + gfmt(r[0]) + '\nFY=' + gfmt(r[1]) + '\nFZ=' + gfmt(r[2]) + (r[3] || r[4] || r[5] ? '\nMX=' + gfmt(r[3]) + '\nMY=' + gfmt(r[4]) + '\nMZ=' + gfmt(r[5]) : '') : '(no constraint)'; }
         else t = 'UX=' + gfmt(u[0]) + '\nUY=' + gfmt(u[1]) + '\nUZ=' + gfmt(u[2]) + '\nUSUM=' + gfmt(Math.hypot(u[0], u[1], u[2]));
         q.push({ id: n, t: 'NODE=' + n + '\n' + t }); rows.push('NODE ' + n + ':  ' + t.replace(/\n/g, '   '));
       });
@@ -753,7 +753,7 @@
   var animRAF = null;
   function startAnim() {
     stopAnim(); var a = eng.anim; if (!a) return; var per = Math.max(0.2, a.nfram * (a.delay || 0.1)) * 1000, t0 = performance.now(), cyc = a.ncycl || 5;
-    flash('Animation — ' + cyc + '회 반복 (다른 명령을 입력하면 멈춤)');
+    flash('Animation - ' + cyc + ' cycles (stops when you enter another command)');
     var step = function (now) { var t = (now - t0) / per; if (t >= cyc) { stopAnim(); return; } var fr = Math.floor((t % 1) * a.nfram + 1e-9) / Math.max(1, a.nfram - 1); view.animK = Math.min(1, fr); draw(); animRAF = requestAnimationFrame(step); };
     animRAF = requestAnimationFrame(step);
   }
@@ -761,23 +761,23 @@
 
   // ================= 명령 도우미 (입력 칸 위 문법 표시) =================
   var SYN = {
-    '/CLEAR': 'Read|데이터베이스 지우기', '/PREP7': '|전처리기', '/SOLU': '|해석 처리기', '/POST1': '|후처리기', 'FINISH': '|처리기 나가기', '/TITLE': 'Title|그림 아래 제목',
-    'NLIST': 'NODE1, NODE2, NINC, Lcoord, SORT1, SORT2, SORT3|노드 목록 (nlist = 전부, nlist,2,5 = 2~5번)', 'ELIST': 'IEL1, IEL2, INC, NNKEY, RKEY, PTKEY|요소 목록 (elist = 전부, 요소별 노드·재료·단면)', 'KLIST': 'NP1, NP2, NINC, Lab|키포인트 목록', 'LLIST': 'NL1, NL2, NINC, Lab|선 목록', 'ALIST': 'NA1, NA2, NINC, Lab|면 목록', 'DLIST': 'NODE1, NODE2, NINC|구속 조건 목록', 'FLIST': 'NODE1, NODE2, NINC|노드 하중 목록', '/PSYMB': 'Label, KEY|기호 표시 (CS = 좌표계, NDIR = 노드 좌표계 축, ESYS = 요소 좌표계 축; KEY 1 = 켜기)', '/PBC': 'Item, --, KEY, MIN, MAX, ABS|구속·하중 기호 표시 (/pbc,all,,1 = 전부 켜기)', 'NPLOT': 'KNUM|노드 그림 (KNUM 1 = 키포인트 번호도)', '/PNUM': 'Label, KEY|번호 표시 (KP LINE AREA NODE ELEM, 1=켜기)', '/ESHAPE': 'SCALE, KEY|보를 단면 모양으로 그리기', '*GET': 'Par, Entity, ENTNUM, Item1, IT1NUM, Item2, IT2NUM|결과·모델 값을 파라미터로', '*DO': 'Par, IVAL, FVAL, INC|반복 시작', '*ENDDO': '|반복 끝',
-    '*IF': 'VAL1, Oper1, VAL2, Base1, VAL3, Oper2, VAL4, Base2|조건문 (Oper: EQ NE LT GT LE GE, Base: THEN)', '*ELSE': '|조건문', '*ENDIF': '|조건문 끝', '*AFUN': 'Lab|각도 단위 (DEG / RAD)',
-    'SAVE': 'Fname, Ext, --, Slab|DB 저장', 'RESUME': 'Fname, Ext, --, NOPAR, KNOPLOT|DB 불러오기',
-    'ET': 'ITYPE, Ename, KOP1, KOP2, KOP3, KOP4, KOP5, KOP6, INOPR|요소 종류 (LINK180 BEAM188 PLANE182 …)', 'KEYOPT': 'ITYPE, KNUM, VALUE|요소 옵션', 'R': 'NSET, R1, R2, R3, R4, R5, R6|실상수 (옛 요소)',
-    'SECTYPE': 'SECID, Type, Subtype, Name, REFINEKEY|단면 (BEAM: RECT CSOLID CTUBE I CHAN HREC ASEC / LINK)', 'SECDATA': 'VAL1, VAL2, VAL3, VAL4, VAL5, VAL6, VAL7, VAL8, VAL9, VAL10, VAL11, VAL12|단면 치수',
-    'TYPE': 'ITYPE|현재 요소 종류', 'MAT': 'MAT|현재 재료', 'REAL': 'NSET|현재 실상수', 'MP': 'Lab, MAT, C0, C1, C2, C3, C4|재료 (EX, NUXY = 푸아송비, GXY, DENS)',
-    'CSYS': 'KCN|좌표계 (0 직교, 1 원통)', 'LOCAL': 'KCN, KCS, XC, YC, ZC, THXY, THYZ, THZX, PAR1, PAR2|국부 좌표계', 'WPAVE': 'X1, Y1, Z1, X2, Y2, Z2, X3, Y3, Z3|작업평면 이동',
-    'K': 'NPT, X, Y, Z|키포인트', 'L': 'P1, P2, NDIV, SPACE, XV1, YV1, ZV1, XV2, YV2, ZV2|선 (원통 CS면 호)', 'LSYMM': 'Ncomp, NL1, NL2, NINC, KINC, NOELEM, IMOVE|선 대칭복사', 'NUMMRG': 'Label, TOLER, GTOLER, Action, Switch|겹친 항목 합치기',
-    'LATT': 'MAT, REAL, TYPE, --, KB, KE, SECNUM|선 속성 (KB = 방향 키포인트)', 'ESIZE': 'SIZE, NDIV|요소 크기', 'LESIZE': 'NL1, SIZE, ANGSIZ, NDIV, SPACE, KFORC, LAYER1, LAYER2, KYNDIV|선별 분할', 'LMESH': 'NL1, NL2, NINC|선 메쉬',
-    'AADD': 'NA1, NA2, NA3, NA4, NA5, NA6, NA7, NA8, NA9|면 합치기', 'ASBA': 'NA1, NA2, SEPO, KEEP1, KEEP2|면 빼기 (NA1 − NA2)', 'AL': 'L1, L2, L3, L4, L5, L6, L7, L8, L9, L10|선으로 면', 'AMESH': 'NA1, NA2, NINC|면 메쉬',
-    'N': 'NODE, X, Y, Z, THXY, THYZ, THZX|노드', 'E': 'I, J, K, L, M, N, O, P|요소 (BEAM188 의 K = 방향 노드)', 'EN': 'IEL, I, J, K, L, M, N, O, P|번호 지정 요소', 'FILL': 'NODE1, NODE2, NFILL, NSTRT, NINC, ITIME, INC, SPACE|사이 노드 채우기',
-    'NGEN': 'ITIME, INC, NODE1, NODE2, NINC, DX, DY, DZ, SPACE|노드 복사', 'EGEN': 'ITIME, NINC, IEL1, IEL2, IEINC, MINC, TINC, RINC, CINC, SINC, DX, DY, DZ|요소 복사', 'NMODIF': 'NODE, X, Y, Z, THXY, THYZ, THZX|노드 수정', 'NROTAT': 'NODE1, NODE2, NINC|노드 좌표계 회전 (현재 CS 로)', 'ESEL': 'Type, Item, Comp, VMIN, VMAX, VINC, KABS|요소 선택', 'ALLSEL': 'LabT, Entity|전부 선택',
-    'D': 'NODE, Lab, VALUE, VALUE2, NEND, NINC, Lab2, Lab3, Lab4, Lab5, Lab6|노드 구속 (UX UY UZ ROTX ROTY ROTZ ALL)', 'F': 'NODE, Lab, VALUE, VALUE2, NEND, NINC|노드 하중 (FX FY FZ MX MY MZ)',
-    'DK': 'KPOI, Lab, VALUE, VALUE2, KEXPND, Lab2, Lab3, Lab4, Lab5, Lab6|키포인트 구속', 'FK': 'KPOI, Lab, VALUE, VALUE2|키포인트 하중', 'SFBEAM': 'Elem, LKEY, Lab, VALI, VALJ, VAL2I, VAL2J, IOFFST, JOFFST, LENRAT|보 분포하중 (BEAM188: 1=−z, 2=−y)', 'SFEDELE': 'ELEM, LKEY, Lab|면하중 지우기', 'SOLVE': 'Action|풀기', 'SET': 'Lstep, SBSTEP, Fact, KIMG, TIME, ANGLE, NSET, ORDER|결과 읽기',
-    'PRNSOL': 'Item, Comp|노드 결과 출력 (prnsol,u,sum → UX UY UZ USUM)', 'PRRFOR': 'Lab|반력 출력 (수업 파일 방식)', 'PCIR': 'RAD1, RAD2, THETA1, THETA2|= PCIRC 원 면 (수업 표기)', 'RECT': 'X1, X2, Y1, Y2|= RECTNG 직사각형 면 (수업 표기)', 'WPOFF': 'XOFF, YOFF, ZOFF|= WPOFFS 작업평면 평행이동 (수업 표기)', 'SECN': 'SECID|= SECNUM 현재 단면 번호 (수업 표기)', 'SECOFF': 'Location, OFFSET1, OFFSET2|= SECOFFSET 단면 위치 (수업 표기)', 'ETABLE': 'Lab, Item, Comp, Option|요소 테이블 (SMISC LS NMISC S)', 'PRETAB': 'Lab1, Lab2, Lab3, Lab4, Lab5, Lab6, Lab7, Lab8, Lab9|요소 테이블 출력',
-    'PLDISP': 'KUND|변형 형상 (1 = 변형 전 같이)', 'PLNSOL': 'Item, Comp, KUND, Fact, FileID|노드 결과 등고선', 'PLETAB': 'Itlab, Avglab|요소 테이블 그림', 'EPLOT': '|요소 그림'};
+    '/CLEAR': 'Read|Clear the database', '/PREP7': '|Preprocessor', '/SOLU': '|Solution processor', '/POST1': '|Postprocessor', 'FINISH': '|Leave the processor', '/TITLE': 'Title|Title below the plot',
+    'NLIST': 'NODE1, NODE2, NINC, Lcoord, SORT1, SORT2, SORT3|List nodes (nlist = all, nlist,2,5 = nodes 2 to 5)', 'ELIST': 'IEL1, IEL2, INC, NNKEY, RKEY, PTKEY|List elements (elist = all; nodes, material and section per element)', 'KLIST': 'NP1, NP2, NINC, Lab|List keypoints', 'LLIST': 'NL1, NL2, NINC, Lab|List lines', 'ALIST': 'NA1, NA2, NINC, Lab|List areas', 'DLIST': 'NODE1, NODE2, NINC|List constraints', 'FLIST': 'NODE1, NODE2, NINC|List nodal loads', '/PSYMB': 'Label, KEY|Display symbols (CS = coordinate systems, NDIR = nodal coordinate axes, ESYS = element coordinate axes; KEY 1 = on)', '/PBC': 'Item, --, KEY, MIN, MAX, ABS|Show constraint/load symbols (/pbc,all,,1 = all on)', 'NPLOT': 'KNUM|Plot nodes (KNUM 1 = also keypoint numbers)', '/PNUM': 'Label, KEY|Show numbers (KP LINE AREA NODE ELEM, 1 = on)', '/ESHAPE': 'SCALE, KEY|Draw beams with their section shape', '*GET': 'Par, Entity, ENTNUM, Item1, IT1NUM, Item2, IT2NUM|Get results/model values into a parameter', '*DO': 'Par, IVAL, FVAL, INC|Start loop', '*ENDDO': '|End loop',
+    '*IF': 'VAL1, Oper1, VAL2, Base1, VAL3, Oper2, VAL4, Base2|Conditional (Oper: EQ NE LT GT LE GE, Base: THEN)', '*ELSE': '|Conditional', '*ENDIF': '|End conditional', '*AFUN': 'Lab|Angle unit (DEG / RAD)',
+    'SAVE': 'Fname, Ext, --, Slab|Save the database', 'RESUME': 'Fname, Ext, --, NOPAR, KNOPLOT|Resume the database',
+    'ET': 'ITYPE, Ename, KOP1, KOP2, KOP3, KOP4, KOP5, KOP6, INOPR|Element type (LINK180 BEAM188 PLANE182 …)', 'KEYOPT': 'ITYPE, KNUM, VALUE|Element option', 'R': 'NSET, R1, R2, R3, R4, R5, R6|Real constants (legacy elements)',
+    'SECTYPE': 'SECID, Type, Subtype, Name, REFINEKEY|Section (BEAM: RECT CSOLID CTUBE I CHAN HREC ASEC / LINK)', 'SECDATA': 'VAL1, VAL2, VAL3, VAL4, VAL5, VAL6, VAL7, VAL8, VAL9, VAL10, VAL11, VAL12|Section dimensions',
+    'TYPE': 'ITYPE|Current element type', 'MAT': 'MAT|Current material', 'REAL': 'NSET|Current real constant set', 'MP': 'Lab, MAT, C0, C1, C2, C3, C4|Material (EX, NUXY = Poisson ratio, GXY, DENS)',
+    'CSYS': 'KCN|Coordinate system (0 Cartesian, 1 cylindrical)', 'LOCAL': 'KCN, KCS, XC, YC, ZC, THXY, THYZ, THZX, PAR1, PAR2|Local coordinate system', 'WPAVE': 'X1, Y1, Z1, X2, Y2, Z2, X3, Y3, Z3|Move the working plane',
+    'K': 'NPT, X, Y, Z|Keypoint', 'L': 'P1, P2, NDIV, SPACE, XV1, YV1, ZV1, XV2, YV2, ZV2|Line (an arc in a cylindrical CS)', 'LSYMM': 'Ncomp, NL1, NL2, NINC, KINC, NOELEM, IMOVE|Reflect lines', 'NUMMRG': 'Label, TOLER, GTOLER, Action, Switch|Merge coincident items',
+    'LATT': 'MAT, REAL, TYPE, --, KB, KE, SECNUM|Line attributes (KB = orientation keypoint)', 'ESIZE': 'SIZE, NDIV|Element size', 'LESIZE': 'NL1, SIZE, ANGSIZ, NDIV, SPACE, KFORC, LAYER1, LAYER2, KYNDIV|Divisions per line', 'LMESH': 'NL1, NL2, NINC|Mesh lines',
+    'AADD': 'NA1, NA2, NA3, NA4, NA5, NA6, NA7, NA8, NA9|Add areas', 'ASBA': 'NA1, NA2, SEPO, KEEP1, KEEP2|Subtract areas (NA1 − NA2)', 'AL': 'L1, L2, L3, L4, L5, L6, L7, L8, L9, L10|Area from lines', 'AMESH': 'NA1, NA2, NINC|Mesh areas',
+    'N': 'NODE, X, Y, Z, THXY, THYZ, THZX|Node', 'E': 'I, J, K, L, M, N, O, P|Element (K of BEAM188 = orientation node)', 'EN': 'IEL, I, J, K, L, M, N, O, P|Element with a given number', 'FILL': 'NODE1, NODE2, NFILL, NSTRT, NINC, ITIME, INC, SPACE|Fill nodes in between',
+    'NGEN': 'ITIME, INC, NODE1, NODE2, NINC, DX, DY, DZ, SPACE|Copy nodes', 'EGEN': 'ITIME, NINC, IEL1, IEL2, IEINC, MINC, TINC, RINC, CINC, SINC, DX, DY, DZ|Copy elements', 'NMODIF': 'NODE, X, Y, Z, THXY, THYZ, THZX|Modify nodes', 'NROTAT': 'NODE1, NODE2, NINC|Rotate the nodal CS (to the active CS)', 'ESEL': 'Type, Item, Comp, VMIN, VMAX, VINC, KABS|Select elements', 'ALLSEL': 'LabT, Entity|Select all',
+    'D': 'NODE, Lab, VALUE, VALUE2, NEND, NINC, Lab2, Lab3, Lab4, Lab5, Lab6|Constrain nodes (UX UY UZ ROTX ROTY ROTZ ALL)', 'F': 'NODE, Lab, VALUE, VALUE2, NEND, NINC|Nodal loads (FX FY FZ MX MY MZ)',
+    'DK': 'KPOI, Lab, VALUE, VALUE2, KEXPND, Lab2, Lab3, Lab4, Lab5, Lab6|Constrain keypoints', 'FK': 'KPOI, Lab, VALUE, VALUE2|Keypoint loads', 'SFBEAM': 'Elem, LKEY, Lab, VALI, VALJ, VAL2I, VAL2J, IOFFST, JOFFST, LENRAT|Distributed beam load (BEAM188: 1 = −z, 2 = −y)', 'SFEDELE': 'ELEM, LKEY, Lab|Delete surface loads', 'SOLVE': 'Action|Solve', 'SET': 'Lstep, SBSTEP, Fact, KIMG, TIME, ANGLE, NSET, ORDER|Read results',
+    'PRNSOL': 'Item, Comp|Print nodal results (prnsol,u,sum -> UX UY UZ USUM)', 'PRRFOR': 'Lab|Print reactions (course-file style)', 'PCIR': 'RAD1, RAD2, THETA1, THETA2|= PCIRC circular area (course notation)', 'RECT': 'X1, X2, Y1, Y2|= RECTNG rectangular area (course notation)', 'WPOFF': 'XOFF, YOFF, ZOFF|= WPOFFS translate the working plane (course notation)', 'SECN': 'SECID|= SECNUM current section number (course notation)', 'SECOFF': 'Location, OFFSET1, OFFSET2|= SECOFFSET section offset location (course notation)', 'ETABLE': 'Lab, Item, Comp, Option|Element table (SMISC LS NMISC S)', 'PRETAB': 'Lab1, Lab2, Lab3, Lab4, Lab5, Lab6, Lab7, Lab8, Lab9|Print the element table',
+    'PLDISP': 'KUND|Deformed shape (1 = with undeformed)', 'PLNSOL': 'Item, Comp, KUND, Fact, FileID|Nodal results contour', 'PLETAB': 'Itlab, Avglab|Plot the element table', 'EPLOT': '|Plot elements'};
   var synEl = $('#mwSyn'), CMDS = Object.keys(SYN);
   function synUpd() {
     var v = input.value, i = v.indexOf(','), head = (i < 0 ? v : v.slice(0, i)).trim().toUpperCase();
@@ -787,7 +787,7 @@
     if (i > -1) { if (!full) { synEl.hidden = true; return; } synEl.innerHTML = fmt(full, v.split(',').length - 2); synEl.hidden = false; synEl.classList.remove('below'); return; }
     var m = CMDS.filter(function (c) { return c.indexOf(head) === 0; }).sort(function (a, b) { return (a === head ? -1 : 0) - (b === head ? -1 : 0) || a.length - b.length || (a < b ? -1 : 1); }).slice(0, 7);
     if (!m.length) { synEl.hidden = true; return; }
-    synEl.innerHTML = m.map(function (c) { return fmt(c, -1); }).join('') + (m.length > 1 ? '<div class="mw-synh">Tab = 첫 명령 채우기</div>' : ''); synEl.hidden = false; synEl._first = m[0]; synEl.classList.toggle('below', m.length > 2);
+    synEl.innerHTML = m.map(function (c) { return fmt(c, -1); }).join('') + (m.length > 1 ? '<div class="mw-synh">Tab = fill in the first command</div>' : ''); synEl.hidden = false; synEl._first = m[0]; synEl.classList.toggle('below', m.length > 2);
   }
   input.addEventListener('input', synUpd); input.addEventListener('focus', synUpd); input.addEventListener('blur', function () { setTimeout(function () { synEl.hidden = true; }, 150); });
   input.addEventListener('keydown', function (e) {
@@ -797,33 +797,33 @@
   input.addEventListener('keyup', function (e) { if (e.key === 'ArrowUp' || e.key === 'ArrowDown') synUpd(); });
 
   // ================= 메모 (오른쪽) =================
-  var MKEY = 'mapdl-trainer-memo', memo = { cur: 0, pages: [{ name: '메모 1', text: '' }] }, mmT = $('#mmText'), mmP = $('#mmPage'), mmTimer;
+  var MKEY = 'mapdl-trainer-memo', memo = { cur: 0, pages: [{ name: 'Memo 1', text: '' }] }, mmT = $('#mmText'), mmP = $('#mmPage'), mmTimer;
   try { var mm = JSON.parse(localStorage.getItem(MKEY)); if (mm && mm.pages && mm.pages.length) memo = mm; } catch (e) { }
-  function memoSave() { memo.pages[memo.cur].text = mmT.value; try { localStorage.setItem(MKEY, JSON.stringify(memo)); $('#mmStat').textContent = '저장됨 ' + new Date().toTimeString().slice(0, 5); } catch (e) { $('#mmStat').textContent = '이 브라우저에서는 저장 안 됨'; } }
+  function memoSave() { memo.pages[memo.cur].text = mmT.value; try { localStorage.setItem(MKEY, JSON.stringify(memo)); $('#mmStat').textContent = 'Saved ' + new Date().toTimeString().slice(0, 5); } catch (e) { $('#mmStat').textContent = 'Not saved in this browser'; } }
   function memoList() { mmP.innerHTML = ''; memo.pages.forEach(function (pg, i) { var o = document.createElement('option'); o.value = i; o.textContent = pg.name; mmP.appendChild(o); }); mmP.value = memo.cur; mmT.value = memo.pages[memo.cur].text; memoPos(); }
-  function memoPos() { var b = mmT.value.slice(0, mmT.selectionStart).split('\n'); $('#mmPos').textContent = '줄 ' + b.length + ', 열 ' + (b[b.length - 1].length + 1); }
+  function memoPos() { var b = mmT.value.slice(0, mmT.selectionStart).split('\n'); $('#mmPos').textContent = 'Line ' + b.length + ', Col ' + (b[b.length - 1].length + 1); }
   function memoSel() { var a = mmT.selectionStart, b = mmT.selectionEnd, v = mmT.value; if (a === b) { a = v.lastIndexOf('\n', a - 1) + 1; b = v.indexOf('\n', b); if (b < 0) b = v.length; } return v.slice(a, b); }
-  mmT.addEventListener('input', function () { $('#mmStat').textContent = '입력 중…'; clearTimeout(mmTimer); mmTimer = setTimeout(memoSave, 400); memoPos(); });
+  mmT.addEventListener('input', function () { $('#mmStat').textContent = 'Typing…'; clearTimeout(mmTimer); mmTimer = setTimeout(memoSave, 400); memoPos(); });
   mmT.addEventListener('keyup', memoPos); mmT.addEventListener('click', memoPos);
   mmT.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); $('#mmRun').click(); } if (e.key === 'Tab') { e.preventDefault(); document.execCommand('insertText', false, '  '); } });
   mmP.onchange = function () { memoSave(); memo.cur = +mmP.value; memoList(); };
-  $('#mmNew').onclick = function () { memoSave(); memo.pages.push({ name: '메모 ' + (memo.pages.length + 1), text: '' }); memo.cur = memo.pages.length - 1; memoList(); memoSave(); mmT.focus(); };
-  $('#mmDel').onclick = function () { msgbox('메모 삭제', '"' + memo.pages[memo.cur].name + '" 을(를) 지울까요?', 'q', ['OK', 'Cancel'], function (i) { if (i) return; memo.pages.splice(memo.cur, 1); if (!memo.pages.length) memo.pages.push({ name: '메모 1', text: '' }); memo.cur = Math.max(0, memo.cur - 1); memoList(); memoSave(); }); };
-  $('#mmRun').onclick = function () { var t = memoSel().trim(); if (!t) { flash('실행할 줄이 없습니다.'); return; } if (t.indexOf('\n') < 0) cmd1(t); else runMany(t); };
-  $('#mmAll').onclick = function () { if (!mmT.value.trim()) { flash('메모가 비어 있습니다.'); return; } runMany(mmT.value); };
-  $('#mmHist').onclick = function () { if (!eng.hist.length) { flash('아직 입력한 명령이 없습니다.'); return; } mmT.focus(); document.execCommand('insertText', false, eng.hist.join('\n') + '\n'); memoSave(); };
+  $('#mmNew').onclick = function () { memoSave(); memo.pages.push({ name: 'Memo ' + (memo.pages.length + 1), text: '' }); memo.cur = memo.pages.length - 1; memoList(); memoSave(); mmT.focus(); };
+  $('#mmDel').onclick = function () { msgbox('Delete Memo', 'Delete "' + memo.pages[memo.cur].name + '"?', 'q', ['OK', 'Cancel'], function (i) { if (i) return; memo.pages.splice(memo.cur, 1); if (!memo.pages.length) memo.pages.push({ name: 'Memo 1', text: '' }); memo.cur = Math.max(0, memo.cur - 1); memoList(); memoSave(); }); };
+  $('#mmRun').onclick = function () { var t = memoSel().trim(); if (!t) { flash('No line to run.'); return; } if (t.indexOf('\n') < 0) cmd1(t); else runMany(t); };
+  $('#mmAll').onclick = function () { if (!mmT.value.trim()) { flash('The memo is empty.'); return; } runMany(mmT.value); };
+  $('#mmHist').onclick = function () { if (!eng.hist.length) { flash('No commands entered yet.'); return; } mmT.focus(); document.execCommand('insertText', false, eng.hist.join('\n') + '\n'); memoSave(); };
   $('#mmSave').onclick = function () { memoSave(); download(memo.pages[memo.cur].name.replace(/\s+/g, '_') + '.txt', mmT.value); };
-  $('#mmHide').onclick = function () { root.classList.add('nomemo'); draw(); flash('메모는 MenuCtrls › 메모 보이기 로 다시 열 수 있습니다.'); };
+  $('#mmHide').onclick = function () { root.classList.add('nomemo'); draw(); flash('Reopen the memo with MenuCtrls › Show/Hide Memo.'); };
   memoList();
 
   // ================= 시작 =================
   function boot() {
-    eng.p(' MAPDL 연습기 — 중간고사 범위 (Mechanical APDL 방식, 정적 구조 해석)');
-    eng.p(' 명령 입력 칸에 명령을 입력하고 Enter. 여러 줄은 붙여넣기 / File > Read Input from… / Session Editor.');
+    eng.p(' MAPDL Trainer - midterm scope (Mechanical APDL style, static structural analysis)');
+    eng.p(' Type a command in the input box and press Enter. For several lines, paste them, or use File > Read Input from… / Session Editor.');
     eng.p(''); flushOut(0); updStatus(); draw();
   }
   boot(); refreshHist();
-  if (location.hash.indexOf('#code=') === 0) { try { var code = decodeURIComponent(escape(atob(location.hash.slice(6)))); eng.p(' /INPUT  (기출 풀이 페이지에서 불러옴)'); runMany(code); } catch (e) { } }
+  if (location.hash.indexOf('#code=') === 0) { try { var code = decodeURIComponent(escape(atob(location.hash.slice(6)))); eng.p(' /INPUT  (loaded from the past-exam solutions page)'); runMany(code); } catch (e) { } }
   window.addEventListener('hashchange', function () { if (location.hash.indexOf('#code=') === 0) location.reload(); });
   window.MAPDL = { run: function (t) { return run(t); }, engine: function () { return eng; }, view: view };
 })();

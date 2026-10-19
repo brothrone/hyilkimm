@@ -54,7 +54,7 @@
   function Expr(env) { this.env = env; }
   Expr.prototype.eval = function (src) {
     this.s = src; this.toks = this.lex(src); this.i = 0;
-    var v = this.cmp(); if (this.i < this.toks.length) throw new ApdlError('Unable to evaluate "' + src + '" (식 오류)'); return v;
+    var v = this.cmp(); if (this.i < this.toks.length) throw new ApdlError('Unable to evaluate "' + src + '" (expression error)'); return v;
   };
   Expr.prototype.lex = function (s) {
     var t = [], i = 0, m;
@@ -116,7 +116,7 @@
     if (s === 'CHAN') { var C1 = d[0], C2 = d[1], C3 = d[2], u1 = d[3], u2 = d[4], u3 = d[5]; return rectsProps([{ y0: 0, y1: C1, z0: 0, z1: u1 }, { y0: 0, y1: u3, z0: u1, z1: C3 - u2 }, { y0: 0, y1: C2, z0: C3 - u2, z1: C3 }], C3 * u3, (C1 * u1 + C2 * u2) * 5 / 6); } // 원점 = 웨브 바깥 아래 모서리, W1·t1 = 아래 플랜지
     if (s === 'HREC') { var a1 = d[0], a2 = d[1], q1 = d[2], q2 = d[3], q3 = d[4], q4 = d[5]; return rectsProps([{ y0: 0, y1: q1, z0: 0, z1: a2 }, { y0: a1 - q2, y1: a1, z0: 0, z1: a2 }, { y0: q1, y1: a1 - q2, z0: 0, z1: q3 }, { y0: q1, y1: a1 - q2, z0: a2 - q4, z1: a2 }]); } // 원점 = 왼쪽 아래 모서리 (W1 폭, W2 높이, t1 왼 t2 오 t3 아래 t4 위)
     if (s === 'ASEC') return { A: d[0], Iyy: d[1], Iyz: d[2], Izz: d[3], J: d[5] || 0, cy: 0, cz: 0, ymin: -0.5, ymax: 0.5, zmin: -0.5, zmax: 0.5, /* Help: ASEC 은 ±0.5 로 가정 */ Asy: d[0], Asz: d[0], asec: true };
-    throw new ApdlError('Section subtype ' + s + ' is not supported in this trainer (연습기 미지원 단면).');
+    throw new ApdlError('Section subtype ' + s + ' is not supported in this trainer (section not supported by the trainer).');
   };
 
   // ---------- 요소 강성 ----------
@@ -164,7 +164,7 @@
   C.planeB = function (X) {
     if (X.length === 3) {
       var x1 = X[0][0], y1 = X[0][1], x2 = X[1][0], y2 = X[1][1], x3 = X[2][0], y3 = X[2][1], A2 = (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
-      if (A2 <= 0) throw new ApdlError('Element has a negative or zero area (노드 순서를 반시계로).');
+      if (A2 <= 0) throw new ApdlError('Element has a negative or zero area (order the nodes counter-clockwise).');
       var b = [y2 - y3, y3 - y1, y1 - y2], c = [x3 - x2, x1 - x3, x2 - x1], B = [new Array(6).fill(0), new Array(6).fill(0), new Array(6).fill(0)];
       for (var i = 0; i < 3; i++) { B[0][2 * i] = b[i] / A2; B[1][2 * i + 1] = c[i] / A2; B[2][2 * i] = c[i] / A2; B[2][2 * i + 1] = b[i] / A2; }
       return [{ B: B, w: A2 / 2 }];
@@ -173,7 +173,7 @@
     pts.forEach(function (p) {
       var dN = [[], []]; for (var a = 0; a < 4; a++) { dN[0][a] = xi[a] * (1 + et[a] * p[1]) / 4; dN[1][a] = et[a] * (1 + xi[a] * p[0]) / 4; }
       var J = [[0, 0], [0, 0]]; for (a = 0; a < 4; a++) { J[0][0] += dN[0][a] * X[a][0]; J[0][1] += dN[0][a] * X[a][1]; J[1][0] += dN[1][a] * X[a][0]; J[1][1] += dN[1][a] * X[a][1]; }
-      var dj = J[0][0] * J[1][1] - J[0][1] * J[1][0]; if (dj <= 0) throw new ApdlError('Element shape is invalid (노드 순서를 반시계로, 찌그러짐 확인).');
+      var dj = J[0][0] * J[1][1] - J[0][1] * J[1][0]; if (dj <= 0) throw new ApdlError('Element shape is invalid (order the nodes counter-clockwise and check for distortion).');
       var Ji = [[J[1][1] / dj, -J[0][1] / dj], [-J[1][0] / dj, J[0][0] / dj]], B = [new Array(8).fill(0), new Array(8).fill(0), new Array(8).fill(0)];
       for (a = 0; a < 4; a++) { var dx = Ji[0][0] * dN[0][a] + Ji[0][1] * dN[1][a], dy = Ji[1][0] * dN[0][a] + Ji[1][1] * dN[1][a]; B[0][2 * a] = dx; B[1][2 * a + 1] = dy; B[2][2 * a] = dy; B[2][2 * a + 1] = dx; }
       out.push({ B: B, w: dj });
@@ -213,7 +213,7 @@
       for (var b = 0; b < bnd.length && ok; b++) if (segDist(p, bnd[b][0], bnd[b][1]) < 0.55 * h) ok = false;
       if (ok) pts.push(p);
     }
-    if (pts.length > 6000) throw new ApdlError('Too many nodes for this trainer (요소 크기를 키우세요: esize).');
+    if (pts.length > 6000) throw new ApdlError('Too many nodes for this trainer (increase the element size: esize).');
     var tris = delaunay(pts).filter(function (t) {
       var a = pts[t[0]], b = pts[t[1]], c = pts[t[2]], ar = ((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2;
       if (Math.abs(ar) < 1e-12 * h * h) return false;
