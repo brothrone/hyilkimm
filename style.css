@@ -253,7 +253,7 @@ dl.pages dt{font-family:var(--sans);font-style:normal;font-size:15px}
 .mw-outwin{margin-top:10px;border:1px solid #6f6f6f;background:#fff;box-shadow:0 3px 14px rgba(0,0,0,.2)}
 .mw-outwin[hidden]{display:none}
 .mw-outwin.omin .mw-out{display:none}
-.mw-out{margin:0;height:260px;overflow:auto;background:#fff;padding:6px 10px;font:13px/1.35 "Courier New",Courier,monospace;color:#000;white-space:pre;border:0;border-radius:0}
+.mw-out{user-select:text;outline:none;margin:0;height:260px;overflow:auto;background:#fff;padding:6px 10px;font:13px/1.35 "Courier New",Courier,monospace;color:#000;white-space:pre;border:0;border-radius:0}
 .mw-out .e{color:#c00;font-weight:700}
 .mw-out .w{color:#9a5a00}
 .mw-out .n{color:#1a5fb4}

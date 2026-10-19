@@ -67,6 +67,18 @@
     var t = (e.clipboardData || window.clipboardData).getData('text'); if (t.indexOf('\n') < 0) return;
     e.preventDefault(); runMany(t);
   });
+  // 입력 칸이 아닌 곳(그래픽 창, 빈 곳)에 포커스가 있어도 Ctrl+V가 동작: 한 줄이면 입력 칸에 넣고, 여러 줄이면 바로 실행
+  document.addEventListener('paste', function (e) {
+    var a = e.target; if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
+    var t = (e.clipboardData || window.clipboardData).getData('text'); if (!t || !t.trim()) return;
+    e.preventDefault();
+    if (t.trim().indexOf('\n') < 0) { input.value = t.trim(); input.focus(); } else runMany(t);
+  });
+  // Output Window: 클릭하면 포커스를 받고 Ctrl+A로 출력 전체를 선택해서 Ctrl+C로 복사
+  out.tabIndex = 0;
+  out.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') { e.preventDefault(); var r = document.createRange(); r.selectNodeContents(out); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+  });
   function runMany(t) { t.split('\n').forEach(function (l) { if (l.trim()) hist.push(l.trim()); }); hpos = hist.length; refreshHist(); run(t); }
   var hl = $('#mwHistList');
   function refreshHist() { hl.innerHTML = ''; var seen = {}; hist.slice().reverse().forEach(function (h) { if (seen[h] || Object.keys(seen).length >= 40) return; seen[h] = 1; var b = document.createElement('button'); b.type = 'button'; b.textContent = h; b.onclick = function () { input.value = h; hideHist(); input.focus(); }; hl.appendChild(b); }); }
