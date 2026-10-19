@@ -762,7 +762,7 @@ face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = 
 </ul>
 <hr />
 <h2 id="12-beam188-keyopt-ansys-help">12. Element KEYOPT (ANSYS Help)</h2>
-<p>KEYOPT는 요소의 동작 옵션이다. <code>et,1,beam188,KOP1,KOP2,KOP3</code>처럼 <code>et</code>에서 앞에서부터 순서대로 칸을 채우거나 <code>keyopt,1,번호,값</code>으로 따로 준다. 아래 값은 ANSYS Help(v261)의 BEAM188, LINK180 페이지를 직접 읽고 옮긴 것이다. 시험에서는 BEAM188의 <b>KEYOPT(3)</b>만 바꾸고 나머지는 기본값을 쓴다.</p>
+<p>KEYOPT는 요소의 동작 옵션이다. <code>et,1,beam188,KOP1,KOP2,KOP3</code>처럼 <code>et</code>에서 앞에서부터 순서대로 칸을 채우거나 <code>keyopt,1,번호,값</code>으로 따로 준다. 아래 값은 ANSYS Help(v261)의 BEAM188, LINK180, PLANE182 페이지를 직접 읽고 옮긴 것이다. 시험에서는 BEAM188의 <b>KEYOPT(3)</b>만 바꾸고 나머지는 기본값을 쓴다.</p>
 <h3 id="beam188-keyopt">BEAM188</h3>
 <div class="tbl"><table>
 <thead><tr><th>KEYOPT</th><th>값</th><th>의미</th></tr></thead>
@@ -795,4 +795,26 @@ face 번호는 K 노드를 위(+Y)에 둔 경우 1, K 노드 없이 element y = 
 <ul>
 <li><b>ETABLE 번호:</b> 축력은 <code>smisc,1</code>, 축응력은 <code>ls,1</code>(I 끝)과 <code>ls,2</code>(J 끝)이다. 단면적은 <code>smisc</code>가 아니라 <code>nmisc</code> 29에 저장된다. 이 요소는 <b>축방향 응력이 하나뿐</b>이라 결과 항목이 적다.</li>
 <li><b>가정과 제한:</b> 양 끝에서 축방향 힘만 받는 직선 봉이고, 길이 방향 성질은 균일하다. 노드 I와 J가 같은 위치이면 안 되고(길이 &gt; 0), 단면적도 0보다 커야 한다. 변위 형상함수상 봉 전체의 응력이 균일하다.</li>
+</ul>
+<h3 id="plane182-keyopt">PLANE182</h3>
+<p>2차원 4절점 고체 요소이다. 면(area)을 <code>amesh</code>로 나누거나 노드와 <code>e</code>로 직접 만든다. 시험(2025-1)에서는 <b>노드와 요소를 만드는 명령</b>만 묻고, 요소 옵션은 기본값을 쓴다.</p>
+<div class="tbl"><table>
+<thead><tr><th>KEYOPT</th><th>값</th><th>의미</th></tr></thead>
+<tbody>
+<tr><td>(1) 요소 기법</td><td>0 (기본) / 1 / 2 / 3</td><td>0은 완전 적분(B-bar, 선택적 감차 적분)이다. 1은 감차 적분에 모래시계(hourglass) 제어를 붙인다. 2는 강화 변형률 기법, 3은 단순화된 강화 변형률 기법이다.</td></tr>
+<tr><td><b>(3) 요소 거동</b></td><td>0 (기본) / 1 / 2 / 3 / 5 / 6</td><td><b>0은 평면응력</b>(단위 두께), 1은 축대칭, <b>2는 평면변형</b>(Z 방향 변형률 0), <b>3은 두께를 입력하는 평면응력</b>, 5는 일반화 평면변형, 6은 비틀림이 있는 축대칭이다.</td></tr>
+<tr><td>(6) 정식화</td><td>0 (기본) / 1</td><td>0은 순수 변위 정식화, 1은 혼합 u-P 정식화이다. 1은 평면응력에서 쓸 수 없고 희소 행렬 해법이 필요하다.</td></tr>
+<tr><td>(15) PML 흡수 조건</td><td>0 (기본) / 1</td><td>0은 포함하지 않는다. 음향·파동 해석용이라 시험과 무관하다.</td></tr>
+<tr><td>(17) 추가 면 출력</td><td>0 (기본) / 4</td><td>4는 압력이 0이 아닌 면의 표면 해를 출력한다.</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>노드와 자유도:</b> 노드는 I, J, K, L 네 개이고 자유도는 UX, UY이다(KEYOPT(3)=6일 때만 ROTY가 추가된다).</li>
+<li><b>실상수:</b> <code>THK</code>(두께)는 KEYOPT(3)=3일 때만 쓰인다. <code>HGSTF</code>는 KEYOPT(1)=1일 때만 쓰이고 기본값은 1.0이다. 수업에서는 실상수를 쓰지 않으므로 KEYOPT(3)=0(단위 두께)으로 푼다.</li>
+<li><b>재료:</b> <code>mp</code>로 EX, PRXY(또는 NUXY) 등을 넣는다. 이 요소는 평면 거동이라 EX와 포아송비만 있으면 된다.</li>
+<li><b>노드 순서와 모양:</b> 노드 I, J, K, L은 <b>반시계 방향</b>으로 준다. K와 L에 같은 노드 번호를 주면 삼각형이 되지만 정확도가 떨어져 권장하지 않는다. 요소 면적은 0이 아니어야 한다.</li>
+<li><b>위치 제한:</b> 요소는 반드시 <b>global X-Y 평면 안</b>에 있어야 한다. 축대칭이면 Y축이 대칭축이고 모델은 +X 쪽에 만든다.</li>
+<li><b>압력 면 번호:</b> face 1은 J–I 변, face 2는 K–J 변, face 3은 L–K 변, face 4는 I–L 변이다. 양(+)의 압력은 요소를 향해 누른다.</li>
+<li><b>하중 단위:</b> 평면 해석(KEYOPT(3)가 3, 5가 아닌 경우)의 절점력은 <b>단위 깊이당</b>이다. 축대칭에서는 360° 전체 기준이다.</li>
+<li><b>응력 방향:</b> 요소 좌표계는 기본적으로 global과 같다. 출력은 <code>rsys</code>에 따라 global 또는 재료 좌표계 기준이다. 축대칭(비틀림 없음)에서 global X, Y, Z, XY 응력은 각각 반경, 축, 원주, 면내 전단 방향이다.</li>
+<li><b>결과 번호:</b> 응력과 변형률은 <code>plnsol,s,x</code>, <code>prnsol,s,comp</code>처럼 성분 이름으로 본다. 압력 항목은 <code>smisc</code> P1(I/J: 2, 1), P2(J/K: 4, 3), P3(K/L: 6, 5), P4(I/L: 7, 8)이고 두께는 <code>nmisc</code> 1이다.</li>
 </ul>
