@@ -37,6 +37,11 @@ GY-291은 CS를 GND가 아니라 GPIO에 연결해야 SPI 모드로 동작한다
    `--rpm`을 주면 1P, 2P, BPF 고조파 위치가 그래프에 표시된다.
    하드웨어가 없을 때는 `python3 tools/make_demo_log.py demo.bin` 으로 시험 가능.
 
+## 마운트 사전 추정
+
+`python3 tools/mount_estimate.py --nx 2 --ny 2 --px 45 --py 30 --E 26` : TPU 막대 마운트의 6자유도 고유진동수와
+1P/BPF 전달률을 FEA 전에 대략 추정한다 (핀 접합 트러스, 굽힘 무시 → 실제는 더 단단함). `--E`는 실측 필요.
+
 ## 비행 전 확인 사항
 
 - 시리얼 모니터에서 `queueDrops=0`, `fifoFull` 이 늘지 않는지 확인 (늘면 유실 가능).
