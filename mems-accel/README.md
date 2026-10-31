@@ -42,6 +42,9 @@ GY-291은 CS를 GND가 아니라 GPIO에 연결해야 SPI 모드로 동작한다
 `python3 tools/mount_estimate.py --nx 2 --ny 2 --px 45 --py 30 --E 26` : TPU 막대 마운트의 6자유도 고유진동수와
 1P/BPF 전달률을 FEA 전에 대략 추정한다 (핀 접합 트러스, 굽힘 무시 → 실제는 더 단단함). `--E`는 실측 필요.
 
+`python3 tools/mount_optimize.py --cells 4 --cradle --hmax 12 --dmin 1.0 --fmin 15 --fmax 70` : 스로틀 → RPM 추정과 마운트 후보 탐색.
+`--eval 2 2 36 58 35 1.0 12 --cradle` 로 지정한 설계(NX NY PX PY 각도 d H)를 E 하한/26/상한에서 상세 평가한다.
+
 ## 비행 전 확인 사항
 
 - 시리얼 모니터에서 `queueDrops=0`, `fifoFull` 이 늘지 않는지 확인 (늘면 유실 가능).

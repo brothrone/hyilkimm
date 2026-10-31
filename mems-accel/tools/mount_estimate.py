@@ -33,18 +33,22 @@ def build(args, d, H):
     a, b, c = args.cam                         # 카메라 상자 X, Y, Z [mm]
     I = m / 12 * np.array([b**2 + c**2, a**2 + c**2, a**2 + b**2]) * 1e-6
     M = np.diag([m, m, m, *I])
-    zc = -(args.plate + c / 2) * 1e-3          # 부착점 기준 CG 높이: 부착점 = 윗판 아랫면
+    zc = -(args.plate + c / 2) * 1e-3          # 부착점은 CG보다 이만큼 아래 (CG 기준 z 좌표)
     xs = (np.arange(args.nx) - (args.nx - 1) / 2) * args.px * 1e-3
     ys = (np.arange(args.ny) - (args.ny - 1) / 2) * args.py * 1e-3
+    if getattr(args, "cradle", False):         # 카메라 양 옆면, CG 높이에 유닛 부착 (유닛 축 = Y)
+        kxy, kz = Ku[0, 0], Ku[2, 2]
+        sites = [(np.array([x, s * args.py * 0.5e-3, 0.0]), np.diag([kxy, kz, kxy]))
+                 for x in xs for s in (-1, 1)]
+    else:
+        sites = [(np.array([x, y, zc]), Ku) for x in xs for y in ys]
     K = np.zeros((6, 6))
     Kb = np.zeros((6, 3))                      # 기초 병진 변위 → 카메라 CG에 가해지는 힘/모멘트
-    for x in xs:
-        for y in ys:
-            r = np.array([x, y, -zc])          # CG → 부착점
-            S = np.array([[0, -r[2], r[1]], [r[2], 0, -r[0]], [-r[1], r[0], 0]])
-            B = np.hstack([np.eye(3), -S])     # 부착점 변위 = u + θ x r
-            K += B.T @ Ku @ B
-            Kb += B.T @ Ku
+    for r, Kl in sites:                        # r: CG → 부착점
+        S = np.array([[0, -r[2], r[1]], [r[2], 0, -r[0]], [-r[1], r[0], 0]])
+        B = np.hstack([np.eye(3), -S])         # 부착점 변위 = u + θ x r
+        K += B.T @ Kl @ B
+        Kb += B.T @ Kl
     return M, K, Kb, L, gap
 
 
