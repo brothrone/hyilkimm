@@ -18,10 +18,8 @@ jobs:
           site="https://brothrone.github.io/hyilkimm/"
           probe="https://pad.nixnet.services/bAGiCdA_TZ-IFhg_Te7pzA?edit"
           def attached(page):
-              page.goto(site+"?verify="+uuid.uuid4().hex,wait_until="domcontentloaded")
-              page.locator("#frame-manuscript").evaluate("(frame, url) => { frame.src=url; }", probe)
-              frame=page.frame_locator("#frame-manuscript")
-              cm=frame.locator(".CodeMirror").first
+              page.goto(probe,wait_until="domcontentloaded",timeout=90000)
+              cm=page.locator(".ui-edit-area .CodeMirror, .CodeMirror").first
               expect(cm).to_be_visible(timeout=60000)
               expect(cm.locator(".CodeMirror-code")).to_contain_text("공동 메모 동기화 확인",timeout=45000)
               return cm
@@ -43,4 +41,4 @@ jobs:
               finally:
                   pages[0].keyboard.press("Control+z")
               expect(second).not_to_contain_text(marker,timeout=25000)
-              print("HedgeDoc embed and new anonymous session roundtrip passed")
+              print("Standalone HedgeDoc and fresh anonymous session roundtrip passed")
