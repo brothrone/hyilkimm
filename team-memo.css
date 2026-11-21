@@ -1,0 +1,82 @@
+:root {
+  color-scheme: light;
+  --ink: #25332e;
+  --muted: #586760;
+  --border: #d1d7d0;
+  --paper: #fff;
+  --parchment: #f5f4ef;
+  --green: #244e40;
+  --memo-scale: 1;
+  font-family: "Work Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; color: var(--ink); background: var(--parchment); }
+button, select { font: inherit; color: inherit; }
+button, select, .file-button { cursor: pointer; }
+button, select {
+  background: transparent; border: 1px solid var(--border); border-radius: 6px;
+  padding: .48rem .75rem; font-size: .88rem;
+}
+button:hover, select:hover { background: #e9eee8; }
+a { color: var(--muted); text-underline-offset: 3px; }
+:focus-visible, .file-button:focus-within { outline: 3px solid #ac681a; outline-offset: 2px; }
+.mast, main, footer { width: min(1500px, 94%); margin-inline: auto; }
+.mast, .page-head, .bar, .controls, .paper-foot, .resources-head, .row, .project {
+  display: flex; align-items: center; gap: .65rem;
+}
+.mast, .page-head, .bar, .resources-head, .row { justify-content: space-between; }
+.mast { min-height: 3.5rem; border-bottom: 1px solid var(--border); }
+.project { font-size: .93rem; font-weight: 650; }
+.stamp { color: var(--green); font-size: 1.6rem; line-height: 1; }
+.page-head { padding-block: 1rem; }
+h1, h2, h3 { margin: 0; letter-spacing: -.045em; }
+h1 { font-size: clamp(1.6rem, 3vw, 2.4rem); line-height: 1.2; }
+h2 { font-size: 1.04rem; } h3 { font-size: .94rem; }
+#references, .file-button { color: white; background: var(--green); border-color: var(--green); }
+#references:hover, .file-button:hover { background: #34614e; }
+.workspace { display: grid; gap: 1rem; align-items: start; }
+body.with-files .workspace { grid-template-columns: minmax(0, 1fr) minmax(310px, 31%); }
+.paper, .resources {
+  min-width: 0; background: var(--paper); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.paper { display: grid; grid-template-rows: auto minmax(0,1fr) auto; height: max(420px, calc(100dvh - 174px)); }
+.bar, .resources-head { padding: .63rem 1rem; border-bottom: 1px solid var(--border); }
+.controls { gap: .4rem; }
+.canvas { position: relative; overflow: hidden; }
+iframe { border: 0; width: 100%; height: 100%; display: block; background: white; }
+#frame-manuscript {
+  position: absolute; inset: 0 auto auto 0;
+  width: calc(100% / var(--memo-scale)); height: calc(100% / var(--memo-scale));
+  transform: scale(var(--memo-scale)); transform-origin: top left;
+}
+.paper-foot { justify-content: flex-end; padding: .45rem .95rem; gap: 1rem; border-top: 1px solid var(--border); }
+.paper-foot a, footer a { font-size: .77rem; text-decoration: none; }
+.paper-foot a:hover, footer a:hover { text-decoration: underline; }
+.resources { display: flex; flex-direction: column; height: max(420px, calc(100dvh - 174px)); }
+.files { padding: 1rem; border-bottom: 1px solid var(--border); }
+.files p, .files small { color: var(--muted); font-size: .8rem; }
+.files p { margin: .55rem 0 0; } .files p:empty { display: none; }
+.file-button { position: relative; overflow: hidden; border-radius: 5px; padding: .45rem .7rem; font-size: .85rem; }
+.file-button input { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; }
+.files ul { list-style: none; padding: 0; margin: .4rem 0; max-height: 20vh; overflow: auto; }
+.files li { display: grid; gap: .2rem; padding: .4rem 0; border-bottom: 1px solid #edf0ec; }
+.files li a { overflow-wrap: anywhere; }
+.links { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.links h3 { padding: .75rem 1rem; } #reference-editor { flex: 1; min-height: 0; }
+footer { padding-block: .45rem; text-align: right; }
+body.focus .mast, body.focus .page-head, body.focus footer, body.focus .resources { display: none; }
+body.focus main { width: 100%; } body.focus .workspace { display: block; }
+body.focus .paper { height: 100dvh; min-height: 300px; border: 0; border-radius: 0; }
+.sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); }
+@media(max-width: 800px) {
+  body.with-files .workspace { grid-template-columns: 1fr; }
+  body.with-files .resources { grid-row: 1; height: auto; }
+  #reference-editor { flex: auto; height: 240px; }
+  .mast, main, footer { width: 96%; }
+  .page-head { padding-block: .65rem; }
+  .bar { padding: .5rem .7rem; }
+  .controls { gap: .3rem; }
+  .paper { height: max(380px, calc(100dvh - 155px)); }
+}
