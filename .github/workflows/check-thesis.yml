@@ -24,7 +24,7 @@ jobs:
                   page.on('requestfailed', lambda req: print('request failed:',req.url[:130], req.failure))
                   for retry in range(14):
                       page.goto(site+'?check='+str(retry),wait_until='domcontentloaded')
-                      if page.locator('#manuscript').count(): break
+                      if page.locator('#upload').count(): break
                       time.sleep(4)
               def editor(page,key):
                   return page.frame_locator('#frame-'+key).frame_locator('iframe[name=ace_outer]').frame_locator('iframe[name=ace_inner]').locator('body[contenteditable=true]')
@@ -55,7 +55,7 @@ jobs:
                       if line: page.keyboard.insert_text(line)
                   expect(target).to_contain_text(first_line)
                   print('Initialized',key)
-              seed_if_new('manuscript','3D 프린팅 카고메 카메라 진동 마운트',['','1. 서론','','2. 연구 방법','','3. 해석 및 시험 결과','','4. 결론','','참고문헌'])
+              seed_if_new('manuscript','목차 초안',['1. 서론','2. 연구 방법','3. 해석 및 시험 결과','4. 결론','','회의 메모','','결정한 내용','','다음 할 일'])
               seed_if_new('references','공유 자료',['','시험 데이터','','도면 및 사진','','참고문헌'])
               first,second=(editor(page,'references') for page in pages)
               # Append a temporary marker and undo only this edit.
@@ -71,6 +71,21 @@ jobs:
               pages[1].reload(wait_until='domcontentloaded')
               expect(editor(pages[1],'references')).to_be_visible(timeout=45000)
               for page in pages:
-                  page.get_by_role('link',name='논문 원고',exact=True).click()
+                  page.get_by_role('link',name='공동 메모',exact=True).click()
                   expect(editor(page,'manuscript')).to_be_visible(timeout=55000)
+              for page in pages:
+                  page.locator('#references').click()
+              sample='공유확인-'+uuid.uuid4().hex[:8]+'.txt'
+              pdf=b'Team workspace file sharing test.'
+              pages[0].locator('#upload').set_input_files({'name':sample,'mimeType':'text/plain','buffer':pdf})
+              expect(pages[0].locator('#upload-status')).to_contain_text('파일을 공유했습니다',timeout=40000)
+              link=pages[1].locator('#file-list').get_by_text(sample,exact=True)
+              expect(link).to_be_visible(timeout=45000)
+              href=link.get_attribute('href')
+              assert href.startswith('https://filebin.net/hyilkimm-team-')
+              # Clean up only the disposable file created by this run.
+              response=b.request.delete(href)
+              assert response.ok, response.status
+              expect(link).not_to_be_visible(timeout=45000)
+              print('Uploaded file appeared in second browser and its removal synchronized.')
               print('Both embedded editors loaded. Anonymous edit, remote receipt, undo and refresh all passed.')
