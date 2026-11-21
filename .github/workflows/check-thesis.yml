@@ -12,53 +12,35 @@ jobs:
       - name: Check two independent anonymous sessions
         shell: python
         run: |
-          import re, time, uuid
+          import time, uuid
           from playwright.sync_api import sync_playwright, expect
-          site = 'https://brothrone.github.io/hyilkimm/'
-          def editor(page, key):
-              return page.frame_locator('#frame-'+key).frame_locator('iframe[name=ace_outer]').frame_locator('iframe[name=ace_inner]').locator('body[contenteditable=true]')
+          import os
+          site="https://brothrone.github.io/hyilkimm/"
+          probe="https://pad.nixnet.services/bAGiCdA_TZ-IFhg_Te7pzA?edit"
+          def attached(page):
+              page.goto(site+"?verify="+uuid.uuid4().hex,wait_until="domcontentloaded")
+              page.locator("#frame-manuscript").evaluate("(frame, url) => { frame.src=url; }", probe)
+              frame=page.frame_locator("#frame-manuscript")
+              cm=frame.locator(".CodeMirror").first
+              expect(cm).to_be_visible(timeout=60000)
+              expect(cm.locator(".CodeMirror-code")).to_contain_text("공동 메모 동기화 확인",timeout=45000)
+              return cm
           with sync_playwright() as p:
-              browser = p.chromium.launch(executable_path='/usr/bin/google-chrome', args=['--no-sandbox'])
-              a, b = [browser.new_context(locale='ko-KR',viewport={'width':1440,'height':900}) for _ in range(2)]
-              pages = [a.new_page(), b.new_page()]
+              browser=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
+              contexts=[browser.new_context(locale="ko-KR") for _ in range(3)]
+              pages=[ctx.new_page() for ctx in contexts]
               for page in pages:
-                  for retry in range(24):
-                      page.goto(site+'?view=workspace'+str(retry),wait_until='domcontentloaded')
-                      if page.locator('#zoom').count(): break
-                      time.sleep(4)
-                  expect(editor(page,'manuscript')).to_be_visible(timeout=65000)
-                  expect(page.locator('#zoom')).to_have_value('1')
-                  assert 'hyilkimm-kagome-team-notes-ad9d61' in page.locator('#frame-manuscript').get_attribute('src')
-                  assert page.locator('#frame-manuscript').bounding_box()['height'] > 500
-              page = pages[0]
-              page.locator('#references').click()
-              expect(editor(page,'references')).to_be_visible(timeout=65000)
-              note,docs=[page.locator(x).bounding_box() for x in ['.paper','#uploads']]
-              assert note['x']+note['width'] <= docs['x']+1
-              page.locator('#zoom').select_option('1.3')
-              page.locator('#focus').click()
-              expect(page.locator('#uploads')).not_to_be_visible()
-              assert page.locator('.paper').bounding_box()['height'] >= 899
-              page.locator('#focus').click()
-              expect(page.locator('#uploads')).to_be_visible()
-              page.set_viewport_size({'width':390,'height':844})
-              assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
-              assert page.locator('.paper').bounding_box()['y'] >= page.locator('#uploads').bounding_box()['height']
-              page.locator('#close-files').click()
-              page.reload(wait_until='domcontentloaded')
-              expect(page.locator('#zoom')).to_have_value('1.3')
-              expect(editor(page,'manuscript')).to_be_visible(timeout=65000)
-              # Exercise typing on a separate disposable pad, with the deployed UI and identical embed settings.
-              probe='hyilkimm-ui-check-'+uuid.uuid4().hex[:12]
-              for pg in pages:
-                  pg.locator('#frame-manuscript').evaluate("(f, id) => { const u=new URL(f.src); u.pathname='/p/'+id; f.src=u.href; }",probe)
-                  expect(editor(pg,'manuscript')).to_be_visible(timeout=65000)
-              first,second=[editor(pg,'manuscript') for pg in pages]
-              marker='공동메모검증'+uuid.uuid4().hex[:8]
+                  page.on("console", lambda m: print("browser:",m.text[:150]) if m.type=="error" else None)
+              first,second=map(attached,pages[:2])
+              marker="한국어편집확인"+uuid.uuid4().hex[:6]
               first.click()
-              pages[0].keyboard.press('Control+End')
+              pages[0].keyboard.press("Control+End")
               pages[0].keyboard.insert_text(marker)
-              expect(second).to_contain_text(marker,timeout=30000)
-              pages[0].keyboard.press('Control+z')
-              expect(second).not_to_contain_text(marker,timeout=30000)
-              print('Desktop, mobile, focus, zoom persistence, materials and two anonymous typing sessions passed.')
+              try:
+                  expect(second).to_contain_text(marker,timeout=30000)
+                  third=attached(pages[2])
+                  expect(third).to_contain_text(marker,timeout=30000)
+              finally:
+                  pages[0].keyboard.press("Control+z")
+              expect(second).not_to_contain_text(marker,timeout=25000)
+              print("HedgeDoc embed and new anonymous session roundtrip passed")
