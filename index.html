@@ -5,32 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f4f4f0">
-<title>논문 작업실 · 카고메 카메라 마운트</title>
+<title>팀 메모 · 카고메 카메라 마운트</title>
 <style>
 *{box-sizing:border-box}html{color-scheme:light}body{margin:0;background:#f4f4f0;color:#20342d;font-family:"Inter","Apple SD Gothic Neo","Malgun Gothic",sans-serif}header,main,footer{width:min(1480px,96%);margin:auto}header{display:flex;align-items:center;justify-content:space-between;padding:18px 2px;border-bottom:1px solid #c9d1c9;gap:12px}h1{font-size:clamp(19px,2.4vw,29px);margin:0;letter-spacing:-.055em}h1 span{font-weight:450;font-size:.65em;letter-spacing:-.025em;margin-left:12px;color:#4e6358}a{color:#234c3f;text-underline-offset:4px}button,a{font:inherit}button{cursor:pointer}.share{border:1px solid #9daea4;background:transparent;border-radius:7px;padding:8px 14px;color:#254537;font-weight:600}.tools{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0}.views{display:flex;gap:3px}.views a{padding:10px 16px;border-radius:6px;text-decoration:none;font-weight:650;color:#456055}.views a[aria-current=page]{background:#274f40;color:white}.open{font-size:14px;margin-right:3px}.sheet{background:white;border:1px solid #bdcbc1;border-radius:8px;overflow:hidden;height:max(430px,calc(100vh - 194px));height:max(430px,calc(100dvh - 194px))}iframe{display:block;width:100%;height:100%;border:0}.hint{font-size:14px;margin:9px 2px;color:#43584b}footer{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:12px;color:#526258;padding:8px 2px 15px}a:focus-visible,button:focus-visible{outline:3px solid #b46817;outline-offset:2px}@media(max-width:600px){header,main,footer{width:96%}header{padding:12px 0}h1 span{display:block;margin:3px 0 0}.tools{padding:8px 0}.views a{padding:8px 11px}.open,.hint{font-size:13px}footer{align-items:baseline}.sheet{height:max(340px,calc(100dvh - 201px))}}
+.uploads{border:1px solid #bdcbc1;border-radius:8px;background:#fff;padding:14px 18px;margin-bottom:12px}.upload-head,.uploads li{display:flex;align-items:center;justify-content:space-between;gap:12px}.upload-head h2{font-size:17px;margin:0}.file-button{position:relative;overflow:hidden;border-radius:6px;background:#274f40;color:#fff;padding:8px 15px;font-weight:650;font-size:14px;cursor:pointer}.file-button:focus-within{outline:3px solid #b46817}.file-button input{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer}.file-help,.uploads p,.uploads small{font-size:13px;color:#51645a}.uploads p{margin:7px 0 0}.uploads p:empty{display:none}.uploads ul{margin:0;padding:0;list-style:none;max-height:180px;overflow:auto}.uploads li{border-top:1px solid #e2e8e3;padding:8px 0;font-size:14px}.uploads li:first-child{margin-top:9px}.uploads li a{overflow-wrap:anywhere}.uploads li small{flex:none}.uploads:not([hidden])~.sheet{height:max(360px,64dvh)}
 </style>
 </head>
 <body>
-<header><h1>논문 작업실<span>카고메 카메라 진동 마운트</span></h1><button class="share" type="button" id="share">주소 복사</button></header>
+<header><h1>팀 메모<span>카고메 카메라 진동 마운트</span></h1><button class="share" type="button" id="share">주소 복사</button></header>
 <main>
-<div class="tools"><nav class="views" aria-label="공동 편집 문서"><a href="#manuscript" id="manuscript" aria-current="page">논문 원고</a><a href="#references" id="references">공유 자료</a></nav><a class="open" id="open" href="https://annuel.framapad.org/p/hyilkimm-kagome-manuscript-46b1d7" target="_blank" rel="noopener noreferrer">새 창에서 열기 ↗</a></div>
+<div class="tools"><nav class="views" aria-label="작업 공간"><a href="#manuscript" id="manuscript" aria-current="page">공동 메모</a><a href="#references" id="references">공유 자료</a></nav><a class="open" id="open" href="https://annuel.framapad.org/p/hyilkimm-kagome-team-notes-ad9d61" target="_blank" rel="noopener noreferrer">새 창에서 열기 ↗</a></div>
+<section class="uploads" id="uploads" hidden aria-labelledby="files-title">
+<div class="upload-head"><h2 id="files-title">공유 파일</h2><label class="file-button">파일 올리기<input id="upload" type="file" multiple></label></div>
+<p class="file-help">계정 없이 올리고 내려받을 수 있습니다. 파일은 Filebin에 임시 보관되며 목록에 만료일이 표시됩니다.</p>
+<p id="upload-status" role="status"></p><ul id="file-list" aria-label="공유된 파일"></ul>
+<p id="file-status" role="status"></p>
+</section>
 <div class="sheet" id="sheet"></div>
-<noscript><p><a href="https://annuel.framapad.org/p/hyilkimm-kagome-manuscript-46b1d7">공동 원고 열기</a></p></noscript>
+<noscript><p><a href="https://annuel.framapad.org/p/hyilkimm-kagome-team-notes-ad9d61">공동 메모 열기</a></p></noscript>
 <p class="hint" id="hint"></p>
 </main>
 <footer><span>편집 기록과 내보내기는 편집창 도구 모음에서 이용할 수 있습니다.</span><a href="apdl-home.html">전산구조해석 자료</a></footer>
 <script>
 const docs = {
-  manuscript: {pad:"hyilkimm-kagome-manuscript-46b1d7",title:"논문 원고",hint:"주소를 아는 사람은 누구나 이 원고를 함께 편집할 수 있습니다."},
-  references: {pad:"hyilkimm-kagome-references-6d98f3",title:"공유 자료",hint:"자료 이름과 파일 공유 링크를 한 줄씩 추가하세요. 링크를 열 수 있도록 원본 파일의 열람 권한도 확인하세요."}
+  manuscript: {pad:"hyilkimm-kagome-team-notes-ad9d61",title:"공동 메모",hint:"목차와 회의 내용을 함께 정리하세요. 입력한 내용은 접속한 사람 모두에게 실시간으로 보입니다."},
+  references: {pad:"hyilkimm-kagome-references-6d98f3",title:"공유 자료",hint:"오래 보관할 자료는 공유 링크를 아래 편집창에 남기세요."}
 };
 let active;
 function showDocument() {
   const hash=location.hash.slice(1);
-  if(["contents","matrix","files","files-exam","files-sol","files-class"].includes(hash)){location.replace("apdl-home.html"+location.hash);return;}
+  if(["contents","matrix","files","files-exam","files-sol","files-class","files-ref"].includes(hash)){location.replace("apdl-home.html"+location.hash);return;}
   const key=hash==="references"?"references":"manuscript";
   if(key===active)return;
   active=key;
+  document.getElementById("uploads").hidden=key!=="references";
+  if(key==="references")window.dispatchEvent(new Event("show-files"));
   const doc=docs[key];
   for(const name of Object.keys(docs)){
     const link=document.getElementById(name);
@@ -48,12 +57,14 @@ function showDocument() {
   document.getElementById("open").href=frame.src;
   document.getElementById("hint").textContent=doc.hint;
 }
-window.addEventListener("hashchange",showDocument);showDocument();
+window.addEventListener("hashchange",showDocument);
 const share=document.getElementById("share");
 share.addEventListener("click",async()=>{
   try{await navigator.clipboard.writeText(location.href);share.textContent="복사됨";setTimeout(()=>{share.textContent="주소 복사"},1600);}
   catch{window.prompt("공유할 주소를 복사하세요.",location.href);}
 });
 </script>
+<script src="shared-files.js"></script>
+<script>showDocument();</script>
 </body>
 </html>
