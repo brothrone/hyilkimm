@@ -41,4 +41,25 @@ jobs:
               finally:
                   pages[0].keyboard.press("Control+z")
               expect(second).not_to_contain_text(marker,timeout=25000)
-              print("Standalone HedgeDoc and fresh anonymous session roundtrip passed")
+              home=contexts[0].new_page()
+              for attempt in range(18):
+                  home.goto(site+"?memo="+uuid.uuid4().hex,wait_until="domcontentloaded")
+                  if home.locator("#memo-preview").count(): break
+                  time.sleep(4)
+              expect(home.locator("#memo-preview")).to_contain_text("초록",timeout=45000)
+              with home.expect_popup() as popup:
+                  home.locator("#open").click()
+              actual=popup.value
+              expect(actual.locator(".CodeMirror").first).to_be_visible(timeout=60000)
+              expect(actual.locator(".CodeMirror-code").first).to_contain_text("초록",timeout=30000)
+              # Inspect, without changing the team's migrated notes.
+              editable=actual.locator(".CodeMirror").first.evaluate("(el) => !el.CodeMirror.getOption('readOnly')")
+              assert editable
+              assert "로그인" in actual.locator("body").text_content()
+              home.locator("#references").click()
+              expect(home.locator("#reference-editor")).to_contain_text("시험 데이터",timeout=45000)
+              with home.expect_popup() as ref_popup:
+                  home.locator(".link-head a").click()
+              refs=ref_popup.value
+              expect(refs.locator(".CodeMirror-code").first).to_contain_text("시험 데이터",timeout=60000)
+              print("Live previews, Korean interface, migrated notes and anonymous two-browser synchronization passed.")
