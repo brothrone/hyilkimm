@@ -1,0 +1,52 @@
+name: Verify public thesis editor
+on:
+  push:
+    branches: [verify/thesis-workspace]
+permissions: {}
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - run: python -m pip install -q playwright==1.56.0
+      - name: Check two independent anonymous sessions
+        shell: python
+        run: |
+          import time, uuid
+          from playwright.sync_api import sync_playwright, expect
+          site = 'https://brothrone.github.io/hyilkimm/'
+          with sync_playwright() as p:
+              browser = p.chromium.launch(executable_path='/usr/bin/google-chrome', args=['--no-sandbox'])
+              a,b = (browser.new_context(locale='ko-KR') for _ in range(2))
+              pages = [a.new_page(), b.new_page()]
+              for page in pages:
+                  page.on('console', lambda msg: print('browser:',msg.text[:160]) if msg.type=='error' else None)
+                  page.on('requestfailed', lambda req: print('request failed:',req.url[:130], req.failure))
+                  for retry in range(14):
+                      page.goto(site+'?check='+str(retry),wait_until='domcontentloaded')
+                      if page.locator('#manuscript').count(): break
+                      time.sleep(4)
+              def editor(page,key):
+                  return page.frame_locator('#frame-'+key).frame_locator('iframe[name=ace_outer]').frame_locator('iframe[name=ace_inner]').locator('body[contenteditable=true]')
+              for page in pages:
+                  expect(editor(page,'manuscript')).to_be_visible(timeout=50000)
+                  assert page.locator('#frame-manuscript').bounding_box()['height'] > 400
+                  page.get_by_role('link',name='공유 자료',exact=True).click()
+                  expect(editor(page,'references')).to_be_visible(timeout=55000)
+              first,second=(editor(page,'references') for page in pages)
+              # Append a temporary marker and undo only this edit.
+              marker='thesis-sync-'+uuid.uuid4().hex[:10]
+              first.click()
+              pages[0].keyboard.press('Control+End')
+              pages[0].keyboard.insert_text(marker)
+              try:
+                  expect(second).to_contain_text(marker,timeout=25000)
+              finally:
+                  pages[0].keyboard.press('Control+z')
+              expect(second).not_to_contain_text(marker,timeout=25000)
+              pages[1].reload(wait_until='domcontentloaded')
+              expect(editor(pages[1],'references')).to_be_visible(timeout=45000)
+              for page in pages:
+                  page.get_by_role('link',name='논문 원고',exact=True).click()
+                  expect(editor(page,'manuscript')).to_be_visible()
+              print('Both embedded editors loaded. Anonymous edit, remote receipt, undo and refresh all passed.')
