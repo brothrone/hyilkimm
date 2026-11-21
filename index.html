@@ -25,6 +25,7 @@
         <div class="bar">
           <h2 id="memo-title">공동 메모</h2>
           <div class="controls">
+            <a class="edit-button" id="open" href="https://pad.nixnet.services/52pFcc5PT7eMKQgNOdLOwA?edit" target="_blank" rel="noopener noreferrer">함께 편집 ↗</a>
             <label class="zoom-label"><span class="sr">메모 글자 크기</span>
               <select id="zoom" aria-label="메모 글자 크기">
                 <option value="0.9">90%</option><option value="1" selected>100%</option>
@@ -35,11 +36,12 @@
           </div>
         </div>
         <div class="canvas">
-          <iframe id="frame-manuscript" title="공동 메모 작성" src="https://annuel.framapad.org/p/hyilkimm-kagome-team-notes-ad9d61?showControls=false&amp;showChat=false&amp;showLineNumbers=false&amp;noColors=true&amp;lang=ko" referrerpolicy="no-referrer"></iframe>
+          <div class="note-preview" id="memo-preview" data-note="52pFcc5PT7eMKQgNOdLOwA">메모를 불러오는 중…</div>
         </div>
         <div class="paper-foot">
-          <a href="https://annuel.framapad.org/p/hyilkimm-kagome-team-notes-ad9d61/timeslider" target="_blank" rel="noopener noreferrer">수정 기록 ↗</a>
-          <a id="open" href="https://annuel.framapad.org/p/hyilkimm-kagome-team-notes-ad9d61" target="_blank" rel="noopener noreferrer">서식·내보내기 ↗</a>
+          <a href="https://annuel.framapad.org/p/hyilkimm-kagome-team-notes-ad9d61/timeslider" target="_blank" rel="noopener noreferrer">이전 편집 기록 ↗</a>
+          <a href="https://pad.nixnet.services/52pFcc5PT7eMKQgNOdLOwA/download">메모 내려받기</a>
+
         </div>
       </section>
       <aside class="resources" id="uploads" hidden aria-labelledby="files-title">
@@ -50,8 +52,8 @@
           <p id="upload-status" role="status"></p><ul id="file-list" aria-label="공유된 파일"></ul><p id="file-status" role="status"></p>
         </section>
         <section class="links">
-          <h3>자료 링크</h3>
-          <div id="reference-editor"></div>
+          <div class="link-head"><h3>자료 링크</h3><a href="https://pad.nixnet.services/SKTqg4RGRg2eQ6GLN6ODXA?edit" target="_blank" rel="noopener noreferrer">링크 편집 ↗</a></div>
+          <div class="note-preview" id="reference-editor" data-note="SKTqg4RGRg2eQ6GLN6ODXA">자료 링크를 불러오는 중…</div>
         </section>
       </aside>
     </div>

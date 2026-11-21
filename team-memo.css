@@ -45,12 +45,9 @@ body.with-files .workspace { grid-template-columns: minmax(0, 1fr) minmax(310px,
 .bar, .resources-head { padding: .63rem 1rem; border-bottom: 1px solid var(--border); }
 .controls { gap: .4rem; }
 .canvas { position: relative; overflow: hidden; }
-iframe { border: 0; width: 100%; height: 100%; display: block; background: white; }
-#frame-manuscript {
-  position: absolute; inset: 0 auto auto 0;
-  width: calc(100% / var(--memo-scale)); height: calc(100% / var(--memo-scale));
-  transform: scale(var(--memo-scale)); transform-origin: top left;
-}
+.note-preview { white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; height: 100%; padding: clamp(16px, 4vw, 60px); line-height: 1.8; font-size: calc(1rem * var(--memo-scale)); }
+.edit-button { display: inline-flex; align-items: center; padding: .5rem .85rem; border-radius: 6px; background: var(--green); color: white; text-decoration: none; font-size: .88rem; font-weight: 650; }
+#reference-editor.note-preview { padding: .75rem 1rem; font-size: .93rem; }
 .paper-foot { justify-content: flex-end; padding: .45rem .95rem; gap: 1rem; border-top: 1px solid var(--border); }
 .paper-foot a, footer a { font-size: .77rem; text-decoration: none; }
 .paper-foot a:hover, footer a:hover { text-decoration: underline; }
@@ -80,3 +77,6 @@ body.focus .paper { height: 100dvh; min-height: 300px; border: 0; border-radius:
   .controls { gap: .3rem; }
   .paper { height: max(380px, calc(100dvh - 155px)); }
 }
+
+.link-head { display: flex; align-items: center; justify-content: space-between; }
+.link-head a { font-size: .77rem; margin-right: 1rem; }
