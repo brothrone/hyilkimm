@@ -6,14 +6,14 @@ sys.path.insert(0, SRC)
 import svgs
 
 PAGES = [  # file, nav label, crumb, desc, deep (h3 in sidebar)
-    ('index.html', 'Home', 'Home', 'ANSYS APDL midterm reference', False),
+    ('apdl-home.html', 'Home', 'Home', 'ANSYS APDL midterm reference', False),
     ('trend.html', 'Analysis', 'Midterm Analysis', 'Past-exam trend analysis 2016-2025 and study plan', False),
     ('exams.html', 'Past Exams', 'Past Exams', 'Midterm APDL solution scripts 2016-2025', True),
     ('textbook.html', 'Textbook', 'Textbook Examples', 'Moaveni textbook examples and problems', True),
     ('ref.html', 'Reference', 'Command Reference', 'ANSYS APDL command reference', False),
     ('apdl.html', 'Practice', 'APDL Practice', 'In-browser APDL practice', False),
 ]
-TITLES = {'index.html': 'ANSYS APDL', 'trend.html': 'Midterm Analysis · ANSYS APDL',
+TITLES = {'apdl-home.html': 'ANSYS APDL', 'trend.html': 'Midterm Analysis · ANSYS APDL',
           'exams.html': 'Past Exams · ANSYS APDL', 'textbook.html': 'Textbook Examples · ANSYS APDL', 'ref.html': 'Command Reference · ANSYS APDL', 'apdl.html': 'APDL Practice · ANSYS APDL'}
 
 def strip(s): return re.sub(r'<[^>]+>', '', s).strip()
@@ -95,12 +95,12 @@ for k, (f, label, crumb, desc, deep) in enumerate(PAGES):
 </head>
 <body>
 <header class="hd">
-  <a class="logo" href="index.html">{LOGO}<span class="tx"><b>ANSYS APDL</b></span></a>
+  <a class="logo" href="apdl-home.html">{LOGO}<span class="tx"><b>ANSYS APDL</b></span></a>
   <nav class="topnav" aria-label="Pages">{nav}</nav>
 </header>
 <div class="sb">
   <button class="burger" type="button" id="burger" aria-label="Toggle contents"><span></span><span></span><span></span></button>
-  <div class="crumbs"><a href="index.html">Mechanical APDL Midterm 2026</a><span class="sep">|</span><a href="{f}">{crumb}</a><span class="sep">|</span><a href="#" id="printlink">PDF</a></div>
+  <div class="crumbs"><a href="apdl-home.html">Mechanical APDL Midterm 2026</a><span class="sep">|</span><a href="{f}">{crumb}</a><span class="sep">|</span><a href="#" id="printlink">PDF</a></div>
   <form class="search" id="search" role="search">
     <input type="search" id="q" placeholder="Search this page (e.g. sfbeam)" aria-label="Search this page">
     <button class="ic" type="submit" aria-label="Search">{SEARCH_IC}</button>
@@ -118,7 +118,7 @@ for k, (f, label, crumb, desc, deep) in enumerate(PAGES):
 {bodies[f]}
 </main>
 </div>
-<footer class="ft"><a href="https://ansyshelp.ansys.com/" rel="noopener">ANSYS Help</a><a href="index.html">Source files</a></footer>
+<footer class="ft"><a href="https://ansyshelp.ansys.com/" rel="noopener">ANSYS Help</a><a href="apdl-home.html">Source files</a></footer>
 <script src="site.js"></script>
 {'<script src="refsearch.js"></script>' if f == 'ref.html' else ''}
 </body>
