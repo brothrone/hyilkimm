@@ -19,16 +19,46 @@ function showResources() {
   fileToggle.setAttribute("aria-expanded", String(open));
   fileToggle.textContent = open ? "자료 접기" : "자료 함께 보기";
   if (!open) return;
-  if (!byId("frame-references")) {
-    const frame = document.createElement("iframe");
-    frame.id = "frame-references";
-    frame.title = "자료 링크 공동 편집";
-    frame.src = "https://annuel.framapad.org/p/hyilkimm-kagome-references-6d98f3?showChat=false&showLineNumbers=false&lang=ko";
-    frame.referrerPolicy = "no-referrer";
-    byId("reference-editor").append(frame);
-  }
+  refreshPreview(byId("reference-editor"));
   window.dispatchEvent(new Event("show-files"));
 }
+const loading = new WeakSet();
+const lastText = new WeakMap();
+async function refreshPreview(panel) {
+  if (loading.has(panel) || document.hidden || (panel.id === "reference-editor" && resources.hidden)) return;
+  loading.add(panel);
+  try {
+    const response = await fetch("https://pad.nixnet.services/" + panel.dataset.note + "/download", {
+      credentials: "omit", cache: "no-store", signal: AbortSignal.timeout(15000)
+    });
+    if (!response.ok) throw new Error("download");
+    const value = await response.text();
+    if (lastText.get(panel) !== value) {
+      const pieces = value.split(/(https?:\/\/[^\s<>]+)/g);
+      const nodes = pieces.map((part, index) => {
+        if (index % 2 === 0) return document.createTextNode(part);
+        const link = document.createElement("a");
+        link.href = part; link.textContent = part; link.target = "_blank"; link.rel = "noopener noreferrer";
+        return link;
+      });
+      panel.replaceChildren(...nodes);
+      if (!value.trim()) panel.textContent = "아직 작성된 내용이 없습니다.";
+      lastText.set(panel, value);
+    }
+    panel.removeAttribute("title");
+  } catch {
+    if (!lastText.has(panel)) panel.textContent = "미리보기를 불러오지 못했습니다. 편집 버튼으로 문서를 직접 열 수 있습니다.";
+    else panel.title = "마지막으로 불러온 내용입니다.";
+  } finally { loading.delete(panel); }
+}
+function refreshVisible() {
+  refreshPreview(byId("memo-preview"));
+  refreshPreview(byId("reference-editor"));
+}
+window.addEventListener("focus", refreshVisible);
+document.addEventListener("visibilitychange", refreshVisible);
+setInterval(refreshVisible, 12000);
+refreshPreview(byId("memo-preview"));
 fileToggle.addEventListener("click", () => { location.hash = resources.hidden ? "references" : "manuscript"; });
 byId("close-files").addEventListener("click", () => { location.hash = "manuscript"; fileToggle.focus(); });
 window.addEventListener("hashchange", showResources);
