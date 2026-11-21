@@ -12,7 +12,7 @@ jobs:
       - name: Check two independent anonymous sessions
         shell: python
         run: |
-          import time, uuid
+          import time, uuid, hashlib
           from playwright.sync_api import sync_playwright, expect
           site = 'https://brothrone.github.io/hyilkimm/'
           with sync_playwright() as p:
@@ -33,6 +33,30 @@ jobs:
                   assert page.locator('#frame-manuscript').bounding_box()['height'] > 400
                   page.get_by_role('link',name='공유 자료',exact=True).click()
                   expect(editor(page,'references')).to_be_visible(timeout=55000)
+              def seed_if_new(key, first_line, sections):
+                  page=pages[0]
+                  page.locator('#'+key).click()
+                  target=editor(page,key)
+                  expect(target).to_be_visible(timeout=55000)
+                  url=page.locator('#open').get_attribute('href').split('?')[0]
+                  response=a.request.get(url+'/export/txt')
+                  data=response.body()
+                  if hashlib.sha256(data).hexdigest() != '0d26ef910ba200bf5153f45fc21c7a6f42ce09877e1bdc5f795f578179e8c99e':
+                      print(key, 'already edited, preserving content'); return
+                  canonical=lambda x: ''.join(x.split())
+                  if canonical(target.inner_text()) != canonical(data.decode()):
+                      print(key,'changed in browser, preserving content'); return
+                  target.click()
+                  page.keyboard.press('Control+a')
+                  page.keyboard.insert_text(first_line)
+                  for line in sections:
+                      page.keyboard.press('End')
+                      page.keyboard.press('Enter')
+                      if line: page.keyboard.insert_text(line)
+                  expect(target).to_contain_text(first_line)
+                  print('Initialized',key)
+              seed_if_new('manuscript','3D 프린팅 카고메 카메라 진동 마운트',['','1. 서론','','2. 연구 방법','','3. 해석 및 시험 결과','','4. 결론','','참고문헌'])
+              seed_if_new('references','공유 자료',['','시험 데이터','','도면 및 사진','','참고문헌'])
               first,second=(editor(page,'references') for page in pages)
               # Append a temporary marker and undo only this edit.
               marker='thesis-sync-'+uuid.uuid4().hex[:10]
@@ -48,5 +72,5 @@ jobs:
               expect(editor(pages[1],'references')).to_be_visible(timeout=45000)
               for page in pages:
                   page.get_by_role('link',name='논문 원고',exact=True).click()
-                  expect(editor(page,'manuscript')).to_be_visible()
+                  expect(editor(page,'manuscript')).to_be_visible(timeout=55000)
               print('Both embedded editors loaded. Anonymous edit, remote receipt, undo and refresh all passed.')
