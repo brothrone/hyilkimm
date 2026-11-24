@@ -1,17 +1,17 @@
 ! ==================================================================
-!  offln.mac : 직선을 d 만큼 평행이동(offset)한 선 만들기
+!  offln.mac : 직선을 dist 만큼 평행이동(offset)한 선 만들기
 !
-!  사용법 : offln, x1, y1, x2, y2, d, k1, k2
-!     (x1,y1) -> (x2,y2) : 원래 직선의 시작점, 끝점 좌표
-!     d                  : offset 거리 (+ 면 진행방향의 왼쪽, - 면 오른쪽)
-!     k1, k2             : 새로 만들 keypoint 번호
-!  -> keypoint k1, k2 를 만들고 l,k1,k2 로 선을 만든다
+!  사용법 : 아래 변수에 값을 먼저 넣고  offln  한 줄로 실행
+!     x1, y1   : 원래 직선의 시작점 좌표
+!     x2, y2   : 원래 직선의 끝점 좌표
+!     dist     : offset 거리 (+ 면 진행방향의 왼쪽, - 면 오른쪽)
+!     kp1, kp2 : 새로 만들 keypoint 번호
 ! ==================================================================
-dx = arg3-arg1              ! 방향벡터
-dy = arg4-arg2
-ln = sqrt(dx*dx+dy*dy)      ! 길이
-nx = -dy/ln                 ! 방향벡터를 90도 돌린 단위 법선벡터
-ny =  dx/ln
-k,arg6,arg1+arg5*nx,arg2+arg5*ny
-k,arg7,arg3+arg5*nx,arg4+arg5*ny
-l,arg6,arg7
+dx = x2-x1                  ! 방향벡터
+dy = y2-y1
+lng = sqrt(dx*dx+dy*dy)     ! 길이
+nx = -dy/lng                ! 방향벡터를 90도 돌린 단위 법선벡터
+ny =  dx/lng
+k,kp1,x1+dist*nx,y1+dist*ny
+k,kp2,x2+dist*nx,y2+dist*ny
+l,kp1,kp2
