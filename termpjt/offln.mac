@@ -1,17 +1,30 @@
 ! ==================================================================
-!  offln.mac : 직선을 dist 만큼 평행이동(offset)한 선 만들기
+!  offln.mac : 직선 또는 원호를 dist 만큼 평행이동(offset)한 선 만들기
 !
 !  사용법 : 아래 변수에 값을 먼저 넣고  offln  한 줄로 실행
-!     x1, y1   : 원래 직선의 시작점 좌표
-!     x2, y2   : 원래 직선의 끝점 좌표
-!     dist     : offset 거리 (+ 면 진행방향의 왼쪽, - 면 오른쪽)
+!     x1, y1   : 원래 선의 시작점 좌표
+!     x2, y2   : 원래 선의 끝점 좌표
+!     dist     : offset 거리
 !     kp1, kp2 : 새로 만들 keypoint 번호
+!     rad      : 0 이면 직선,  0 이 아니면 원호의 반지름
+!     xc, yc   : (원호일 때) 중심 좌표
+!     kpc      : (원호일 때) 중심 keypoint 번호
+!
+!  직선 : 진행방향(점1->점2)의 왼쪽으로 dist 만큼 이동
+!  원호 : 중심 쪽으로 dist 만큼 이동 (반지름 rad -> rad-dist)
 ! ==================================================================
-dx = x2-x1                  ! 방향벡터
-dy = y2-y1
-lng = sqrt(dx*dx+dy*dy)     ! 길이
-nx = -dy/lng                ! 방향벡터를 90도 돌린 단위 법선벡터
-ny =  dx/lng
-k,kp1,x1+dist*nx,y1+dist*ny
-k,kp2,x2+dist*nx,y2+dist*ny
-l,kp1,kp2
+*if,rad,eq,0,then
+  dx = x2-x1                         ! 방향벡터
+  dy = y2-y1
+  lng = sqrt(dx*dx+dy*dy)            ! 길이
+  enx = -dy/lng                      ! 90도 돌린 단위 법선벡터
+  eny =  dx/lng
+  k,kp1,x1+dist*enx,y1+dist*eny
+  k,kp2,x2+dist*enx,y2+dist*eny
+  l,kp1,kp2
+*else
+  sc = (rad-dist)/rad                ! 중심 쪽으로 당기는 비율
+  k,kp1,xc+(x1-xc)*sc,yc+(y1-yc)*sc
+  k,kp2,xc+(x2-xc)*sc,yc+(y2-yc)*sc
+  larc,kp1,kp2,kpc,rad-dist
+*endif
