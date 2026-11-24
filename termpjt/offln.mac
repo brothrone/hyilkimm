@@ -1,0 +1,85 @@
+! ==================================================================
+!  offln.mac  --  선(직선 또는 원호)을 일정 거리만큼 평행이동한 새 선 생성
+!
+!  사용법 :  offln, NL, DIST, KSTART
+!     NL     : 원본 선 번호
+!     DIST   : offset 거리 (+ : 선 진행방향(KP1->KP2)의 왼쪽, - : 오른쪽)
+!     KSTART : (생략 가능) 새 선의 시작점으로 쓸 기존 keypoint 번호
+!              -> 앞 offset 선의 끝점을 넘기면 선들이 끊김 없이 이어짐
+!  결과 parameter :
+!     ofl_  : 새로 만든 선 번호
+!     ofk1_ : 새 선의 시작 keypoint,  ofk2_ : 새 선의 끝 keypoint
+!
+!  원리 : 원본 선 위 세 점(시작 0, 중간 0.5, 끝 1)의 위치 LX,LY 와
+!         접선 LSX,LSY 를 읽고, 접선을 +90도 돌린 법선 (-ty, tx) 방향으로
+!         DIST 만큼 옮긴다.  옮긴 세 점이 일직선이면 L, 아니면 세 점을
+!         지나는 원의 중심/반지름을 구해 LARC 로 원호를 만든다.
+!  (2D, X-Y 평면 전용)
+! ==================================================================
+nl_ = arg1
+d_  = arg2
+ks_ = arg3
+
+! ---- 1) 시작점 (LFRAC = 0) ----
+x1_ = lx(nl_,0)
+y1_ = ly(nl_,0)
+tx_ = lsx(nl_,0)
+ty_ = lsy(nl_,0)
+tl_ = sqrt(tx_**2+ty_**2)
+x1_ = x1_ - d_*ty_/tl_
+y1_ = y1_ + d_*tx_/tl_
+
+! ---- 2) 중간점 (LFRAC = 0.5) ----
+xm_ = lx(nl_,0.5)
+ym_ = ly(nl_,0.5)
+tx_ = lsx(nl_,0.5)
+ty_ = lsy(nl_,0.5)
+tl_ = sqrt(tx_**2+ty_**2)
+xm_ = xm_ - d_*ty_/tl_
+ym_ = ym_ + d_*tx_/tl_
+
+! ---- 3) 끝점 (LFRAC = 1) ----
+x2_ = lx(nl_,1)
+y2_ = ly(nl_,1)
+tx_ = lsx(nl_,1)
+ty_ = lsy(nl_,1)
+tl_ = sqrt(tx_**2+ty_**2)
+x2_ = x2_ - d_*ty_/tl_
+y2_ = y2_ + d_*tx_/tl_
+
+! ---- 4) 직선인지 판정 : 중간점이 시작-끝 현(chord)에서 벗어난 거리 ----
+cx_  = x2_-x1_
+cy_  = y2_-y1_
+cl_  = sqrt(cx_**2+cy_**2)
+dev_ = abs(cx_*(ym_-y1_)-cy_*(xm_-x1_))/cl_
+tol_ = 1e-6*cl_
+
+! ---- 5) keypoint 만들기 ----
+*get,km_,kp,0,num,maxd
+*if,ks_,gt,0,then
+  ofk1_ = ks_
+*else
+  ofk1_ = km_+1
+  k,ofk1_,x1_,y1_
+*endif
+ofk2_ = km_+2
+k,ofk2_,x2_,y2_
+
+! ---- 6) 선 만들기 ----
+*if,dev_,lt,tol_,then
+  l,ofk1_,ofk2_
+*else
+  ! 세 점을 지나는 원의 중심 (xc_,yc_) 과 반지름 r_
+  a1_ = x1_**2+y1_**2
+  am_ = xm_**2+ym_**2
+  a2_ = x2_**2+y2_**2
+  dd_ = 2*(x1_*(ym_-y2_)+xm_*(y2_-y1_)+x2_*(y1_-ym_))
+  xc_ = (a1_*(ym_-y2_)+am_*(y2_-y1_)+a2_*(y1_-ym_))/dd_
+  yc_ = (a1_*(x2_-xm_)+am_*(x1_-x2_)+a2_*(xm_-x1_))/dd_
+  r_  = sqrt((x1_-xc_)**2+(y1_-yc_)**2)
+  kc_ = km_+3
+  k,kc_,xc_,yc_
+  larc,ofk1_,ofk2_,kc_,r_
+  kdele,kc_
+*endif
+*get,ofl_,line,0,num,maxd
