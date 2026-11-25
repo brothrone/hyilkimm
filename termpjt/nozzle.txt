@@ -1,6 +1,6 @@
 ! ==================================================================
 !  Term Project : Thermal Stress Analysis of a Rocket Nozzle
-!  준비 : offln.mac 을 ANSYS 작업 폴더에 저장해 둘 것
+!  준비 : offln.mac, offarc.mac 을 ANSYS 작업 폴더에 저장해 둘 것
 !  단위 : mm, W, K, MPa
 !  축대칭 : Y축 = 노즐 중심축,  X = 반지름,  Y=0 = throat 높이
 !
@@ -47,12 +47,9 @@ l,5,7                        ! L7 : 두께 방향 선 (D-D')
 l,6,8                        ! L8 : 출구 끝면 (E-E'')
 al,2,6,7,8                   ! A2
 
-! ---- [영역 3, 4] 원호 부분 : 두께 30 인 부채꼴 고리 ----
-wpave,350,0                  ! R200 중심으로 working plane 이동
-pcirc,170,200,135,180        ! A3 : R170 ~ R200, 135 ~ 180도
-wpave,200,0                  ! R50 중심으로 이동
-pcirc,20,50,180,195          ! A4 : R20 ~ R50, 180 ~ 195도
-wpave,0,0
+! ---- [영역 3, 4] 원호 부분 : 원호 매크로 (offarc, 중심x, 중심y, 반지름, 시작각, 끝각, 거리) ----
+offarc,350,0,200,135,180,30  ! A3 : R200 원호 + offset R170 원호
+offarc,200,0,50,180,195,30   ! A4 : R50  원호 + offset R20  원호
 
 nummrg,kp                    ! 이음매에 겹친 keypoint / 선 합치기
 lplot
