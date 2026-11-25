@@ -8,6 +8,8 @@
 !           dist             : 거리 (+ 면 진행방향의 왼쪽)
 !           kp1, kp2         : 새로 만들 keypoint 번호
 !           -> offset 직선 1개 생성
+!              kp1 은 시작점과 같은 높이(y1)에 놓음 (노즐 끝면이 수평이므로)
+!              kp2 는 끝점에서 수직으로 dist 떨어진 점
 !   원호 :  offln, 2, xc, yc, rad, th1, th2, dist
 !           (xc,yc) : 원래 원호의 중심,  rad : 반지름
 !           th1, th2 : 시작 / 끝 각도(도),  dist : 거리 (중심 쪽으로)
@@ -37,7 +39,9 @@ narc  = arg1-1               ! 원호(2)이면 1, 직선(1)이면 0
   enx = -dy/lng              ! 방향벡터를 90도 돌린 단위 법선벡터
   eny =  dx/lng
 
-  k,kp1,x1+dist*enx,y1+dist*eny
+  ! 시작점을 dist 옮기면 y 가 dist*eny 만큼 변함
+  ! -> 직선 방향(dx,dy)으로 다시 밀어서 y = y1 로 맞춤
+  k,kp1,x1+dist*enx-dist*eny*dx/dy,y1
   k,kp2,x2+dist*enx,y2+dist*eny
   l,kp1,kp2
 *enddo
