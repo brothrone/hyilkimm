@@ -1,30 +1,50 @@
 ! ==================================================================
-!  offln.mac : 직선을 일정 거리만큼 평행이동(offset)한 선 만들기
+!  offln.mac : 직선 또는 원호를 일정 거리만큼 평행이동(offset)하기
 !  (메모장에서 파일 이름 offln.mac 으로 ANSYS 작업 폴더에 저장)
 !
-!  사용법 :  offln, x1, y1, x2, y2, dist, kp1, kp2
-!     x1, y1   : 원래 직선의 시작점 좌표
-!     x2, y2   : 원래 직선의 끝점 좌표
-!     dist     : offset 거리 (+ 면 진행방향의 왼쪽, - 면 오른쪽)
-!     kp1, kp2 : 새로 만들 keypoint 번호
-!  예)  offln,0,0,10,0,3,11,12  -> (0,3)-(10,3) 선 생성
+!  첫 번째 숫자로 종류를 고른다
+!   직선 :  offln, 1, x1, y1, x2, y2, dist, kp1, kp2
+!           (x1,y1)->(x2,y2) : 원래 직선의 두 점
+!           dist             : 거리 (+ 면 진행방향의 왼쪽)
+!           kp1, kp2         : 새로 만들 keypoint 번호
+!           -> offset 직선 1개 생성
+!   원호 :  offln, 2, xc, yc, rad, th1, th2, dist
+!           (xc,yc) : 원래 원호의 중심,  rad : 반지름
+!           th1, th2 : 시작 / 끝 각도(도),  dist : 거리 (중심 쪽으로)
+!           -> 원래 원호와 offset 원호 사이의 부채꼴 고리(area) 생성
 !
-!  매크로 이름 뒤에 쓴 값들은 매크로 안에서 arg1, arg2, ... 로 들어온다
+!  매크로 이름 뒤에 쓴 숫자들은 순서대로 arg1, arg2, ... 에 들어온다
 ! ==================================================================
-x1   = arg1
-y1   = arg2
-x2   = arg3
-y2   = arg4
-dist = arg5
-kp1  = arg6
-kp2  = arg7
+*if,arg1,eq,1,then
+  ! ---------------- 직선 ----------------
+  x1   = arg2
+  y1   = arg3
+  x2   = arg4
+  y2   = arg5
+  dist = arg6
+  kp1  = arg7
+  kp2  = arg8
 
-dx  = x2-x1                 ! 방향벡터
-dy  = y2-y1
-lng = sqrt(dx*dx+dy*dy)     ! 길이
-enx = -dy/lng               ! 방향벡터를 90도 돌린 단위 법선벡터
-eny =  dx/lng
+  dx  = x2-x1                ! 방향벡터
+  dy  = y2-y1
+  lng = sqrt(dx*dx+dy*dy)    ! 길이
+  enx = -dy/lng              ! 방향벡터를 90도 돌린 단위 법선벡터
+  eny =  dx/lng
 
-k,kp1,x1+dist*enx,y1+dist*eny
-k,kp2,x2+dist*enx,y2+dist*eny
-l,kp1,kp2
+  k,kp1,x1+dist*enx,y1+dist*eny
+  k,kp2,x2+dist*enx,y2+dist*eny
+  l,kp1,kp2
+*else
+  ! ---------------- 원호 ----------------
+  ! 원호를 중심 쪽으로 dist 옮기면 "같은 중심, 반지름 rad-dist" 원호
+  xc   = arg2
+  yc   = arg3
+  rad  = arg4
+  th1  = arg5
+  th2  = arg6
+  dist = arg7
+
+  wpave,xc,yc                ! working plane 을 원호 중심으로 이동
+  pcirc,rad-dist,rad,th1,th2 ! 반지름 rad-dist ~ rad 부채꼴 고리
+  wpave,0,0                  ! working plane 원위치
+*endif
